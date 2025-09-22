@@ -1,0 +1,505 @@
+/* Global Next Unified Portal - Custom Styles */
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Hide scrollbar for Firefox */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Animation classes */
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom button styles */
+.btn-primary {
+    @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium;
+}
+
+.btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium;
+}
+
+.btn-success {
+    @apply bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium;
+}
+
+.btn-danger {
+    @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium;
+}
+
+/* Card hover effects */
+.card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+}
+
+/* Status badge styles */
+.status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.status-approved {
+    @apply bg-green-100 text-green-800;
+}
+
+.status-pending {
+    @apply bg-yellow-100 text-yellow-800;
+}
+
+.status-rejected {
+    @apply bg-red-100 text-red-800;
+}
+
+.status-in-progress {
+    @apply bg-blue-100 text-blue-800;
+}
+
+.status-completed {
+    @apply bg-green-100 text-green-800;
+}
+
+.status-cancelled {
+    @apply bg-gray-100 text-gray-800;
+}
+
+.status-delayed {
+    @apply bg-red-100 text-red-800;
+}
+
+.status-on-track {
+    @apply bg-green-100 text-green-800;
+}
+
+.status-at-risk {
+    @apply bg-orange-100 text-orange-800;
+}
+
+/* Form input styles */
+.form-input {
+    @apply w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+}
+
+.form-input:invalid {
+    @apply border-red-500;
+}
+
+.form-label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+/* Table styles */
+.table-container {
+    @apply overflow-x-auto shadow-sm border border-gray-200 rounded-lg;
+}
+
+.table {
+    @apply min-w-full divide-y divide-gray-200;
+}
+
+.table thead {
+    @apply bg-gray-50;
+}
+
+.table th {
+    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.table td {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+}
+
+.table tbody tr {
+    @apply hover:bg-gray-50 transition-colors duration-150;
+}
+
+/* Modal styles */
+.modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4;
+}
+
+.modal-content {
+    @apply bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto;
+}
+
+.modal-header {
+    @apply p-6 border-b border-gray-200;
+}
+
+.modal-body {
+    @apply p-6;
+}
+
+.modal-footer {
+    @apply p-6 border-t border-gray-200 flex items-center justify-end space-x-3;
+}
+
+/* Sidebar styles */
+.sidebar {
+    @apply fixed left-0 top-[121px] w-64 h-[calc(100vh-121px)] bg-gray-900 text-white overflow-y-auto;
+}
+
+.sidebar-item {
+    @apply flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 cursor-pointer transition-colors duration-200;
+}
+
+.sidebar-item.active {
+    @apply bg-gray-800;
+}
+
+/* Navigation styles */
+.nav-item {
+    @apply flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer transition-colors duration-200;
+}
+
+.nav-item.active {
+    @apply text-blue-600 font-medium border-b-2 border-blue-600;
+}
+
+/* KPI card styles */
+.kpi-card {
+    @apply bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200;
+}
+
+.kpi-icon {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center;
+}
+
+.kpi-value {
+    @apply text-2xl font-bold text-gray-900 mb-1;
+}
+
+.kpi-label {
+    @apply text-gray-600;
+}
+
+.kpi-change {
+    @apply text-sm font-medium px-2 py-1 rounded-full;
+}
+
+.kpi-change.positive {
+    @apply text-green-600 bg-green-100;
+}
+
+.kpi-change.negative {
+    @apply text-red-600 bg-red-100;
+}
+
+/* Loading states */
+.loading {
+    @apply opacity-50 pointer-events-none;
+}
+
+.loading-spinner {
+    @apply animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600;
+}
+
+/* Notification styles */
+.notification {
+    @apply fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm;
+}
+
+.notification.success {
+    @apply bg-green-100 text-green-800 border border-green-200;
+}
+
+.notification.error {
+    @apply bg-red-100 text-red-800 border border-red-200;
+}
+
+.notification.info {
+    @apply bg-blue-100 text-blue-800 border border-blue-200;
+}
+
+.notification.warning {
+    @apply bg-yellow-100 text-yellow-800 border border-yellow-200;
+}
+
+/* Responsive design utilities */
+@media (max-width: 768px) {
+    .sidebar {
+        @apply transform -translate-x-full transition-transform duration-300;
+    }
+    
+    .sidebar.open {
+        @apply transform translate-x-0;
+    }
+    
+    .main-content {
+        @apply ml-0;
+    }
+    
+    .main-content.sidebar-open {
+        @apply ml-64;
+    }
+    
+    .nav-item {
+        @apply px-2 py-3 text-sm;
+    }
+    
+    .kpi-card {
+        @apply p-4;
+    }
+    
+    .kpi-value {
+        @apply text-xl;
+    }
+    
+    .table-container {
+        @apply text-xs;
+    }
+    
+    .table th,
+    .table td {
+        @apply px-3 py-2;
+    }
+    
+    .modal-content {
+        @apply max-w-full mx-2;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        @apply p-4;
+    }
+}
+
+@media (max-width: 640px) {
+    .header-search {
+        @apply w-48;
+    }
+    
+    .header-actions {
+        @apply space-x-2;
+    }
+    
+    .kpi-grid {
+        @apply grid-cols-1 gap-4;
+    }
+    
+    .content-grid {
+        @apply grid-cols-1 gap-6;
+    }
+    
+    .form-grid {
+        @apply grid-cols-1 gap-4;
+    }
+    
+    .button-group {
+        @apply flex-col space-y-2 space-x-0;
+    }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .print-break {
+        page-break-before: always;
+    }
+    
+    .print-avoid-break {
+        page-break-inside: avoid;
+    }
+}
+
+/* Dark mode support (for future implementation) */
+@media (prefers-color-scheme: dark) {
+    .dark-mode {
+        @apply bg-gray-900 text-white;
+    }
+    
+    .dark-mode .bg-white {
+        @apply bg-gray-800;
+    }
+    
+    .dark-mode .text-gray-900 {
+        @apply text-white;
+    }
+    
+    .dark-mode .text-gray-600 {
+        @apply text-gray-300;
+    }
+    
+    .dark-mode .border-gray-200 {
+        @apply border-gray-700;
+    }
+}
+
+/* Accessibility improvements */
+.sr-only {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+.focus-visible {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .high-contrast {
+        @apply border-2 border-black;
+    }
+    
+    .high-contrast .text-gray-600 {
+        @apply text-black;
+    }
+    
+    .high-contrast .bg-gray-100 {
+        @apply bg-white border border-black;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Custom utility classes */
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.shadow-soft {
+    box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.border-soft {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Custom component styles */
+.timeline-item {
+    @apply relative pl-8 pb-8;
+}
+
+.timeline-item::before {
+    content: '';
+    @apply absolute left-0 top-0 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-sm;
+}
+
+.timeline-item::after {
+    content: '';
+    @apply absolute left-2 top-4 w-0.5 h-full bg-gray-200;
+}
+
+.timeline-item:last-child::after {
+    @apply hidden;
+}
+
+.progress-bar {
+    @apply w-full bg-gray-200 rounded-full h-2;
+}
+
+.progress-fill {
+    @apply bg-blue-600 h-2 rounded-full transition-all duration-300;
+}
+
+/* File upload styles */
+.file-upload-area {
+    @apply border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-colors duration-200;
+}
+
+.file-upload-area.dragover {
+    @apply border-blue-400 bg-blue-50;
+}
+
+/* Search highlight */
+.search-highlight {
+    @apply bg-yellow-200 px-1 rounded;
+}
+
+/* Custom scrollbar for specific elements */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

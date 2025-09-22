@@ -1,0 +1,855 @@
+openapi: 3.1.0
+info:
+  title: Global Next API
+  version: "1.0.0"
+  description: |
+    Comprehensive API for the Global Next unified portal including:
+    - Logistics & Container Tracking
+    - Consulting & Project Management
+    - Compliance & Regulatory Management
+    - Marketing & Content Management
+    - Financial Management
+    - Security & Privacy Controls
+    - Reporting & Analytics
+    - Integrations & Tokenization Bridge
+  contact:
+    name: Global Next API Support
+    email: api-support@global-next.com
+  license:
+    name: Proprietary
+    url: https://global-next.com/license
+
+servers:
+  - url: https://api.global-next.com/v1
+    description: Production server
+  - url: https://staging-api.global-next.com/v1
+    description: Staging server
+  - url: http://localhost:3001/api/v1
+    description: Development server
+
+security:
+  - BearerAuth: []
+  - ApiKeyAuth: []
+
+paths:
+  # ===== CONTAINER & LOGISTICS ENDPOINTS =====
+  /containers/{id}:
+    get:
+      summary: Get container details
+      description: Retrieve detailed information about a specific container
+      tags: [Logistics]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Container ID
+      responses:
+        '200':
+          description: Container details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Container'
+        '404':
+          description: Container not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /shipments:
+    get:
+      summary: List shipments
+      description: Retrieve a list of shipments with optional filtering
+      tags: [Logistics]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [DRAFT, IN_TRANSIT, DELIVERED, CANCELLED]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Shipments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Shipment'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /shipments/{id}/milestones:
+    get:
+      summary: Get shipment milestones
+      description: Retrieve all milestones for a specific shipment
+      tags: [Logistics]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Milestones retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Milestone'
+
+  # ===== WORKFLOW ENDPOINTS =====
+  /workflows/{id}/advance:
+    post:
+      summary: Advance workflow
+      description: Move a workflow to the next step
+      tags: [Workflows]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: Action to take (approve, reject, etc.)
+                comment:
+                  type: string
+                  description: Optional comment
+                metadata:
+                  type: object
+                  description: Additional metadata
+      responses:
+        '200':
+          description: Workflow advanced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+        '400':
+          description: Invalid action or workflow state
+        '404':
+          description: Workflow not found
+
+  # ===== FILE UPLOAD ENDPOINTS =====
+  /files:
+    post:
+      summary: Upload file (multipart)
+      description: Upload a file to the system
+      tags: [Files]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File to upload
+                metadata:
+                  type: string
+                  description: JSON metadata about the file
+                tags:
+                  type: string
+                  description: Comma-separated tags
+      responses:
+        '201':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        '400':
+          description: Invalid file or metadata
+        '413':
+          description: File too large
+
+  # ===== WEBHOOK ENDPOINTS =====
+  /webhooks/tokenization:
+    post:
+      summary: Outbound webhook (HMAC signed)
+      description: |
+        Outbound webhook for tokenization events. All webhooks are signed with HMAC-SHA256.
+        The signature is included in the X-Webhook-Signature header.
+      tags: [Webhooks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenizationEvent'
+      responses:
+        '202':
+          description: Webhook accepted
+        '400':
+          description: Invalid webhook payload
+        '401':
+          description: Invalid signature
+
+  # ===== REPORTING ENDPOINTS =====
+  /reporting/kpis/calculate:
+    post:
+      summary: Calculate KPIs
+      description: Calculate KPIs for a specific period and category
+      tags: [Reporting]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                period:
+                  type: string
+                  description: Period in format YYYY-MM or YYYY-Q1
+                category:
+                  type: string
+                  enum: [LOGISTICS, CONSULTING, COMPLIANCE, MARKETING, FINANCE, SECURITY, OVERALL]
+                kpiTypes:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: KPIs calculated successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KPIMetrics'
+
+  /reporting/reports/generate:
+    post:
+      summary: Generate report
+      description: Generate a comprehensive report
+      tags: [Reporting]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reportType:
+                  type: string
+                  enum: [LOGISTICS_SUMMARY, CONSULTING_UTILIZATION, COMPLIANCE_STATUS, FINANCIAL_OVERVIEW, SECURITY_AUDIT, CUSTOM_DASHBOARD]
+                filters:
+                  type: object
+                  description: Report filters
+                format:
+                  type: string
+                  enum: [CSV, XLSX, PDF, JSON]
+      responses:
+        '200':
+          description: Report generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportData'
+
+  /reporting/predictions/eta:
+    post:
+      summary: Predict ETA
+      description: Predict estimated time of arrival for a shipment milestone
+      tags: [Reporting]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipmentId:
+                  type: string
+                milestoneType:
+                  type: string
+                  enum: [ETD, ETA, DEPART, TRANSSHIP, ARRIVE, CUSTOMS, DELIVERED]
+      responses:
+        '200':
+          description: ETA prediction generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ETAPrediction'
+
+  /reporting/predictions/hs-codes:
+    post:
+      summary: Suggest HS codes
+      description: Get HS code suggestions for a product
+      tags: [Reporting]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productName:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: HS code suggestions generated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HSCodeSuggestion'
+
+  # ===== DASHBOARD ENDPOINTS =====
+  /reporting/dashboards/executive:
+    get:
+      summary: Get executive dashboard
+      description: Retrieve executive-level dashboard data
+      tags: [Dashboards]
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            default: "2024-01"
+      responses:
+        '200':
+          description: Executive dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardData'
+
+  /reporting/dashboards/logistics:
+    get:
+      summary: Get logistics dashboard
+      description: Retrieve logistics-specific dashboard data
+      tags: [Dashboards]
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            default: "2024-01"
+      responses:
+        '200':
+          description: Logistics dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardData'
+
+  # ===== SECURITY ENDPOINTS =====
+  /security/sessions:
+    get:
+      summary: List user sessions
+      description: Retrieve active user sessions
+      tags: [Security]
+      responses:
+        '200':
+          description: Sessions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSession'
+
+  /security/data-requests:
+    post:
+      summary: Create data request
+      description: Create a GDPR data export or erasure request
+      tags: [Security]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestType:
+                  type: string
+                  enum: [EXPORT, ERASURE, PORTABILITY, RECTIFICATION]
+                metadata:
+                  type: object
+      responses:
+        '201':
+          description: Data request created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataRequest'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    # ===== CORE ENTITIES =====
+    Container:
+      type: object
+      properties:
+        id:
+          type: string
+        containerNumber:
+          type: string
+        containerType:
+          type: string
+          enum: [20FT, 40FT, 45FT]
+        status:
+          type: string
+          enum: [EMPTY, LOADED, IN_TRANSIT, DELIVERED]
+        currentLocation:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Shipment:
+      type: object
+      properties:
+        id:
+          type: string
+        shipmentNumber:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, IN_TRANSIT, DELIVERED, CANCELLED]
+        origin:
+          type: string
+        destination:
+          type: string
+        estimatedDeparture:
+          type: string
+          format: date-time
+        estimatedArrival:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Milestone:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [ETD, ETA, DEPART, TRANSSHIP, ARRIVE, CUSTOMS, DELIVERED]
+        scheduledDate:
+          type: string
+          format: date-time
+        actualDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [SCHEDULED, IN_PROGRESS, COMPLETED, DELAYED]
+        location:
+          type: string
+
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, ACTIVE, PAUSED, COMPLETED, CANCELLED]
+        currentStep:
+          type: string
+        steps:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              status:
+                type: string
+              assignedTo:
+                type: string
+              dueDate:
+                type: string
+                format: date-time
+
+    File:
+      type: object
+      properties:
+        id:
+          type: string
+        filename:
+          type: string
+        originalName:
+          type: string
+        mimeType:
+          type: string
+        size:
+          type: integer
+        url:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # ===== REPORTING SCHEMAS =====
+    KPIMetrics:
+      type: object
+      properties:
+        kpiType:
+          type: string
+        category:
+          type: string
+        period:
+          type: string
+        value:
+          type: number
+        target:
+          type: number
+        previousValue:
+          type: number
+        trend:
+          type: string
+          enum: [UP, DOWN, STABLE, VOLATILE]
+        metadata:
+          type: object
+
+    ReportData:
+      type: object
+      properties:
+        reportType:
+          type: string
+        period:
+          type: string
+        generatedAt:
+          type: string
+          format: date-time
+        data:
+          type: object
+          properties:
+            summary:
+              type: object
+            kpis:
+              type: array
+              items:
+                $ref: '#/components/schemas/KPIMetrics'
+            trends:
+              type: array
+            details:
+              type: object
+        metadata:
+          type: object
+          properties:
+            filters:
+              type: object
+            recordCount:
+              type: integer
+            generationTime:
+              type: integer
+
+    ETAPrediction:
+      type: object
+      properties:
+        shipmentId:
+          type: string
+        milestoneType:
+          type: string
+        predictedDate:
+          type: string
+          format: date-time
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        historicalDelta:
+          type: number
+        factors:
+          type: object
+          properties:
+            weather:
+              type: number
+            portCongestion:
+              type: number
+            carrierPerformance:
+              type: number
+            routeEfficiency:
+              type: number
+
+    HSCodeSuggestion:
+      type: object
+      properties:
+        productName:
+          type: string
+        description:
+          type: string
+        suggestedCode:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        reasoning:
+          type: string
+        alternatives:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              confidence:
+                type: number
+              reasoning:
+                type: string
+
+    DashboardData:
+      type: object
+      properties:
+        role:
+          type: string
+        period:
+          type: string
+        summary:
+          type: object
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/KPIMetrics'
+        trends:
+          type: array
+        alerts:
+          type: array
+        lastUpdated:
+          type: string
+          format: date-time
+
+    # ===== SECURITY SCHEMAS =====
+    UserSession:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        sessionToken:
+          type: string
+        deviceId:
+          type: string
+        ipAddress:
+          type: string
+        userAgent:
+          type: string
+        isActive:
+          type: boolean
+        lastActivityAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+
+    DataRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        requestType:
+          type: string
+          enum: [EXPORT, ERASURE, PORTABILITY, RECTIFICATION]
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED, EXPIRED]
+        requestedAt:
+          type: string
+          format: date-time
+        processedAt:
+          type: string
+          format: date-time
+        fileUrl:
+          type: string
+
+    # ===== WEBHOOK SCHEMAS =====
+    TokenizationEvent:
+      type: object
+      properties:
+        event:
+          type: string
+          enum: [doc.hashed, shipment.created, milestone.updated, invoice.created, kpi.updated]
+        occurred_at:
+          type: string
+          format: date-time
+        tenant_id:
+          type: string
+        data:
+          type: object
+          properties:
+            document_id:
+              type: string
+            shipment_id:
+              type: string
+            milestone_id:
+              type: string
+            invoice_id:
+              type: string
+            kpi_id:
+              type: string
+            sha256:
+              type: string
+            anchor_tx:
+              type: string
+            resource_type:
+              type: string
+            shipment_ref:
+              type: string
+        hmac:
+          type: string
+          description: HMAC-SHA256 signature of the payload
+
+    # ===== UTILITY SCHEMAS =====
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrevious:
+          type: boolean
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        statusCode:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Unauthorized"
+            message: "Authentication required"
+            statusCode: 401
+            timestamp: "2024-01-15T10:30:00Z"
+            path: "/api/v1/containers/123"
+
+    ForbiddenError:
+      description: Access denied
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Forbidden"
+            message: "Insufficient permissions"
+            statusCode: 403
+            timestamp: "2024-01-15T10:30:00Z"
+            path: "/api/v1/containers/123"
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Not Found"
+            message: "Container not found"
+            statusCode: 404
+            timestamp: "2024-01-15T10:30:00Z"
+            path: "/api/v1/containers/123"
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Bad Request"
+            message: "Invalid request parameters"
+            statusCode: 400
+            timestamp: "2024-01-15T10:30:00Z"
+            path: "/api/v1/containers/123"
+
+tags:
+  - name: Logistics
+    description: Container tracking and logistics management
+  - name: Workflows
+    description: Workflow management and automation
+  - name: Files
+    description: File upload and management
+  - name: Webhooks
+    description: Webhook endpoints for integrations
+  - name: Reporting
+    description: KPI calculation and reporting
+  - name: Dashboards
+    description: Role-specific dashboards
+  - name: Security
+    description: Security and privacy controls

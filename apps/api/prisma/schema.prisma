@@ -1,0 +1,2037 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "audit"]
+}
+
+// User Management
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String?
+  password          String?
+  role              UserRole  @default(VIEWER)
+  avatar            String?
+  attributes        Json?
+  isActive          Boolean   @default(true)
+  mfaEnabled        Boolean   @default(false)
+  webauthnEnabled   Boolean   @default(false)
+  lastLoginAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  sessions          Session[]
+  mfaSecrets        MFASecret[]
+  webauthnCredentials WebAuthnCredential[]
+  auditLogs         AuditLog[]
+  policies          Policy[]
+  
+  // Consulting Modules Relations
+  marketingCampaigns MarketingCampaign[]
+  marketingContent   MarketingContent[]
+  marketingApprovals MarketingApproval[]
+  productRegistrations ProductRegistration[]
+  productSubmissions ProductSubmission[]
+  productCommunications ProductCommunication[]
+  complianceTemplates ComplianceTemplate[]
+  complianceContracts ComplianceContract[]
+  complianceSignatures ComplianceSignature[]
+  complianceRecords ComplianceRecord[]
+  complianceReminders ComplianceReminder[]
+  complianceRemindersCompleted ComplianceReminder[] @relation("ComplianceReminderCompleter")
+  timesheets        Timesheet[]
+  timesheetsCreated Timesheet[] @relation("TimesheetCreator")
+  timesheetsApproved Timesheet[] @relation("TimesheetApprover")
+  projects          Project[]
+  clients           Client[]
+  
+  // Logistics Relations
+  shipments         Shipment[]
+  containers        Container[]
+  milestones        Milestone[]
+  costItems         CostItem[]
+  invoices          Invoice[]
+  carrierIntegrations CarrierIntegration[]
+  logisticsAlerts   LogisticsAlert[]
+  logisticsAlertsResolved LogisticsAlert[] @relation("LogisticsAlertResolver")
+  
+  // Integrations Relations
+  integrationCredentials IntegrationCredential[]
+  webhookEndpoints   WebhookEndpoint[]
+  webhookDeliveries  WebhookDelivery[]
+  tokenizationEvents TokenizationEvent[]
+  tokenizationKPIs   TokenizationKPI[]
+  
+  // Security & Privacy Relations
+  userSessions       UserSession[]
+  userDevices        UserDevice[]
+  consentRecords     ConsentRecord[]
+  dataRetentionPolicies DataRetentionPolicy[]
+  piiEncryptionKeys  PIIEncryptionKey[]
+  rateLimitRecords   RateLimitRecord[]
+  
+  // Reporting & Analytics Relations
+  kpiRecords         KPIRecord[]
+  reportSchedules    ReportSchedule[]
+  reportExports      ReportExport[]
+  predictiveModels   PredictiveModel[]
+  analyticsEvents    AnalyticsEvent[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  OPS_MANAGER
+  FINANCE_MANAGER
+  CONSULTANT
+  PARTNER
+  VIEWER
+}
+
+// Session Management
+model Session {
+  id              String   @id @default(cuid())
+  userId          String
+  token           String   @unique
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+  lastAccessedAt  DateTime @default(now())
+  ipAddress       String?
+  userAgent       String?
+  isActive        Boolean  @default(true)
+
+  // Relations
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// MFA Management
+model MFASecret {
+  id          String    @id @default(cuid())
+  userId      String
+  secret      String
+  backupCodes String[]
+  createdAt   DateTime  @default(now())
+  verifiedAt  DateTime?
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mfa_secrets")
+}
+
+// WebAuthn Management
+model WebAuthnCredential {
+  id            String    @id @default(cuid())
+  userId        String
+  credentialId  String    @unique
+  publicKey     String
+  counter       Int       @default(0)
+  name          String
+  createdAt     DateTime  @default(now())
+  lastUsedAt    DateTime?
+
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("webauthn_credentials")
+}
+
+// RBAC/ABAC Policy Management
+model Policy {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  resource    String
+  action      String
+  subject     String
+  conditions  Json?
+  effect      PolicyEffect @default(ALLOW)
+  createdBy   String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  creator     User         @relation(fields: [createdBy], references: [id])
+
+  @@map("policies")
+}
+
+enum PolicyEffect {
+  ALLOW
+  DENY
+}
+
+// Audit Logging
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorId       String
+  actorEmail    String
+  action        String
+  resource      String
+  resourceId    String?
+  beforeHash    String?
+  afterHash     String?
+  metadata      Json?
+  ipAddress     String?
+  userAgent     String?
+  timestamp     DateTime @default(now())
+
+  // Relations
+  actor         User     @relation(fields: [actorId], references: [id])
+
+  @@map("audit_logs")
+  @@schema("audit")
+}
+
+// NextAuth.js Models (for compatibility)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Add Account relation to User
+model User {
+  // ... existing fields ...
+  accounts Account[]
+  files File[]
+  workflows Workflow[]
+  workflowInstances WorkflowInstance[]
+  tasks Task[]
+  taskAssignments TaskAssignment[]
+  taskComments TaskComment[]
+  notifications Notification[]
+  notificationPreferences NotificationPreference[]
+}
+
+// Files Module
+model File {
+  id              String    @id @default(cuid())
+  name            String
+  originalName    String
+  mimeType        String
+  size            Int
+  path            String
+  url             String?
+  hash            String    @unique
+  chainAnchor     String?   // Blockchain anchor placeholder
+  version         Int       @default(1)
+  parentId        String?
+  isVirusScanned  Boolean   @default(false)
+  virusScanResult String?
+  ocrStatus       OCRStatus @default(PENDING)
+  ocrText         String?
+  metadata        Json?
+  tags            String[]
+  accessLevel     AccessLevel @default(PRIVATE)
+  uploadedBy      String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  uploader        User      @relation(fields: [uploadedBy], references: [id])
+  parent          File?     @relation("FileVersions", fields: [parentId], references: [id])
+  versions        File[]    @relation("FileVersions")
+  accessControls  FileAccessControl[]
+  workflowAttachments WorkflowAttachment[]
+  taskAttachments TaskAttachment[]
+
+  @@map("files")
+}
+
+enum OCRStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AccessLevel {
+  PUBLIC
+  INTERNAL
+  PRIVATE
+  CONFIDENTIAL
+}
+
+model FileAccessControl {
+  id        String    @id @default(cuid())
+  fileId    String
+  userId    String?
+  role      String?
+  permission FilePermission
+  createdAt DateTime  @default(now())
+
+  // Relations
+  file      File      @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([fileId, userId, role])
+  @@map("file_access_controls")
+}
+
+enum FilePermission {
+  READ
+  WRITE
+  DELETE
+  MANAGE
+}
+
+// Workflows Module
+model Workflow {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  definition  Json      // JSON-defined workflow steps
+  isActive    Boolean   @default(true)
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  creator     User      @relation(fields: [createdBy], references: [id])
+  instances   WorkflowInstance[]
+
+  @@map("workflows")
+}
+
+model WorkflowInstance {
+  id          String            @id @default(cuid())
+  workflowId  String
+  status      WorkflowStatus    @default(RUNNING)
+  currentStep Int               @default(0)
+  data        Json?
+  startedBy   String
+  startedAt   DateTime          @default(now())
+  completedAt DateTime?
+  pausedAt    DateTime?
+
+  // Relations
+  workflow    Workflow          @relation(fields: [workflowId], references: [id])
+  starter     User              @relation(fields: [startedBy], references: [id])
+  steps       WorkflowStep[]
+  attachments WorkflowAttachment[]
+
+  @@map("workflow_instances")
+}
+
+enum WorkflowStatus {
+  RUNNING
+  PAUSED
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model WorkflowStep {
+  id          String    @id @default(cuid())
+  instanceId  String
+  stepIndex   Int
+  name        String
+  status      StepStatus @default(PENDING)
+  assignedTo  String?
+  data        Json?
+  startedAt   DateTime?
+  completedAt DateTime?
+  dueDate     DateTime?
+  sla         Int?      // SLA in minutes
+
+  // Relations
+  instance    WorkflowInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@unique([instanceId, stepIndex])
+  @@map("workflow_steps")
+}
+
+enum StepStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  SKIPPED
+}
+
+model WorkflowAttachment {
+  id          String    @id @default(cuid())
+  instanceId  String
+  fileId      String
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  instance    WorkflowInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  file        File             @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([instanceId, fileId])
+  @@map("workflow_attachments")
+}
+
+// Tasks Module
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority  @default(MEDIUM)
+  progress    Int       @default(0) // 0-100%
+  dueDate     DateTime?
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  creator     User      @relation(fields: [createdBy], references: [id])
+  assignments TaskAssignment[]
+  comments    TaskComment[]
+  attachments TaskAttachment[]
+
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model TaskAssignment {
+  id        String    @id @default(cuid())
+  taskId    String
+  userId    String
+  assignedAt DateTime @default(now())
+
+  // Relations
+  task      Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+  @@map("task_assignments")
+}
+
+model TaskComment {
+  id        String    @id @default(cuid())
+  taskId    String
+  userId    String
+  content   String
+  createdAt DateTime  @default(now())
+
+  // Relations
+  task      Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("task_comments")
+}
+
+model TaskAttachment {
+  id        String    @id @default(cuid())
+  taskId    String
+  fileId    String
+  createdAt DateTime  @default(now())
+
+  // Relations
+  task      Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  file      File      @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, fileId])
+  @@map("task_attachments")
+}
+
+// Notifications Module
+model Notification {
+  id          String             @id @default(cuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  data        Json?
+  isRead      Boolean            @default(false)
+  sentAt      DateTime?
+  readAt      DateTime?
+  createdAt   DateTime           @default(now())
+
+  // Relations
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ERROR
+  SUCCESS
+  TASK_ASSIGNED
+  TASK_DUE
+  WORKFLOW_STEP
+  FILE_UPLOADED
+  APPROVAL_REQUIRED
+}
+
+model NotificationPreference {
+  id          String    @id @default(cuid())
+  userId      String
+  type        NotificationType
+  inApp       Boolean   @default(true)
+  email       Boolean   @default(true)
+  sms         Boolean   @default(false)
+  webhook     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@map("notification_preferences")
+}
+
+// ===== CONSULTING MODULES =====
+
+// Marketing Module
+model MarketingCampaign {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  status      CampaignStatus @default(DRAFT)
+  startDate   DateTime?
+  endDate     DateTime?
+  budget      Decimal?
+  currency    String   @default("USD")
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator     User     @relation(fields: [createdBy], references: [id])
+  content     MarketingContent[]
+  approvals   MarketingApproval[]
+  integrations MarketingIntegration[]
+
+  @@map("marketing_campaigns")
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+model MarketingContent {
+  id          String   @id @default(cuid())
+  campaignId  String
+  title       String
+  description String?
+  type        ContentType
+  status      ContentStatus @default(DRAFT)
+  scheduledAt DateTime?
+  publishedAt DateTime?
+  url         String?
+  metadata    Json?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  campaign    MarketingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  creator     User              @relation(fields: [createdBy], references: [id])
+  approvals   MarketingApproval[]
+  assets      MarketingAsset[]
+
+  @@map("marketing_content")
+}
+
+enum ContentType {
+  POST
+  ARTICLE
+  VIDEO
+  IMAGE
+  AD
+  EMAIL
+  WEBINAR
+}
+
+enum ContentStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  SCHEDULED
+  PUBLISHED
+  REJECTED
+}
+
+model MarketingApproval {
+  id          String   @id @default(cuid())
+  contentId   String
+  campaignId  String
+  approverId  String
+  status      ApprovalStatus @default(PENDING)
+  comments    String?
+  approvedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  content     MarketingContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  campaign    MarketingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  approver    User             @relation(fields: [approverId], references: [id])
+
+  @@unique([contentId, approverId])
+  @@map("marketing_approvals")
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model MarketingAsset {
+  id          String   @id @default(cuid())
+  contentId   String
+  name        String
+  type        AssetType
+  url         String
+  size        Int?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  content     MarketingContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@map("marketing_assets")
+}
+
+enum AssetType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+  TEMPLATE
+}
+
+model MarketingIntegration {
+  id          String   @id @default(cuid())
+  campaignId  String
+  platform    SocialPlatform
+  status      IntegrationStatus @default(INACTIVE)
+  credentials Json?
+  settings    Json?
+  lastSyncAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  campaign    MarketingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, platform])
+  @@map("marketing_integrations")
+}
+
+enum SocialPlatform {
+  LINKEDIN
+  INSTAGRAM
+  FACEBOOK
+  TWITTER
+  GOOGLE_ADS
+  YOUTUBE
+}
+
+enum IntegrationStatus {
+  INACTIVE
+  ACTIVE
+  ERROR
+  EXPIRED
+}
+
+// Product Registration Module
+model ProductRegistration {
+  id          String   @id @default(cuid())
+  productName String
+  productCode String
+  country     String
+  status      RegistrationStatus @default(DRAFT)
+  submittedAt DateTime?
+  approvedAt  DateTime?
+  expiresAt   DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator     User     @relation(fields: [createdBy], references: [id])
+  checklist   ProductChecklist[]
+  documents   ProductDocument[]
+  submissions ProductSubmission[]
+  communications ProductCommunication[]
+
+  @@map("product_registrations")
+}
+
+enum RegistrationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  ISSUE
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+model ProductChecklist {
+  id          String   @id @default(cuid())
+  registrationId String
+  item        String
+  description String?
+  isRequired  Boolean  @default(true)
+  isCompleted Boolean  @default(false)
+  completedAt DateTime?
+  completedBy String?
+  order       Int
+  createdAt   DateTime @default(now())
+
+  // Relations
+  registration ProductRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@map("product_checklists")
+}
+
+model ProductDocument {
+  id          String   @id @default(cuid())
+  registrationId String
+  name        String
+  type        DocumentType
+  url         String
+  isGenerated Boolean  @default(false)
+  generatedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  registration ProductRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@map("product_documents")
+}
+
+enum DocumentType {
+  APPLICATION
+  CERTIFICATE
+  MANUAL
+  SPECIFICATION
+  TEST_REPORT
+  OTHER
+}
+
+model ProductSubmission {
+  id          String   @id @default(cuid())
+  registrationId String
+  authority    String
+  submissionId String?
+  status      SubmissionStatus @default(DRAFT)
+  submittedAt DateTime?
+  responseAt  DateTime?
+  response    String?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  registration ProductRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  creator      User               @relation(fields: [createdBy], references: [id])
+
+  @@map("product_submissions")
+}
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  ISSUE
+  APPROVED
+  REJECTED
+}
+
+model ProductCommunication {
+  id          String   @id @default(cuid())
+  registrationId String
+  type        CommunicationType
+  subject     String
+  content     String
+  direction   CommunicationDirection
+  sentAt      DateTime?
+  receivedAt  DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  registration ProductRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  creator      User               @relation(fields: [createdBy], references: [id])
+
+  @@map("product_communications")
+}
+
+enum CommunicationType {
+  EMAIL
+  PHONE
+  LETTER
+  MEETING
+  OTHER
+}
+
+enum CommunicationDirection {
+  OUTBOUND
+  INBOUND
+}
+
+// Compliance Module
+model ComplianceTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        TemplateType
+  category    String?
+  content     String
+  variables   Json?
+  isActive    Boolean  @default(true)
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator     User     @relation(fields: [createdBy], references: [id])
+  contracts   ComplianceContract[]
+
+  @@map("compliance_templates")
+}
+
+enum TemplateType {
+  CONTRACT
+  AGREEMENT
+  POLICY
+  PROCEDURE
+  FORM
+  LETTER
+}
+
+model ComplianceContract {
+  id          String   @id @default(cuid())
+  templateId  String?
+  name        String
+  description String?
+  status      ContractStatus @default(DRAFT)
+  content     String
+  variables   Json?
+  signedAt    DateTime?
+  expiresAt   DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  template    ComplianceTemplate? @relation(fields: [templateId], references: [id])
+  creator     User                @relation(fields: [createdBy], references: [id])
+  signatures  ComplianceSignature[]
+  records     ComplianceRecord[]
+
+  @@map("compliance_contracts")
+}
+
+enum ContractStatus {
+  DRAFT
+  PENDING_SIGNATURE
+  SIGNED
+  EXPIRED
+  TERMINATED
+}
+
+model ComplianceSignature {
+  id          String   @id @default(cuid())
+  contractId  String
+  signerId    String
+  signerEmail String
+  signerName  String
+  status      SignatureStatus @default(PENDING)
+  signedAt    DateTime?
+  signature   String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  contract    ComplianceContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  signer      User               @relation(fields: [signerId], references: [id])
+
+  @@map("compliance_signatures")
+}
+
+enum SignatureStatus {
+  PENDING
+  SIGNED
+  DECLINED
+  EXPIRED
+}
+
+model ComplianceRecord {
+  id          String   @id @default(cuid())
+  contractId  String?
+  name        String
+  type        RecordType
+  category    String?
+  content     String
+  isSensitive Boolean  @default(false)
+  accessLevel AccessLevel @default(INTERNAL)
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  contract    ComplianceContract? @relation(fields: [contractId], references: [id])
+  creator     User                @relation(fields: [createdBy], references: [id])
+  reminders   ComplianceReminder[]
+
+  @@map("compliance_records")
+}
+
+enum RecordType {
+  CONTRACT
+  LICENSE
+  PERMIT
+  CERTIFICATE
+  POLICY
+  PROCEDURE
+  AUDIT_REPORT
+  OTHER
+}
+
+model ComplianceReminder {
+  id          String   @id @default(cuid())
+  recordId    String?
+  title       String
+  description String?
+  type        ReminderType
+  dueDate     DateTime
+  isCompleted Boolean  @default(false)
+  completedAt DateTime?
+  completedBy String?
+  createdBy   String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  record      ComplianceRecord? @relation(fields: [recordId], references: [id])
+  creator     User              @relation(fields: [createdBy], references: [id])
+  completer   User?             @relation(fields: [completedBy], references: [id])
+
+  @@map("compliance_reminders")
+}
+
+enum ReminderType {
+  VISA_EXPIRY
+  LICENSE_RENEWAL
+  PROBATION_REVIEW
+  CONTRACT_RENEWAL
+  AUDIT_DUE
+  TRAINING_DUE
+  OTHER
+}
+
+// Timesheets Module
+model Timesheet {
+  id          String   @id @default(cuid())
+  userId      String
+  projectId   String?
+  clientId    String?
+  date        DateTime
+  hours       Decimal
+  description String?
+  billableRate Decimal?
+  isBillable  Boolean  @default(true)
+  status      TimesheetStatus @default(DRAFT)
+  approvedBy  String?
+  approvedAt  DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+  project     Project? @relation(fields: [projectId], references: [id])
+  client      Client?  @relation(fields: [clientId], references: [id])
+  creator     User     @relation(fields: [createdBy], references: [id])
+  approver    User?    @relation(fields: [approvedBy], references: [id])
+
+  @@map("timesheets")
+}
+
+enum TimesheetStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  clientId    String?
+  status      ProjectStatus @default(ACTIVE)
+  startDate   DateTime?
+  endDate     DateTime?
+  budget      Decimal?
+  currency    String   @default("USD")
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  client      Client?  @relation(fields: [clientId], references: [id])
+  creator     User     @relation(fields: [createdBy], references: [id])
+  timesheets  Timesheet[]
+
+  @@map("projects")
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  contactPerson String?
+  isActive    Boolean  @default(true)
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator     User     @relation(fields: [createdBy], references: [id])
+  projects    Project[]
+  timesheets  Timesheet[]
+
+  @@map("clients")
+}
+
+// ===== LOGISTICS MODULE =====
+
+// Shipment Management
+model Shipment {
+  id              String   @id @default(cuid())
+  shipmentNumber  String   @unique
+  billOfLading    String?  @unique
+  bookingNumber   String?
+  containerNumber String?
+  carrier         Carrier
+  status          ShipmentStatus @default(PLANNED)
+  origin          String
+  destination     String
+  originPort      String?
+  destinationPort String?
+  vesselName      String?
+  voyageNumber    String?
+  etd             DateTime?
+  eta             DateTime?
+  actualDeparture DateTime?
+  actualArrival   DateTime?
+  projectId       String?
+  clientId        String?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+  project         Project? @relation(fields: [projectId], references: [id])
+  client          Client?  @relation(fields: [clientId], references: [id])
+  containers      Container[]
+  milestones      Milestone[]
+  carrierEvents   CarrierEvent[]
+  costItems       CostItem[]
+  invoices        Invoice[]
+
+  @@map("shipments")
+}
+
+enum Carrier {
+  MAERSK
+  MSC
+  CMA_CGM
+  DHL
+  FEDEX
+  UPS
+  OTHER
+}
+
+enum ShipmentStatus {
+  PLANNED
+  BOOKED
+  IN_TRANSIT
+  AT_ORIGIN
+  DEPARTED
+  IN_TRANSIT_OCEAN
+  AT_DESTINATION
+  DELIVERED
+  CANCELLED
+}
+
+model Container {
+  id              String   @id @default(cuid())
+  shipmentId      String
+  containerNumber String
+  containerType   ContainerType
+  size            String
+  sealNumber      String?
+  weight          Decimal?
+  volume          Decimal?
+  status          ContainerStatus @default(EMPTY)
+  location        String?
+  latitude        Decimal?
+  longitude       Decimal?
+  lastUpdated     DateTime?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  shipment        Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  creator         User     @relation(fields: [createdBy], references: [id])
+  milestones      Milestone[]
+  carrierEvents   CarrierEvent[]
+
+  @@unique([shipmentId, containerNumber])
+  @@map("containers")
+}
+
+enum ContainerType {
+  DRY
+  REEFER
+  TANK
+  FLAT_RACK
+  OPEN_TOP
+  HIGH_CUBE
+}
+
+enum ContainerStatus {
+  EMPTY
+  LOADED
+  IN_TRANSIT
+  AT_TERMINAL
+  AT_CUSTOMS
+  DELIVERED
+  RETURNED
+}
+
+model Milestone {
+  id              String   @id @default(cuid())
+  shipmentId      String
+  containerId     String?
+  name            String
+  type            MilestoneType
+  status          MilestoneStatus @default(PENDING)
+  plannedDate     DateTime?
+  actualDate      DateTime?
+  location        String?
+  latitude        Decimal?
+  longitude       Decimal?
+  description     String?
+  metadata        Json?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  shipment        Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  container       Container? @relation(fields: [containerId], references: [id], onDelete: Cascade)
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@map("milestones")
+}
+
+enum MilestoneType {
+  ETD
+  ETA
+  DEPARTURE
+  TRANSSHIPMENT
+  ARRIVAL
+  CUSTOMS_CLEARANCE
+  DELIVERY
+  FREE_TIME_START
+  FREE_TIME_END
+  DEMURRAGE_START
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+  CANCELLED
+}
+
+model CarrierEvent {
+  id              String   @id @default(cuid())
+  shipmentId      String
+  containerId     String?
+  eventType       String
+  eventCode       String?
+  description     String
+  location        String?
+  latitude        Decimal?
+  longitude       Decimal?
+  eventDate       DateTime
+  carrierData     Json?
+  processed       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  // Relations
+  shipment        Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  container       Container? @relation(fields: [containerId], references: [id], onDelete: Cascade)
+
+  @@map("carrier_events")
+}
+
+// Cost Management
+model CostItem {
+  id              String   @id @default(cuid())
+  shipmentId      String
+  name            String
+  type            CostType
+  amount          Decimal
+  currency        String   @default("USD")
+  description     String?
+  vendor          String?
+  invoiceNumber   String?
+  status          CostStatus @default(PENDING)
+  dueDate         DateTime?
+  paidDate        DateTime?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  shipment        Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@map("cost_items")
+}
+
+enum CostType {
+  FREIGHT
+  CUSTOMS
+  WAREHOUSE
+  TRUCKING
+  HANDLING
+  DOCUMENTATION
+  INSURANCE
+  OTHER
+}
+
+enum CostStatus {
+  PENDING
+  APPROVED
+  PAID
+  CANCELLED
+}
+
+model Invoice {
+  id              String   @id @default(cuid())
+  shipmentId      String
+  invoiceNumber   String   @unique
+  clientId        String?
+  projectId       String?
+  totalAmount     Decimal
+  currency        String   @default("USD")
+  status          InvoiceStatus @default(DRAFT)
+  issueDate       DateTime?
+  dueDate         DateTime?
+  paidDate        DateTime?
+  pdfUrl          String?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  shipment        Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  client          Client?  @relation(fields: [clientId], references: [id])
+  project         Project? @relation(fields: [projectId], references: [id])
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@map("invoices")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+// Carrier Integration
+model CarrierIntegration {
+  id              String   @id @default(cuid())
+  carrier         Carrier
+  name            String
+  apiEndpoint     String
+  apiKey          String?
+  apiSecret       String?
+  webhookUrl      String?
+  webhookSecret   String?
+  isActive        Boolean  @default(true)
+  lastSyncAt      DateTime?
+  settings        Json?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@unique([carrier, name])
+  @@map("carrier_integrations")
+}
+
+// Alerts and Notifications
+model LogisticsAlert {
+  id              String   @id @default(cuid())
+  shipmentId      String?
+  containerId     String?
+  type            AlertType
+  severity        AlertSeverity
+  title           String
+  message         String
+  isRead          Boolean  @default(false)
+  isResolved      Boolean  @default(false)
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  metadata        Json?
+  createdBy       String
+  createdAt       DateTime @default(now())
+
+  // Relations
+  shipment        Shipment? @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  container       Container? @relation(fields: [containerId], references: [id], onDelete: Cascade)
+  creator         User     @relation(fields: [createdBy], references: [id])
+  resolver        User?    @relation(fields: [resolvedBy], references: [id])
+
+  @@map("logistics_alerts")
+}
+
+enum AlertType {
+  DELAY
+  ETA_CHANGE
+  FREE_TIME_EXPIRY
+  DEMURRAGE_RISK
+  CUSTOMS_ISSUE
+  CONTAINER_DAMAGE
+  ROUTE_CHANGE
+  OTHER
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// ===== INTEGRATIONS MODULE =====
+
+// Credential Vault
+model IntegrationCredential {
+  id          String   @id @default(cuid())
+  name        String
+  type        CredentialType
+  provider    String   // e.g., 'salesforce', 'hubspot', 'slack'
+  isActive    Boolean  @default(true)
+  encryptedData Json   // Encrypted credentials (OAuth tokens, API keys)
+  metadata    Json?    // Additional configuration
+  expiresAt   DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  creator     User     @relation(fields: [createdBy], references: [id])
+  webhookEndpoints WebhookEndpoint[]
+
+  @@map("integration_credentials")
+}
+
+enum CredentialType {
+  OAUTH2
+  API_KEY
+  BASIC_AUTH
+  JWT
+  WEBHOOK_SECRET
+}
+
+// Webhook Registry
+model WebhookEndpoint {
+  id              String   @id @default(cuid())
+  name            String
+  url             String
+  description     String?
+  isActive        Boolean  @default(true)
+  events          String[] // Array of event types to subscribe to
+  secret          String   // HMAC-SHA256 secret for signing
+  headers         Json?    // Custom headers
+  timeout         Int      @default(30000) // milliseconds
+  retryPolicy     Json?    // Retry configuration
+  credentialId    String?  // Optional credential for authentication
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+  credential      IntegrationCredential? @relation(fields: [credentialId], references: [id])
+  deliveries      WebhookDelivery[]
+
+  @@map("webhook_endpoints")
+}
+
+// Delivery Log
+model WebhookDelivery {
+  id              String   @id @default(cuid())
+  webhookId       String
+  eventType       String
+  payload         Json
+  signature       String   // HMAC-SHA256 signature
+  status          DeliveryStatus @default(PENDING)
+  responseCode    Int?
+  responseBody    String?
+  attemptCount    Int      @default(0)
+  maxAttempts     Int      @default(3)
+  nextRetryAt     DateTime?
+  deliveredAt     DateTime?
+  failedAt        DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  webhook         WebhookEndpoint @relation(fields: [webhookId], references: [id])
+
+  @@map("webhook_deliveries")
+}
+
+enum DeliveryStatus {
+  PENDING
+  DELIVERED
+  FAILED
+  RETRYING
+  EXPIRED
+}
+
+// Tokenization Bridge
+model TokenizationEvent {
+  id              String   @id @default(cuid())
+  eventType       TokenizationEventType
+  entityId        String   // ID of the source entity (shipment, milestone, etc.)
+  entityType      String   // Type of entity (shipment, milestone, document, invoice, kpi)
+  sanitizedData   Json     // PII-sanitized, investor-safe data
+  originalData    Json?    // Original data (for debugging, encrypted)
+  isPublished     Boolean  @default(false)
+  publishedAt     DateTime?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@map("tokenization_events")
+}
+
+enum TokenizationEventType {
+  SHIPMENT_CREATED
+  MILESTONE_UPDATED
+  DOC_HASHED
+  INVOICE_CREATED
+  KPI_UPDATED
+}
+
+// KPI Read Model
+model TokenizationKPI {
+  id              String   @id @default(cuid())
+  kpiType         KPIType
+  period          String   // e.g., '2024-01', '2024-Q1'
+  value           Decimal
+  metadata        Json?    // Additional KPI context
+  isPublished     Boolean  @default(false)
+  publishedAt     DateTime?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@unique([kpiType, period])
+  @@map("tokenization_kpis")
+}
+
+enum KPIType {
+  SHIPMENT_VOLUME
+  DELIVERY_TIME_AVG
+  COST_PER_SHIPMENT
+  ON_TIME_DELIVERY_RATE
+  CUSTOMER_SATISFACTION
+  REVENUE_PER_CONTAINER
+  DEMURRAGE_COSTS
+  CARRIER_PERFORMANCE
+}
+
+// ===== SECURITY & PRIVACY MODULE =====
+
+// User Session Management
+model UserSession {
+  id              String   @id @default(cuid())
+  userId          String
+  sessionToken    String   @unique
+  deviceId        String?
+  ipAddress       String
+  userAgent       String
+  fingerprint     String?  // Device fingerprint
+  isActive        Boolean  @default(true)
+  lastActivityAt  DateTime @default(now())
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user            User     @relation(fields: [userId], references: [id])
+  device          UserDevice? @relation(fields: [deviceId], references: [id])
+
+  @@map("user_sessions")
+}
+
+// User Device Management
+model UserDevice {
+  id              String   @id @default(cuid())
+  userId          String
+  deviceFingerprint String @unique
+  deviceName      String?
+  deviceType      DeviceType
+  osName          String?
+  osVersion       String?
+  browserName     String?
+  browserVersion  String?
+  isTrusted       Boolean  @default(false)
+  lastSeenAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user            User     @relation(fields: [userId], references: [id])
+  sessions        UserSession[]
+
+  @@map("user_devices")
+}
+
+enum DeviceType {
+  DESKTOP
+  MOBILE
+  TABLET
+  UNKNOWN
+}
+
+// GDPR Consent Management
+model ConsentRecord {
+  id              String   @id @default(cuid())
+  userId          String
+  consentType     ConsentType
+  purpose         String
+  legalBasis      LegalBasis
+  isGranted       Boolean
+  grantedAt       DateTime?
+  withdrawnAt     DateTime?
+  expiresAt       DateTime?
+  version         String   @default("1.0")
+  metadata        Json?    // Additional consent context
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@map("consent_records")
+}
+
+enum ConsentType {
+  DATA_PROCESSING
+  MARKETING
+  ANALYTICS
+  COOKIES
+  THIRD_PARTY_SHARING
+  DATA_RETENTION
+  LOCATION_TRACKING
+}
+
+enum LegalBasis {
+  CONSENT
+  CONTRACT
+  LEGAL_OBLIGATION
+  VITAL_INTERESTS
+  PUBLIC_TASK
+  LEGITIMATE_INTERESTS
+}
+
+// Data Retention Policies
+model DataRetentionPolicy {
+  id              String   @id @default(cuid())
+  recordType      String   // e.g., 'user', 'shipment', 'invoice'
+  retentionPeriod Int      // Days
+  autoDelete      Boolean  @default(false)
+  legalBasis      String?  // Legal basis for retention
+  description     String?
+  isActive        Boolean  @default(true)
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@unique([recordType])
+  @@map("data_retention_policies")
+}
+
+// PII Encryption Keys (KMS Envelope)
+model PIIEncryptionKey {
+  id              String   @id @default(cuid())
+  keyId           String   @unique // KMS key ID
+  keyVersion      String
+  algorithm       String   @default("AES-256-GCM")
+  isActive        Boolean  @default(true)
+  expiresAt       DateTime?
+  rotatedAt       DateTime?
+  metadata        Json?    // KMS metadata
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@map("pii_encryption_keys")
+}
+
+// Rate Limiting Records
+model RateLimitRecord {
+  id              String   @id @default(cuid())
+  identifier      String   // User ID, IP address, or route
+  identifierType  RateLimitType
+  route           String?
+  requestCount    Int      @default(1)
+  windowStart     DateTime @default(now())
+  windowEnd       DateTime
+  isBlocked       Boolean  @default(false)
+  blockedUntil    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([identifier, identifierType, route, windowStart])
+  @@map("rate_limit_records")
+}
+
+enum RateLimitType {
+  USER_ID
+  IP_ADDRESS
+  ROUTE
+  GLOBAL
+}
+
+// Data Export/Erase Requests (GDPR)
+model DataRequest {
+  id              String   @id @default(cuid())
+  userId          String
+  requestType     DataRequestType
+  status          DataRequestStatus @default(PENDING)
+  requestedAt     DateTime @default(now())
+  processedAt     DateTime?
+  expiresAt       DateTime
+  fileUrl         String?  // URL to exported data file
+  metadata        Json?    // Request details and processing info
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user            User     @relation(fields: [userId], references: [id])
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@map("data_requests")
+}
+
+enum DataRequestType {
+  EXPORT
+  ERASURE
+  PORTABILITY
+  RECTIFICATION
+}
+
+enum DataRequestStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+// Security Events Log
+model SecurityEvent {
+  id              String   @id @default(cuid())
+  eventType       SecurityEventType
+  severity        SecuritySeverity
+  userId          String?
+  ipAddress       String?
+  userAgent       String?
+  route           String?
+  description     String
+  metadata        Json?    // Additional event context
+  isResolved      Boolean  @default(false)
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  createdAt       DateTime @default(now())
+
+  // Relations
+  user            User?    @relation(fields: [userId], references: [id])
+  resolver        User?    @relation(fields: [resolvedBy], references: [id])
+
+  @@map("security_events")
+}
+
+enum SecurityEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  LOGIN_BLOCKED
+  SESSION_EXPIRED
+  SESSION_REVOKED
+  RATE_LIMIT_EXCEEDED
+  SUSPICIOUS_ACTIVITY
+  DATA_ACCESS
+  DATA_EXPORT
+  DATA_ERASURE
+  CONSENT_GRANTED
+  CONSENT_WITHDRAWN
+  ENCRYPTION_KEY_ROTATION
+  SECURITY_SCAN
+  VULNERABILITY_DETECTED
+}
+
+enum SecuritySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// ===== REPORTING & ANALYTICS MODULE =====
+
+// KPI Records
+model KPIRecord {
+  id              String   @id @default(cuid())
+  kpiType         KPIType
+  category        KPICategory
+  period          String   // e.g., '2024-01', '2024-Q1', '2024-W01'
+  value           Decimal
+  target          Decimal?
+  previousValue   Decimal?
+  trend           KPITrend?
+  metadata        Json?    // Additional KPI context
+  calculatedAt    DateTime @default(now())
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@unique([kpiType, period])
+  @@map("kpi_records")
+}
+
+enum KPIType {
+  // Logistics KPIs
+  LEAD_TIME_AVERAGE
+  ON_TIME_DELIVERY_RATE
+  CLEARANCE_DELAY_DAYS
+  DEMURRAGE_DAYS
+  CONTAINER_UTILIZATION
+  SHIPMENT_VOLUME
+  COST_PER_SHIPMENT
+  CARRIER_PERFORMANCE
+  
+  // Consulting KPIs
+  UTILIZATION_RATE
+  BILLABILITY_RATE
+  CYCLE_TIME_AVERAGE
+  PROJECT_MARGIN
+  CLIENT_SATISFACTION
+  HOURS_BILLED
+  HOURS_UNBILLED
+  
+  // Compliance KPIs
+  RENEWALS_PIPELINE
+  CONTRACT_EXPIRY_RISK
+  LICENSE_RENEWAL_RATE
+  COMPLIANCE_SCORE
+  AUDIT_FINDINGS
+  POLICY_VIOLATIONS
+  
+  // Marketing KPIs
+  CAMPAIGN_ROI
+  LEAD_CONVERSION_RATE
+  CONTENT_ENGAGEMENT
+  SEMRUSH_RANKINGS
+  APPROVAL_CYCLE_TIME
+  
+  // Finance KPIs
+  AR_AGING
+  CASH_FLOW
+  REVENUE_PER_CLIENT
+  COST_PER_CONTAINER
+  PROFIT_MARGIN
+}
+
+enum KPICategory {
+  LOGISTICS
+  CONSULTING
+  COMPLIANCE
+  MARKETING
+  FINANCE
+  SECURITY
+  OVERALL
+}
+
+enum KPITrend {
+  UP
+  DOWN
+  STABLE
+  VOLATILE
+}
+
+// Report Schedules
+model ReportSchedule {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  reportType      ReportType
+  frequency       ReportFrequency
+  recipients      String[] // Email addresses
+  webhookUrls     String[] // Webhook endpoints
+  filters         Json?    // Report filters
+  format          ReportFormat
+  isActive        Boolean  @default(true)
+  lastRunAt       DateTime?
+  nextRunAt       DateTime?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+  exports         ReportExport[]
+
+  @@map("report_schedules")
+}
+
+enum ReportType {
+  LOGISTICS_SUMMARY
+  CONSULTING_UTILIZATION
+  COMPLIANCE_STATUS
+  FINANCIAL_OVERVIEW
+  SECURITY_AUDIT
+  CUSTOM_DASHBOARD
+}
+
+enum ReportFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  ON_DEMAND
+}
+
+enum ReportFormat {
+  CSV
+  XLSX
+  PDF
+  JSON
+}
+
+// Report Exports
+model ReportExport {
+  id              String   @id @default(cuid())
+  scheduleId      String?
+  reportType      ReportType
+  format          ReportFormat
+  status          ExportStatus @default(PENDING)
+  fileUrl         String?
+  fileSize        Int?
+  recordCount     Int?
+  filters         Json?    // Applied filters
+  generatedAt     DateTime @default(now())
+  expiresAt       DateTime?
+  downloadedAt    DateTime?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+  schedule        ReportSchedule? @relation(fields: [scheduleId], references: [id])
+
+  @@map("report_exports")
+}
+
+enum ExportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+// Predictive Models
+model PredictiveModel {
+  id              String   @id @default(cuid())
+  name            String
+  modelType       ModelType
+  category        KPICategory
+  algorithm       String   // e.g., 'linear_regression', 'time_series'
+  parameters      Json?    // Model parameters
+  accuracy        Decimal? // Model accuracy score
+  isActive        Boolean  @default(true)
+  lastTrainedAt   DateTime?
+  lastPredictionAt DateTime?
+  metadata        Json?    // Model metadata
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@map("predictive_models")
+}
+
+enum ModelType {
+  ETA_PREDICTION
+  HS_CODE_SUGGESTION
+  DEMURRAGE_RISK
+  UTILIZATION_FORECAST
+  RENEWAL_PROBABILITY
+  COST_OPTIMIZATION
+}
+
+// Analytics Events
+model AnalyticsEvent {
+  id              String   @id @default(cuid())
+  eventType       String
+  category        KPICategory
+  entityId        String?  // Related entity ID
+  entityType      String?  // Related entity type
+  properties      Json?    // Event properties
+  userId          String?
+  sessionId       String?
+  timestamp       DateTime @default(now())
+  metadata        Json?    // Additional context
+
+  // Relations
+  user            User?    @relation(fields: [userId], references: [id])
+
+  @@map("analytics_events")
+}
+
+// HS Code Suggestions (for predictive analytics)
+model HSCodeSuggestion {
+  id              String   @id @default(cuid())
+  productName     String
+  description     String
+  suggestedCode   String
+  confidence      Decimal  // 0-1 confidence score
+  reasoning       String?  // Why this code was suggested
+  isAccepted      Boolean?
+  acceptedBy      String?
+  acceptedAt      DateTime?
+  auditTrail      Json?    // Audit information
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  accepter        User?    @relation(fields: [acceptedBy], references: [id])
+
+  @@map("hs_code_suggestions")
+}
+
+// ETA Predictions
+model ETAPrediction {
+  id              String   @id @default(cuid())
+  shipmentId      String
+  milestoneType   String
+  predictedDate   DateTime
+  confidence      Decimal  // 0-1 confidence score
+  historicalDelta Int?     // Days difference from historical average
+  factors         Json?    // Factors affecting prediction
+  actualDate      DateTime?
+  accuracy        Decimal? // Actual vs predicted accuracy
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  creator         User     @relation(fields: [createdBy], references: [id])
+
+  @@map("eta_predictions")
+}

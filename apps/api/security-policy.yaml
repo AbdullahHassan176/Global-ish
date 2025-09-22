@@ -1,0 +1,43 @@
+# Security Policy Configuration for Global Next Portal
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: security-policy
+data:
+  policy.yaml: |
+    # PII Encryption Policy
+    pii_encryption:
+      enabled: true
+      algorithm: "AES-256-GCM"
+      key_rotation_days: 90
+      fields:
+        - "email"
+        - "phone"
+        - "address"
+        - "name"
+        - "ssn"
+        - "credit_card"
+    
+    # GDPR Compliance Policy
+    gdpr:
+      enabled: true
+      consent_required: true
+      data_retention_days: 2555  # 7 years
+      auto_delete: false
+      export_format: "json"
+      erasure_verification: true
+    
+    # Rate Limiting Policy
+    rate_limiting:
+      global_limit: 10000  # per 5 minutes
+      per_ip_limit: 1000   # per 5 minutes
+      login_limit: 5       # per 15 minutes
+      block_duration: 300  # 5 minutes
+    
+    # Session Management Policy
+    session:
+      max_duration: 86400  # 24 hours
+      idle_timeout: 3600   # 1 hour
+      max_concurrent: 5
+      device_fingerprinting: true
+      trusted_device_retention: 90  # days

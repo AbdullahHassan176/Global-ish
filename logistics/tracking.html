@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Tracking - Global Next</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script>tailwind.config = {
+  "theme": {
+    "extend": {
+      "fontFamily": {
+        "sans": [
+          "Inter",
+          "sans-serif"
+        ]
+      }
+    }
+  }
+};</script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"><style>
+      body {
+        font-family: 'Inter', sans-serif !important;
+      }
+      
+      /* Preserve Font Awesome icons */
+      .fa, .fas, .far, .fal, .fab {
+        font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+      }
+    </style><style>
+  .highlighted-section {
+    outline: 2px solid #3F20FB;
+    background-color: rgba(63, 32, 251, 0.1);
+  }
+
+  .edit-button {
+    position: absolute;
+    z-index: 1000;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  html, body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  </style></head>
+<body class="bg-gray-50 font-custom">
+
+<header id="header" class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center">
+            <div class="flex items-center mr-8">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 rounded-lg flex items-center justify-center mr-3">
+                    <span class="text-white font-bold text-lg">GN</span>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl text-gray-900">Global Next</h1>
+                    <p class="text-xs text-gray-500">Consulting, Compliance &amp; Containers</p>
+                </div>
+            </div>
+            <div class="flex items-center bg-gray-100 rounded-full px-3 py-1">
+                <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                <span class="text-sm text-gray-700 font-medium">Production Environment</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <input type="text" placeholder="Search containers, B/L numbers..." class="w-80 pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <button class="relative p-2 text-gray-600 hover:text-gray-900">
+                <i class="fa-regular fa-bell text-lg"></i>
+                <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+            </button>
+            <button class="p-2 text-gray-600 hover:text-gray-900">
+                <i class="fa-solid fa-question-circle text-lg"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full">
+                <div class="text-sm">
+                    <div class="font-medium text-gray-900">Sarah Ahmed</div>
+                    <div class="text-gray-500">Operations Manager</div>
+                </div>
+                <i class="fa-solid fa-chevron-down text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav id="main-navigation" class="bg-white border-b border-gray-200">
+    <div class="px-6">
+        <div class="flex space-x-8">
+            <a href="../index.html" class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-home mr-2"></i>
+                Dashboard
+            </a>
+            <span class="flex items-center px-3 py-4 text-blue-600 font-medium border-b-2 border-blue-600 cursor-pointer">
+                <i class="fa-solid fa-shipping-fast mr-2"></i>
+                Logistics
+            </span>
+            <a href="../consulting/forms.html" class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-briefcase mr-2"></i>
+                Consulting
+            </a>
+            <a href="../compliance/alerts.html" class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-shield-alt mr-2"></i>
+                Compliance
+            </a>
+            <a href="../hr-finance/forms.html" class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-users mr-2"></i>
+                HR &amp; Finance
+            </a>
+            <span class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-chart-line mr-2"></i>
+                Analytics
+            </span>
+        </div>
+    </div>
+</nav>
+
+<div class="bg-gray-100 px-6 py-3">
+    <div class="flex items-center text-sm text-gray-600">
+        <a href="../index.html" class="text-blue-600 hover:text-blue-800 cursor-pointer">Dashboard</a>
+        <i class="fa-solid fa-chevron-right mx-2 text-gray-400"></i>
+        <span class="text-gray-900">Container Tracking</span>
+    </div>
+</div>
+
+<main id="logistics-main" class="px-6 py-8">
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Container Tracking</h2>
+                <p class="text-gray-600">Real-time tracking of shipments and containers across global routes.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 flex items-center">
+                    <i class="fa-solid fa-download mr-2"></i>
+                    Export Report
+                </button>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center" onclick="showTrackModal()">
+                    <i class="fa-solid fa-plus mr-2"></i>
+                    Track New Shipment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Track Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-900">Quick Track</h3>
+        </div>
+        <div class="p-6">
+            <div class="flex items-center space-x-4">
+                <div class="flex-1">
+                    <input type="text" placeholder="Enter container number, B/L number, or tracking ID" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center">
+                    <i class="fa-solid fa-search mr-2"></i>
+                    Track
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div id="logistics-kpi-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-ship text-blue-600 text-xl"></i>
+                </div>
+                <span class="text-green-600 text-sm font-medium bg-green-100 px-2 py-1 rounded-full">+8</span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-1">147</h3>
+            <p class="text-gray-600">Active Shipments</p>
+            <div class="mt-3 text-sm text-gray-500">23 arriving this week</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-check-circle text-green-600 text-xl"></i>
+                </div>
+                <span class="text-green-600 text-sm font-medium bg-green-100 px-2 py-1 rounded-full">+5%</span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-1">89%</h3>
+            <p class="text-gray-600">On-Time Delivery</p>
+            <div class="mt-3 text-sm text-gray-500">vs target 85%</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-clock text-orange-600 text-xl"></i>
+                </div>
+                <span class="text-red-600 text-sm font-medium bg-red-100 px-2 py-1 rounded-full">+3</span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-1">12</h3>
+            <p class="text-gray-600">Delayed Shipments</p>
+            <div class="mt-3 text-sm text-gray-500">5 critical delays</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-dollar-sign text-purple-600 text-xl"></i>
+                </div>
+                <span class="text-green-600 text-sm font-medium bg-green-100 px-2 py-1 rounded-full">+12%</span>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-1">$1.2M</h3>
+            <p class="text-gray-600">Freight Costs</p>
+            <div class="mt-3 text-sm text-gray-500">This month</div>
+        </div>
+    </div>
+
+    <!-- Critical Shipments -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div id="critical-shipments" class="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-900">Critical Shipments</h3>
+                    <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">View All</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="border border-red-200 bg-red-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-900">MSCU7834567</span>
+                            <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Delayed</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Dubai → Sharjah</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">ETA: Dec 28, 2024</span>
+                            <span class="text-red-600 font-medium">2 days overdue</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="flex items-center text-xs text-gray-600">
+                                <i class="fa-solid fa-map-marker-alt mr-1"></i>
+                                <span>Last seen: Jebel Ali Port</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-orange-200 bg-orange-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-900">OOLU9876543</span>
+                            <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">At Risk</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Singapore → Dubai</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">ETA: Dec 30, 2024</span>
+                            <span class="text-orange-600 font-medium">Weather delays</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="flex items-center text-xs text-gray-600">
+                                <i class="fa-solid fa-map-marker-alt mr-1"></i>
+                                <span>Last seen: Malacca Strait</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-green-200 bg-green-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-900">HLBU5432109</span>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">On Track</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Mumbai → Abu Dhabi</p>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500">ETA: Jan 2, 2025</span>
+                            <span class="text-green-600 font-medium">On schedule</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="flex items-center text-xs text-gray-600">
+                                <i class="fa-solid fa-map-marker-alt mr-1"></i>
+                                <span>Last seen: Arabian Sea</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="recent-updates" class="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-900">Recent Updates</h3>
+                    <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">View All</button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-check text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-900 font-medium">Container MSCU7834567 cleared customs</p>
+                            <p class="text-gray-600 text-sm">Jebel Ali Port - Dubai</p>
+                            <p class="text-gray-500 text-xs mt-1">2 hours ago</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-ship text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-900 font-medium">Vessel departed Singapore Port</p>
+                            <p class="text-gray-600 text-sm">OOLU9876543 - Next stop: Dubai</p>
+                            <p class="text-gray-500 text-xs mt-1">4 hours ago</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-exclamation-triangle text-orange-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-900 font-medium">Weather delay reported</p>
+                            <p class="text-gray-600 text-sm">HLBU5432109 - Arabian Sea</p>
+                            <p class="text-gray-500 text-xs mt-1">6 hours ago</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-file-alt text-purple-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-900 font-medium">Documents uploaded</p>
+                            <p class="text-gray-600 text-sm">MSCU7834567 - Bill of Lading</p>
+                            <p class="text-gray-500 text-xs mt-1">1 day ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipments Table -->
+    <div id="shipments-table" class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-gray-900">All Shipments</h3>
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <input type="text" placeholder="Search shipments..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>All Status</option>
+                        <option>In Transit</option>
+                        <option>Delayed</option>
+                        <option>Delivered</option>
+                        <option>At Risk</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Container</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carrier</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ETA</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">MSCU7834567</div>
+                            <div class="text-sm text-gray-500">B/L: MSC123456789</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">Dubai → Sharjah</div>
+                            <div class="text-sm text-gray-500">Food Products</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">MSC</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Delayed</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Dec 28, 2024</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Jebel Ali Port</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="viewShipmentDetails('MSCU7834567')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-900" onclick="downloadDocuments('MSCU7834567')">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">OOLU9876543</div>
+                            <div class="text-sm text-gray-500">B/L: OOL987654321</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">Singapore → Dubai</div>
+                            <div class="text-sm text-gray-500">Electronics</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">OOCL</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">At Risk</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Dec 30, 2024</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Malacca Strait</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="viewShipmentDetails('OOLU9876543')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-900" onclick="downloadDocuments('OOLU9876543')">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">HLBU5432109</div>
+                            <div class="text-sm text-gray-500">B/L: HAP543210987</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">Mumbai → Abu Dhabi</div>
+                            <div class="text-sm text-gray-500">Textiles</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Hapag-Lloyd</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">On Track</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Jan 2, 2025</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Arabian Sea</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="viewShipmentDetails('HLBU5432109')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-900" onclick="downloadDocuments('HLBU5432109')">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">COSU1234567</div>
+                            <div class="text-sm text-gray-500">B/L: COS123456789</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">Shanghai → Dubai</div>
+                            <div class="text-sm text-gray-500">Machinery</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">COSCO</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">In Transit</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Jan 5, 2025</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Indian Ocean</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="viewShipmentDetails('COSU1234567')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-900" onclick="downloadDocuments('COSU1234567')">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">EMCU9876543</div>
+                            <div class="text-sm text-gray-500">B/L: EMC987654321</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">Hamburg → Dubai</div>
+                            <div class="text-sm text-gray-500">Automotive</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Evergreen</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Delivered</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Dec 20, 2024</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Jebel Ali Port</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="viewShipmentDetails('EMCU9876543')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-900" onclick="downloadDocuments('EMCU9876543')">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="px-6 py-3 border-t border-gray-200 flex items-center justify-between">
+            <div class="text-sm text-gray-500">
+                Showing 1 to 5 of 147 shipments
+            </div>
+            <div class="flex items-center space-x-2">
+                <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">Previous</button>
+                <span class="px-3 py-1 bg-blue-600 text-white rounded text-sm">1</span>
+                <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">2</button>
+                <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">3</button>
+                <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">Next</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Track New Shipment Modal -->
+<div id="trackModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-900">Track New Shipment</h3>
+                    <button onclick="closeTrackModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa-solid fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="trackForm">
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tracking Information</label>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Container Number</label>
+                                <input type="text" placeholder="e.g., MSCU7834567" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bill of Lading Number</label>
+                                <input type="text" placeholder="e.g., MSC123456789" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Booking Reference</label>
+                                <input type="text" placeholder="e.g., BOOK123456" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Carrier</label>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Select carrier</option>
+                            <option value="msc">MSC</option>
+                            <option value="maersk">Maersk</option>
+                            <option value="cosco">COSCO</option>
+                            <option value="hapag">Hapag-Lloyd</option>
+                            <option value="oocl">OOCL</option>
+                            <option value="evergreen">Evergreen</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Route Information</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Origin Port</label>
+                                <input type="text" placeholder="e.g., Dubai" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Destination Port</label>
+                                <input type="text" placeholder="e.g., Singapore" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-end space-x-3">
+                        <button type="button" onclick="closeTrackModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Start Tracking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+<script>
+// Logistics specific JavaScript
+function showTrackModal() {
+    document.getElementById('trackModal').classList.remove('hidden');
+}
+
+function closeTrackModal() {
+    document.getElementById('trackModal').classList.add('hidden');
+    document.getElementById('trackForm').reset();
+}
+
+function viewShipmentDetails(containerId) {
+    showNotification('Opening shipment details for: ' + containerId, 'info');
+    // This would open a detailed view modal or navigate to a details page
+}
+
+function downloadDocuments(containerId) {
+    showNotification('Downloading documents for: ' + containerId, 'success');
+    // This would trigger document download
+}
+
+// Track form submission
+document.getElementById('trackForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (GlobalNext.validateForm(this)) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        GlobalNext.showLoading(submitBtn);
+        
+        // Simulate tracking setup
+        setTimeout(() => {
+            GlobalNext.hideLoading(submitBtn);
+            closeTrackModal();
+            showNotification('Shipment tracking started successfully!', 'success');
+        }, 2000);
+    }
+});
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-100 text-green-800' : 
+        type === 'error' ? 'bg-red-100 text-red-800' : 
+        'bg-blue-100 text-blue-800'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Close modal on outside click
+document.getElementById('trackModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeTrackModal();
+    }
+});
+
+// Real-time updates simulation
+setInterval(() => {
+    // This would normally fetch real-time updates from the API
+    console.log('Checking for shipment updates...');
+}, 30000); // Check every 30 seconds
+</script>
+</body>
+</html>

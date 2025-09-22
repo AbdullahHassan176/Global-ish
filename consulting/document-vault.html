@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Vault - Global Next</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script>tailwind.config = {
+  "theme": {
+    "extend": {
+      "fontFamily": {
+        "sans": [
+          "Inter",
+          "sans-serif"
+        ]
+      }
+    }
+  }
+};</script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"><style>
+      body {
+        font-family: 'Inter', sans-serif !important;
+      }
+      
+      /* Preserve Font Awesome icons */
+      .fa, .fas, .far, .fal, .fab {
+        font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+      }
+    </style><style>
+  .highlighted-section {
+    outline: 2px solid #3F20FB;
+    background-color: rgba(63, 32, 251, 0.1);
+  }
+
+  .edit-button {
+    position: absolute;
+    z-index: 1000;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  html, body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  </style></head>
+<body class="bg-gray-50 font-custom">
+
+<header id="header" class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center">
+            <div class="flex items-center mr-8">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 rounded-lg flex items-center justify-center mr-3">
+                    <span class="text-white font-bold text-lg">GN</span>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl text-gray-900">Global Next</h1>
+                    <p class="text-xs text-gray-500">Consulting, Compliance &amp; Containers</p>
+                </div>
+            </div>
+            <div class="flex items-center bg-gray-100 rounded-full px-3 py-1">
+                <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                <span class="text-sm text-gray-700 font-medium">Production Environment</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <input type="text" placeholder="Search documents..." class="w-80 pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <button class="relative p-2 text-gray-600 hover:text-gray-900">
+                <i class="fa-regular fa-bell text-lg"></i>
+                <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+            </button>
+            <button class="p-2 text-gray-600 hover:text-gray-900">
+                <i class="fa-solid fa-question-circle text-lg"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full">
+                <div class="text-sm">
+                    <div class="font-medium text-gray-900">Sarah Ahmed</div>
+                    <div class="text-gray-500">Operations Manager</div>
+                </div>
+                <i class="fa-solid fa-chevron-down text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+</header>
+
+<nav id="main-navigation" class="bg-white border-b border-gray-200">
+    <div class="px-6">
+        <div class="flex space-x-8">
+            <a href="../index.html" class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-home mr-2"></i>
+                Dashboard
+            </a>
+            <a href="../logistics/tracking.html" class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-shipping-fast mr-2"></i>
+                Logistics
+            </a>
+            <span class="flex items-center px-3 py-4 text-blue-600 font-medium border-b-2 border-blue-600 cursor-pointer">
+                <i class="fa-solid fa-briefcase mr-2"></i>
+                Consulting
+            </span>
+            <a href="../compliance/alerts.html" class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-shield-alt mr-2"></i>
+                Compliance
+            </a>
+            <a href="../hr-finance/forms.html" class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-users mr-2"></i>
+                HR &amp; Finance
+            </a>
+            <span class="flex items-center px-3 py-4 text-gray-600 hover:text-gray-900 cursor-pointer">
+                <i class="fa-solid fa-chart-line mr-2"></i>
+                Analytics
+            </span>
+        </div>
+    </div>
+</nav>
+
+<div class="px-6 py-6">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Document Vault</h1>
+            <p class="text-gray-600">Central repository for all documents with advanced tagging and access control</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button class="bg-white border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 flex items-center">
+                <i class="fa-solid fa-download mr-2"></i>
+                Bulk Export
+            </button>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center" onclick="showUploadModal()">
+                <i class="fa-solid fa-plus mr-2"></i>
+                Upload Document
+            </button>
+        </div>
+    </div>
+
+    <div class="flex gap-8">
+        <div id="sidebar-navigation" class="w-72 flex-shrink-0">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Categories</h3>
+                <div class="space-y-2">
+                    <div class="bg-blue-50 text-blue-700 px-3 py-2 rounded-lg font-medium cursor-pointer">
+                        <i class="fa-solid fa-folder mr-2"></i>
+                        All Documents
+                        <span class="ml-auto bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full float-right">1,247</span>
+                    </div>
+                    <div class="text-gray-700 px-3 py-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+                        <i class="fa-solid fa-file-contract mr-2"></i>
+                        Contracts &amp; Agreements
+                        <span class="ml-auto text-gray-500 text-sm float-right">342</span>
+                    </div>
+                    <div class="text-gray-700 px-3 py-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+                        <i class="fa-solid fa-certificate mr-2"></i>
+                        Licenses &amp; Permits
+                        <span class="ml-auto text-gray-500 text-sm float-right">89</span>
+                    </div>
+                    <div class="text-gray-700 px-3 py-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+                        <i class="fa-solid fa-ship mr-2"></i>
+                        Shipping Documents
+                        <span class="ml-auto text-gray-500 text-sm float-right">456</span>
+                    </div>
+                    <div class="text-gray-700 px-3 py-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+                        <i class="fa-solid fa-receipt mr-2"></i>
+                        Financial Records
+                        <span class="ml-auto text-gray-500 text-sm float-right">234</span>
+                    </div>
+                    <div class="text-gray-700 px-3 py-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+                        <i class="fa-solid fa-users mr-2"></i>
+                        HR Documents
+                        <span class="ml-auto text-gray-500 text-sm float-right">126</span>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold text-gray-900 mt-8 mb-4">Tags</h3>
+                <div class="space-y-2">
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs cursor-pointer hover:bg-purple-200">Urgent</span>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs cursor-pointer hover:bg-green-200">Approved</span>
+                        <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs cursor-pointer hover:bg-orange-200">Pending</span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs cursor-pointer hover:bg-blue-200">Draft</span>
+                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs cursor-pointer hover:bg-red-200">Expired</span>
+                        <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs cursor-pointer hover:bg-gray-200">Archive</span>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold text-gray-900 mt-8 mb-4">Access Level</h3>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2 text-blue-600" checked>
+                        <span class="text-gray-700">Public Access</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2 text-blue-600" checked>
+                        <span class="text-gray-700">Team Access</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2 text-blue-600">
+                        <span class="text-gray-700">Restricted</span>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" class="mr-2 text-blue-600">
+                        <span class="text-gray-700">Confidential</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="document-content" class="flex-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <input type="text" placeholder="Search documents by name, content, or tags..." class="w-96 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>All Types</option>
+                                <option>PDF</option>
+                                <option>Word</option>
+                                <option>Excel</option>
+                                <option>Image</option>
+                            </select>
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Last Modified</option>
+                                <option>Name A-Z</option>
+                                <option>Size</option>
+                                <option>Date Created</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg">
+                                <i class="fa-solid fa-th-large"></i>
+                            </button>
+                            <button class="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg bg-gray-100">
+                                <i class="fa-solid fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fa-solid fa-file-pdf text-red-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold text-gray-900">Trade License - Emirates Food Industries</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Expiring Soon</span>
+                                        <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">Confidential</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">Updated 2 days ago • 2.3 MB • PDF</p>
+                                <div class="flex items-center mt-2 space-x-4">
+                                    <span class="text-gray-500 text-xs">Created by: Ahmed Hassan</span>
+                                    <span class="text-gray-500 text-xs">Expires: Jan 15, 2025</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="downloadDocument('trade-license')">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="shareDocument('trade-license')">
+                                    <i class="fa-solid fa-share"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="showDocumentMenu('trade-license')">
+                                    <i class="fa-solid fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fa-solid fa-file-word text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold text-gray-900">Marketing Campaign Proposal - Al Rashid Trading</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Approved</span>
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Team Access</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">Updated 5 hours ago • 1.8 MB • DOCX</p>
+                                <div class="flex items-center mt-2 space-x-4">
+                                    <span class="text-gray-500 text-xs">Created by: Sarah Ahmed</span>
+                                    <span class="text-gray-500 text-xs">Project: Q4 Marketing</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="downloadDocument('marketing-proposal')">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="shareDocument('marketing-proposal')">
+                                    <i class="fa-solid fa-share"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="showDocumentMenu('marketing-proposal')">
+                                    <i class="fa-solid fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fa-solid fa-file-excel text-green-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold text-gray-900">Shipment Tracking Report - December 2024</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Draft</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">Public Access</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">Updated 1 day ago • 4.2 MB • XLSX</p>
+                                <div class="flex items-center mt-2 space-x-4">
+                                    <span class="text-gray-500 text-xs">Created by: Operations Team</span>
+                                    <span class="text-gray-500 text-xs">Category: Logistics</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="downloadDocument('shipment-report')">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="shareDocument('shipment-report')">
+                                    <i class="fa-solid fa-share"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="showDocumentMenu('shipment-report')">
+                                    <i class="fa-solid fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fa-solid fa-file-contract text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold text-gray-900">Service Agreement - Global Logistics Solutions</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">Pending Review</span>
+                                        <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">Restricted</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">Updated 3 days ago • 1.1 MB • PDF</p>
+                                <div class="flex items-center mt-2 space-x-4">
+                                    <span class="text-gray-500 text-xs">Created by: Legal Team</span>
+                                    <span class="text-gray-500 text-xs">Review Due: Jan 20, 2025</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="downloadDocument('service-agreement')">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="shareDocument('service-agreement')">
+                                    <i class="fa-solid fa-share"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="showDocumentMenu('service-agreement')">
+                                    <i class="fa-solid fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fa-solid fa-file-image text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-semibold text-gray-900">Product Certificate - Organic Protein Powder</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Verified</span>
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Team Access</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm mt-1">Updated 1 week ago • 856 KB • PNG</p>
+                                <div class="flex items-center mt-2 space-x-4">
+                                    <span class="text-gray-500 text-xs">Created by: Compliance Team</span>
+                                    <span class="text-gray-500 text-xs">Authority: MOCCAE</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="downloadDocument('product-certificate')">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="shareDocument('product-certificate')">
+                                    <i class="fa-solid fa-share"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-gray-900" onclick="showDocumentMenu('product-certificate')">
+                                    <i class="fa-solid fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+                        <div class="text-sm text-gray-600">
+                            Showing 1-6 of 1,247 documents
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">Previous</button>
+                            <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm">1</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">2</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">3</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="recent-activity-vault" class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-xl font-semibold text-gray-900">Recent Document Activity</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-upload text-blue-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-gray-900 font-medium">New document uploaded</p>
+                                <p class="text-gray-600 text-sm">Trade License - Emirates Food Industries.pdf</p>
+                                <p class="text-gray-500 text-xs mt-1">2 hours ago by Ahmed Hassan</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-check text-green-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-gray-900 font-medium">Document approved</p>
+                                <p class="text-gray-600 text-sm">Marketing Campaign Proposal - Al Rashid Trading.docx</p>
+                                <p class="text-gray-500 text-xs mt-1">5 hours ago by Sarah Ahmed</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-edit text-orange-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-gray-900 font-medium">Document updated</p>
+                                <p class="text-gray-600 text-sm">Shipment Tracking Report - December 2024.xlsx</p>
+                                <p class="text-gray-500 text-xs mt-1">1 day ago by Operations Team</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Document Modal -->
+<div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-900">Upload Document</h3>
+                    <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa-solid fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="uploadForm">
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Files</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                            <i class="fa-solid fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 mb-2">Drag and drop files here or click to browse</p>
+                            <p class="text-sm text-gray-500 mb-4">Supports PDF, DOC, DOCX, XLS, XLSX, PNG, JPG (Max 10MB each)</p>
+                            <input type="file" multiple class="hidden" id="fileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
+                            <button type="button" onclick="document.getElementById('fileInput').click()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                Choose Files
+                            </button>
+                        </div>
+                        <div id="fileList" class="mt-4 space-y-2"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="">Select category</option>
+                                <option value="contracts">Contracts & Agreements</option>
+                                <option value="licenses">Licenses & Permits</option>
+                                <option value="shipping">Shipping Documents</option>
+                                <option value="financial">Financial Records</option>
+                                <option value="hr">HR Documents</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Access Level</label>
+                            <select class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <option value="public">Public Access</option>
+                                <option value="team">Team Access</option>
+                                <option value="restricted">Restricted</option>
+                                <option value="confidential">Confidential</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                        <input type="text" placeholder="Enter tags separated by commas" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea rows="3" placeholder="Optional description of the document" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    
+                    <div class="flex items-center justify-end space-x-3">
+                        <button type="button" onclick="closeUploadModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Upload Documents
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/main.js"></script>
+<script>
+// Document vault specific JavaScript
+function showUploadModal() {
+    document.getElementById('uploadModal').classList.remove('hidden');
+}
+
+function closeUploadModal() {
+    document.getElementById('uploadModal').classList.add('hidden');
+    document.getElementById('uploadForm').reset();
+    document.getElementById('fileList').innerHTML = '';
+}
+
+function downloadDocument(docId) {
+    showNotification('Download started for document: ' + docId, 'success');
+}
+
+function shareDocument(docId) {
+    showNotification('Share link copied to clipboard for document: ' + docId, 'success');
+}
+
+function showDocumentMenu(docId) {
+    showNotification('Document menu would open for: ' + docId, 'info');
+}
+
+// File input handling
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    const fileList = document.getElementById('fileList');
+    
+    fileList.innerHTML = '';
+    
+    files.forEach(file => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+        fileItem.innerHTML = `
+            <div class="flex items-center">
+                <i class="fa-solid fa-file text-gray-400 mr-3"></i>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">${file.name}</p>
+                    <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+            </div>
+            <button type="button" onclick="removeFile(this)" class="text-red-600 hover:text-red-800">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        `;
+        fileList.appendChild(fileItem);
+    });
+});
+
+function removeFile(button) {
+    button.parentNode.remove();
+}
+
+// Upload form submission
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (GlobalNext.validateForm(this)) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        GlobalNext.showLoading(submitBtn);
+        
+        // Simulate upload
+        setTimeout(() => {
+            GlobalNext.hideLoading(submitBtn);
+            closeUploadModal();
+            showNotification('Documents uploaded successfully!', 'success');
+        }, 2000);
+    }
+});
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-100 text-green-800' : 
+        type === 'error' ? 'bg-red-100 text-red-800' : 
+        'bg-blue-100 text-blue-800'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Close modal on outside click
+document.getElementById('uploadModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeUploadModal();
+    }
+});
+
+// Drag and drop functionality
+const dropZone = document.querySelector('.border-dashed');
+dropZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    this.classList.add('border-blue-400', 'bg-blue-50');
+});
+
+dropZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    this.classList.remove('border-blue-400', 'bg-blue-50');
+});
+
+dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('border-blue-400', 'bg-blue-50');
+    
+    const files = Array.from(e.dataTransfer.files);
+    const fileInput = document.getElementById('fileInput');
+    
+    // Create a new FileList-like object
+    const dt = new DataTransfer();
+    files.forEach(file => dt.items.add(file));
+    fileInput.files = dt.files;
+    
+    // Trigger change event
+    fileInput.dispatchEvent(new Event('change'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+# WAF Configuration for Global Next Portal
+# This is a sample configuration for AWS WAF v2 or similar WAF solutions
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: waf-config
+  namespace: global-next
+data:
+  waf-rules.yaml: |
+    # Rate Limiting Rules
+    - name: "RateLimitGlobal"
+      priority: 1
+      action: "BLOCK"
+      conditions:
+        - type: "RATE_BASED"
+          rateLimit: 10000  # requests per 5 minutes
+          timeWindow: 300   # 5 minutes
+        - type: "IP"
+          ipSet: "trusted-ips"
+          negated: true
+
+    - name: "RateLimitPerIP"
+      priority: 2
+      action: "BLOCK"
+      conditions:
+        - type: "RATE_BASED"
+          rateLimit: 1000   # requests per 5 minutes per IP
+          timeWindow: 300
+        - type: "IP"
+          ipSet: "trusted-ips"
+          negated: true
+
+    - name: "RateLimitLogin"
+      priority: 3
+      action: "BLOCK"
+      conditions:
+        - type: "URI_PATH"
+          value: "/api/auth/login"
+        - type: "RATE_BASED"
+          rateLimit: 5      # 5 login attempts per 15 minutes
+          timeWindow: 900
+
+    # SQL Injection Protection
+    - name: "SQLInjectionProtection"
+      priority: 10
+      action: "BLOCK"
+      conditions:
+        - type: "SQL_INJECTION"
+          field: "BODY"
+        - type: "SQL_INJECTION"
+          field: "QUERY_STRING"
+        - type: "SQL_INJECTION"
+          field: "URI"
+
+    # XSS Protection
+    - name: "XSSProtection"
+      priority: 11
+      action: "BLOCK"
+      conditions:
+        - type: "XSS"
+          field: "BODY"
+        - type: "XSS"
+          field: "QUERY_STRING"
+        - type: "XSS"
+          field: "URI"
+
+    # Bot Protection
+    - name: "BotProtection"
+      priority: 20
+      action: "BLOCK"
+      conditions:
+        - type: "USER_AGENT"
+          value: "bot"
+          negated: false
+        - type: "USER_AGENT"
+          value: "crawler"
+          negated: false
+        - type: "USER_AGENT"
+          value: "spider"
+          negated: false
+
+    # Geographic Restrictions
+    - name: "GeoBlocking"
+      priority: 30
+      action: "BLOCK"
+      conditions:
+        - type: "GEO"
+          countryCodes: ["CN", "RU", "KP"]  # Block specific countries
+        - type: "IP"
+          ipSet: "blocked-countries"
+          negated: false
+
+    # API Endpoint Protection
+    - name: "APIProtection"
+      priority: 40
+      action: "BLOCK"
+      conditions:
+        - type: "URI_PATH"
+          value: "/api/"
+        - type: "HEADER"
+          name: "Authorization"
+          value: ""
+          negated: false
+        - type: "HEADER"
+          name: "Content-Type"
+          value: "application/json"
+          negated: true
+
+    # File Upload Protection
+    - name: "FileUploadProtection"
+      priority: 50
+      action: "BLOCK"
+      conditions:
+        - type: "URI_PATH"
+          value: "/api/upload"
+        - type: "BODY_SIZE"
+          size: 10485760  # 10MB limit
+          negated: false
+
+    # Suspicious Request Patterns
+    - name: "SuspiciousPatterns"
+      priority: 60
+      action: "BLOCK"
+      conditions:
+        - type: "REGEX"
+          field: "URI"
+          pattern: ".*\\.\\./.*"  # Directory traversal
+        - type: "REGEX"
+          field: "QUERY_STRING"
+          pattern: ".*<script.*"  # Script injection
+        - type: "REGEX"
+          field: "BODY"
+          pattern: ".*eval\\(.*"  # Code injection
+
+  # IP Sets
+  ip-sets.yaml: |
+    trusted-ips:
+      - "192.168.0.0/16"
+      - "10.0.0.0/8"
+      - "172.16.0.0/12"
+      - "127.0.0.1/32"
+
+    blocked-countries:
+      - "1.2.3.0/24"
+      - "5.6.7.0/24"
+
+    admin-ips:
+      - "203.0.113.0/24"
+      - "198.51.100.0/24"
+
+  # Custom Rules
+  custom-rules.yaml: |
+    - name: "CustomSecurityHeaders"
+      priority: 100
+      action: "ALLOW"
+      conditions:
+        - type: "HEADER"
+          name: "X-API-Key"
+          value: ""
+          negated: true
+      customResponse:
+        statusCode: 401
+        headers:
+          - name: "WWW-Authenticate"
+            value: "Bearer"
+
+    - name: "CORSProtection"
+      priority: 101
+      action: "ALLOW"
+      conditions:
+        - type: "HEADER"
+          name: "Origin"
+          value: "https://app.global-next.com"
+        - type: "HEADER"
+          name: "Access-Control-Request-Method"
+          value: "GET,POST,PUT,DELETE,OPTIONS"
+
+  # Logging Configuration
+  logging.yaml: |
+    logLevel: "INFO"
+    logFormat: "JSON"
+    logFields:
+      - "timestamp"
+      - "requestId"
+      - "clientIP"
+      - "userAgent"
+      - "method"
+      - "uri"
+      - "statusCode"
+      - "responseTime"
+      - "ruleMatched"
+      - "action"
+    
+    logDestinations:
+      - type: "CLOUDWATCH"
+        logGroup: "/aws/waf/global-next"
+        retentionDays: 30
+      - type: "S3"
+        bucket: "global-next-waf-logs"
+        prefix: "waf-logs/"
+        retentionDays: 90
+
+  # Monitoring and Alerting
+  monitoring.yaml: |
+    metrics:
+      - name: "BlockedRequests"
+        type: "COUNTER"
+        labels: ["rule", "source_ip", "country"]
+      - name: "AllowedRequests"
+        type: "COUNTER"
+        labels: ["endpoint", "method"]
+      - name: "ResponseTime"
+        type: "HISTOGRAM"
+        buckets: [0.1, 0.5, 1.0, 2.0, 5.0]
+
+    alerts:
+      - name: "HighBlockRate"
+        condition: "rate(blocked_requests[5m]) > 100"
+        severity: "WARNING"
+        notification: "slack"
+        
+      - name: "SuspiciousActivity"
+        condition: "rate(suspicious_patterns[1m]) > 10"
+        severity: "CRITICAL"
+        notification: "pagerduty"
+        
+      - name: "GeographicAnomaly"
+        condition: "rate(geo_blocked[5m]) > 50"
+        severity: "WARNING"
+        notification: "email"
+
+  # Security Headers
+  security-headers.yaml: |
+    defaultHeaders:
+      - name: "X-Content-Type-Options"
+        value: "nosniff"
+      - name: "X-Frame-Options"
+        value: "DENY"
+      - name: "X-XSS-Protection"
+        value: "1; mode=block"
+      - name: "Strict-Transport-Security"
+        value: "max-age=31536000; includeSubDomains"
+      - name: "Content-Security-Policy"
+        value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+      - name: "Referrer-Policy"
+        value: "strict-origin-when-cross-origin"
+      - name: "Permissions-Policy"
+        value: "geolocation=(), microphone=(), camera=()"
+
+    customHeaders:
+      - name: "X-API-Version"
+        value: "v1"
+      - name: "X-Request-ID"
+        value: "${request_id}"
+      - name: "X-Response-Time"
+        value: "${response_time}ms"
