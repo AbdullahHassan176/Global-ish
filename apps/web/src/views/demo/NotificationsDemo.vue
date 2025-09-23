@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -151,7 +152,7 @@
               <button
                 v-if="selectedNotifications.length > 0"
                 @click="handleMarkAsRead(selectedNotifications)"
-                class="btn btn-outline btn-sm"
+                class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm"
               >
                 <Check class="h-4 w-4 mr-1" />
                 Mark Read
@@ -159,7 +160,7 @@
               <button
                 v-if="selectedNotifications.length > 0"
                 @click="handleMarkAsUnread(selectedNotifications)"
-                class="btn btn-outline btn-sm"
+                class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm"
               >
                 <EyeOff class="h-4 w-4 mr-1" />
                 Mark Unread
@@ -167,12 +168,12 @@
               <button
                 v-if="selectedNotifications.length > 0"
                 @click="handleDelete(selectedNotifications)"
-                class="btn btn-outline btn-sm text-red-600 hover:text-red-700"
+                class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center text-sm"
               >
                 <X class="h-4 w-4 mr-1" />
                 Delete
               </button>
-              <button class="btn btn-primary btn-sm">
+              <button @click="handleMarkAllRead" class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm">
                 <Bell class="h-4 w-4 mr-1" />
                 Mark All Read
               </button>
@@ -250,7 +251,7 @@
       <div v-if="activeTab === 'preferences'" class="card p-6">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-lg font-semibold text-gray-900">Notification Preferences</h3>
-          <button class="btn btn-primary">
+          <button @click="handleSavePreferences" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Settings class="h-4 w-4 mr-2" />
             Save Preferences
           </button>
@@ -332,7 +333,7 @@
       <div v-if="activeTab === 'templates'" class="card p-6">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-lg font-semibold text-gray-900">Notification Templates</h3>
-          <button class="btn btn-primary">
+          <button @click="handleCreateTemplate" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Bell class="h-4 w-4 mr-2" />
             Create Template
           </button>
@@ -361,15 +362,15 @@
                   :key="variable"
                   class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
                 >
-                  {{ `{{${variable}}}` }}
+                  {{ '{{' + variable + '}}' }}
                 </span>
               </div>
             </div>
             <div class="flex items-center justify-between">
-              <button class="btn btn-outline btn-sm">
+              <button @click="handleEditTemplate(template)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 Edit
               </button>
-              <button class="btn btn-primary btn-sm">
+              <button @click="handleTestTemplate(template)" class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm">
                 Test
               </button>
             </div>
@@ -429,11 +430,21 @@
       </div>
     </div>
   </div>
+
+  <!-- Create Notification Workflow Modal -->
+  <CreateNotificationWorkflow
+    :is-open="isCreateNotificationOpen"
+    @close="closeCreateNotification"
+    @submit="handleNotificationSubmit"
+  />
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Bell, Mail, MessageSquare, Webhook, Settings, Check, X, Eye, EyeOff } from 'lucide-vue-next'
+import SidebarLayout from '@/components/SidebarLayout.vue'
+import CreateNotificationWorkflow from '@/components/CreateNotificationWorkflow.vue'
 
 interface Notification {
   id: string
@@ -604,5 +615,48 @@ const handleDelete = (notificationIds: string[]) => {
 
 const updatePreference = (type: string, channel: string, value: boolean) => {
   console.log('Updating preference:', type, channel, value)
+}
+
+// Button click handlers
+const handleMarkAsRead = (notifications: any[]) => {
+  console.log('Mark as Read clicked:', notifications)
+  alert(`${notifications.length} notification(s) marked as read!`)
+}
+
+const handleMarkAsUnread = (notifications: any[]) => {
+  console.log('Mark as Unread clicked:', notifications)
+  alert(`${notifications.length} notification(s) marked as unread!`)
+}
+
+const handleDelete = (notifications: any[]) => {
+  console.log('Delete clicked:', notifications)
+  if (confirm(`Are you sure you want to delete ${notifications.length} notification(s)?`)) {
+    alert(`${notifications.length} notification(s) deleted!`)
+  }
+}
+
+const handleMarkAllRead = () => {
+  console.log('Mark All Read clicked')
+  alert('All notifications marked as read!')
+}
+
+const handleSavePreferences = () => {
+  console.log('Save Preferences clicked')
+  alert('Notification preferences saved successfully!')
+}
+
+const handleCreateTemplate = () => {
+  console.log('Create Template clicked')
+  alert('Create Template functionality would open template creation dialog')
+}
+
+const handleEditTemplate = (template: any) => {
+  console.log('Edit Template clicked:', template)
+  alert(`Editing template: ${template.name}`)
+}
+
+const handleTestTemplate = (template: any) => {
+  console.log('Test Template clicked:', template)
+  alert(`Testing template: ${template.name}`)
 }
 </script>

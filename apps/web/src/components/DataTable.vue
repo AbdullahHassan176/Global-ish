@@ -1,17 +1,17 @@
 <template>
-  <div class="bg-white rounded-lg border border-gray-200">
+  <div class="bg-white/90 backdrop-blur-sm rounded-lg border border-brand-cyan/20 shadow-lg">
     <!-- Search and Filters -->
-    <div v-if="searchable || filterable" class="p-4 border-b border-gray-200">
+    <div v-if="searchable || filterable" class="p-4 border-b border-brand-cyan/20">
       <div class="flex items-center space-x-4">
         <div v-if="searchable" class="flex-1">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search..."
-            class="input w-full"
+            class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300"
           />
         </div>
-        <button v-if="exportable" @click="handleExport" class="btn btn-outline btn-sm">
+        <button v-if="exportable" @click="handleExport" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-sm">
           Export
         </button>
       </div>
@@ -20,14 +20,14 @@
     <!-- Table -->
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+        <thead class="bg-gradient-to-r from-brand-cream to-brand-pink/30">
           <tr>
             <th v-if="selectable" class="px-6 py-3 text-left">
               <input
                 type="checkbox"
                 :checked="allSelected"
                 @change="toggleSelectAll"
-                class="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                class="h-4 w-4 text-brand-orange border-brand-teal/30 rounded focus:ring-brand-orange"
               />
             </th>
             <th
@@ -67,7 +67,7 @@
                 :checked="isRowSelected(row)"
                 @change="toggleRowSelection(row)"
                 @click.stop
-                class="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                class="h-4 w-4 text-brand-orange border-brand-teal/30 rounded focus:ring-brand-orange"
               />
             </td>
             <td

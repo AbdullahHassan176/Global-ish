@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -63,18 +64,24 @@
       <!-- Actions and View Toggle -->
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center space-x-4">
-          <button class="btn btn-primary">
-            <Plus class="h-4 w-4 mr-2" />
-            Create Task
-          </button>
-          <button class="btn btn-outline">
-            <Calendar class="h-4 w-4 mr-2" />
-            Calendar View
-          </button>
-          <button class="btn btn-outline">
-            <User class="h-4 w-4 mr-2" />
-            My Tasks
-          </button>
+          <Tooltip text="Create a new task with assignments, due dates, and priority settings" position="bottom">
+            <button @click="handleCreateTask" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+              <Plus class="h-4 w-4 mr-2" />
+              Create Task
+            </button>
+          </Tooltip>
+          <Tooltip text="Switch to calendar view to see tasks organized by dates" position="bottom">
+            <button @click="handleCalendarView" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center">
+              <Calendar class="h-4 w-4 mr-2" />
+              Calendar View
+            </button>
+          </Tooltip>
+          <Tooltip text="Filter to show only tasks assigned to you" position="bottom">
+            <button @click="handleMyTasks" class="px-4 py-2 border-2 border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center">
+              <User class="h-4 w-4 mr-2" />
+              My Tasks
+            </button>
+          </Tooltip>
         </div>
         
         <div class="flex items-center space-x-2">
@@ -349,15 +356,15 @@
             </div>
             
             <div class="flex items-center space-x-3">
-              <button class="btn btn-primary">
+              <button @click="handleMarkComplete" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
                 <CheckCircle class="h-4 w-4 mr-2" />
                 Mark Complete
               </button>
-              <button class="btn btn-outline">
+              <button @click="handleAddComment" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center">
                 <MessageSquare class="h-4 w-4 mr-2" />
                 Add Comment
               </button>
-              <button class="btn btn-outline">
+              <button @click="handleAddAttachment" class="px-4 py-2 border-2 border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center">
                 <Paperclip class="h-4 w-4 mr-2" />
                 Add Attachment
               </button>
@@ -418,11 +425,22 @@
       </div>
     </div>
   </div>
+
+  <!-- Create Task Workflow Modal -->
+  <CreateTaskWorkflow
+    :is-open="isCreateTaskOpen"
+    @close="closeCreateTask"
+    @submit="handleTaskSubmit"
+  />
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Plus, Calendar, User, MessageSquare, Paperclip, CheckCircle, Clock, AlertCircle, XCircle } from 'lucide-vue-next'
+import SidebarLayout from '@/components/SidebarLayout.vue'
+import Tooltip from '@/components/Tooltip.vue'
+import CreateTaskWorkflow from '@/components/CreateTaskWorkflow.vue'
 
 interface Task {
   id: string
@@ -442,6 +460,7 @@ interface Task {
 
 const viewMode = ref<'kanban' | 'list'>('kanban')
 const selectedTask = ref<Task | null>(null)
+const isCreateTaskOpen = ref(false)
 
 const mockTasks: Task[] = [
   {
@@ -563,6 +582,67 @@ const getStatusIcon = (status: string) => {
     default:
       return Clock
   }
+}
+
+// Button click handlers
+const handleCreateTask = () => {
+  console.log('Opening task creation workflow')
+  isCreateTaskOpen.value = true
+}
+
+const closeCreateTask = () => {
+  isCreateTaskOpen.value = false
+}
+
+const handleTaskSubmit = (taskData: any) => {
+  console.log('Task created:', taskData)
+  // Add the new task to the mock data
+  const newTask: Task = {
+    id: String(Date.now()),
+    title: taskData.title,
+    description: taskData.description,
+    status: 'pending',
+    priority: taskData.priority,
+    progress: 0,
+    dueDate: taskData.dueDate,
+    createdBy: 'Current User',
+    assignedTo: [taskData.assignedTo],
+    comments: 0,
+    attachments: taskData.attachments?.length || 0,
+    createdAt: new Date().toISOString().split('T')[0],
+    updatedAt: new Date().toISOString().split('T')[0]
+  }
+  
+  // Add to mock tasks (in a real app, this would be an API call)
+  mockTasks.unshift(newTask)
+  
+  alert(`Task "${newTask.title}" created successfully!`)
+  isCreateTaskOpen.value = false
+}
+
+const handleCalendarView = () => {
+  console.log('Calendar View clicked')
+  alert('Calendar View functionality would switch to calendar view')
+}
+
+const handleMyTasks = () => {
+  console.log('My Tasks clicked')
+  alert('My Tasks functionality would filter to show only user tasks')
+}
+
+const handleMarkComplete = () => {
+  console.log('Mark Complete clicked')
+  alert('Task marked as complete!')
+}
+
+const handleAddComment = () => {
+  console.log('Add Comment clicked')
+  alert('Add Comment functionality would open comment dialog')
+}
+
+const handleAddAttachment = () => {
+  console.log('Add Attachment clicked')
+  alert('Add Attachment functionality would open file picker')
 }
 </script>
 

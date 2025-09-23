@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -116,7 +117,7 @@
       <div v-if="activeTab === 'credentials'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Credential Vault</h2>
-          <button @click="showAddCredentialModal = true" class="btn btn-primary">
+          <button @click="showAddCredentialModal = true" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Credential
           </button>
@@ -160,14 +161,14 @@
             </div>
             
             <div class="flex items-center space-x-2">
-              <button class="btn btn-outline btn-sm flex-1">
+              <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm flex-1">
                 <TestTube class="h-4 w-4 mr-1" />
                 Test
               </button>
-              <button class="btn btn-outline btn-sm">
+              <button class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Edit class="h-4 w-4" />
               </button>
-              <button class="btn btn-outline btn-sm text-red-600 hover:text-red-800">
+              <button class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Trash2 class="h-4 w-4" />
               </button>
             </div>
@@ -179,7 +180,7 @@
       <div v-if="activeTab === 'webhooks'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Webhook Registry</h2>
-          <button @click="showAddWebhookModal = true" class="btn btn-primary">
+          <button @click="showAddWebhookModal = true" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Webhook
           </button>
@@ -202,15 +203,15 @@
                   {{ webhook.isActive ? 'Active' : 'Inactive' }}
                 </span>
                 <div class="flex items-center space-x-2">
-                  <button class="btn btn-outline btn-sm">
+                  <button class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm">
                     <TestTube class="h-4 w-4 mr-1" />
                     Test
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Edit class="h-4 w-4 mr-1" />
                     Edit
                   </button>
-                  <button class="btn btn-outline btn-sm text-red-600 hover:text-red-800">
+                  <button class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Trash2 class="h-4 w-4 mr-1" />
                     Delete
                   </button>
@@ -269,11 +270,11 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Tokenization Bridge</h2>
           <div class="flex items-center space-x-4">
-            <button class="btn btn-outline">
+            <button class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300">
               <Settings class="h-4 w-4 mr-2" />
               Configure Events
             </button>
-            <button class="btn btn-primary">
+            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300">
               <Shield class="h-4 w-4 mr-2" />
               Publish Events
             </button>
@@ -335,13 +336,13 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Delivery Log</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>All Status</option>
               <option>Delivered</option>
               <option>Failed</option>
               <option>Retrying</option>
             </select>
-            <button class="btn btn-outline">
+            <button class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300">
               <RefreshCw class="h-4 w-4 mr-2" />
               Refresh
             </button>
@@ -428,12 +429,12 @@
             <form @submit.prevent="addCredential" class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                <input v-model="newCredential.name" type="text" class="input w-full" required />
+                <input v-model="newCredential.name" type="text" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" required />
               </div>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Provider</label>
-                <select v-model="newCredential.provider" class="input w-full" required>
+                <select v-model="newCredential.provider" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" required>
                   <option value="">Select Provider</option>
                   <option value="salesforce">Salesforce</option>
                   <option value="hubspot">HubSpot</option>
@@ -445,7 +446,7 @@
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                <select v-model="newCredential.type" class="input w-full" required>
+                <select v-model="newCredential.type" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" required>
                   <option value="">Select Type</option>
                   <option value="OAUTH2">OAuth2</option>
                   <option value="API_KEY">API Key</option>
@@ -455,10 +456,10 @@
               </div>
               
               <div class="flex items-center justify-end space-x-3 pt-4">
-                <button type="button" @click="showAddCredentialModal = false" class="btn btn-outline">
+                <button type="button" @click="showAddCredentialModal = false" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300">
                   Cancel
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300">
                   Add Credential
                 </button>
               </div>
@@ -475,12 +476,12 @@
             <form @submit.prevent="addWebhook" class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                <input v-model="newWebhook.name" type="text" class="input w-full" required />
+                <input v-model="newWebhook.name" type="text" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" required />
               </div>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">URL</label>
-                <input v-model="newWebhook.url" type="url" class="input w-full" required />
+                <input v-model="newWebhook.url" type="url" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" required />
               </div>
               
               <div>
@@ -494,10 +495,10 @@
               </div>
               
               <div class="flex items-center justify-end space-x-3 pt-4">
-                <button type="button" @click="showAddWebhookModal = false" class="btn btn-outline">
+                <button type="button" @click="showAddWebhookModal = false" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300">
                   Cancel
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300">
                   Add Webhook
                 </button>
               </div>
@@ -507,10 +508,12 @@
       </div>
     </div>
   </div>
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
 import { 
   Key, 
   Webhook, 

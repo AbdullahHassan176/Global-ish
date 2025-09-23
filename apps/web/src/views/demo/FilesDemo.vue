@@ -1,60 +1,63 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Files Management Demo</h1>
-        <p class="text-gray-600 mt-2">
+        <h1 class="text-3xl font-bold text-brand-navy">Files Management Demo</h1>
+        <p class="text-brand-teal mt-2">
           Comprehensive file management with virus scanning, OCR, blockchain anchoring, and access control
         </p>
       </div>
 
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="card p-6">
+        <Tooltip text="Total number of files stored in the system across all departments" position="top">
+          <div class="card p-6 bg-white/90 backdrop-blur-sm border border-brand-cyan/20 shadow-lg">
+            <div class="flex items-center">
+              <div class="p-2 bg-gradient-to-br from-brand-orange to-brand-magenta rounded-lg">
+                <FileText class="h-6 w-6 text-white" />
+              </div>
+              <div class="ml-4">
+                <p class="text-sm font-medium text-brand-teal">Total Files</p>
+                <p class="text-2xl font-bold text-brand-navy">1,247</p>
+              </div>
+            </div>
+          </div>
+        </Tooltip>
+        
+        <div class="card p-6 bg-white/90 backdrop-blur-sm border border-brand-teal/20 shadow-lg">
           <div class="flex items-center">
-            <div class="p-2 bg-blue-100 rounded-lg">
-              <FileText class="h-6 w-6 text-blue-600" />
+            <div class="p-2 bg-gradient-to-br from-brand-teal to-brand-cyan rounded-lg">
+              <Shield class="h-6 w-6 text-white" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Total Files</p>
-              <p class="text-2xl font-bold text-gray-900">1,247</p>
+              <p class="text-sm font-medium text-brand-teal">Clean Files</p>
+              <p class="text-2xl font-bold text-brand-navy">1,198</p>
             </div>
           </div>
         </div>
         
-        <div class="card p-6">
+        <div class="card p-6 bg-white/90 backdrop-blur-sm border border-brand-purple/20 shadow-lg">
           <div class="flex items-center">
-            <div class="p-2 bg-green-100 rounded-lg">
-              <Shield class="h-6 w-6 text-green-600" />
+            <div class="p-2 bg-gradient-to-br from-brand-purple to-brand-magenta rounded-lg">
+              <Tag class="h-6 w-6 text-white" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Clean Files</p>
-              <p class="text-2xl font-bold text-gray-900">1,198</p>
+              <p class="text-sm font-medium text-brand-teal">OCR Processed</p>
+              <p class="text-2xl font-bold text-brand-navy">892</p>
             </div>
           </div>
         </div>
         
-        <div class="card p-6">
+        <div class="card p-6 bg-white/90 backdrop-blur-sm border border-brand-pink/20 shadow-lg">
           <div class="flex items-center">
-            <div class="p-2 bg-yellow-100 rounded-lg">
-              <Tag class="h-6 w-6 text-yellow-600" />
+            <div class="p-2 bg-gradient-to-br from-brand-pink to-brand-purple rounded-lg">
+              <Shield class="h-6 w-6 text-white" />
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">OCR Processed</p>
-              <p class="text-2xl font-bold text-gray-900">892</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="card p-6">
-          <div class="flex items-center">
-            <div class="p-2 bg-purple-100 rounded-lg">
-              <Shield class="h-6 w-6 text-purple-600" />
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Blockchain Anchored</p>
-              <p class="text-2xl font-bold text-gray-900">756</p>
+              <p class="text-sm font-medium text-brand-teal">Blockchain Anchored</p>
+              <p class="text-2xl font-bold text-brand-navy">756</p>
             </div>
           </div>
         </div>
@@ -63,21 +66,27 @@
       <!-- Actions -->
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center space-x-4">
-          <button class="btn btn-primary">
-            <Upload class="h-4 w-4 mr-2" />
-            Upload Files
-          </button>
-          <button class="btn btn-outline">
-            <Tag class="h-4 w-4 mr-2" />
-            Manage Tags
-          </button>
-          <button class="btn btn-outline">
-            <Shield class="h-4 w-4 mr-2" />
-            Access Control
-          </button>
+          <Tooltip text="Upload new files with automatic virus scanning and OCR processing" position="bottom">
+            <button @click="handleUploadFiles" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+              <Upload class="h-4 w-4 mr-2" />
+              Upload Files
+            </button>
+          </Tooltip>
+          <Tooltip text="Create and manage file tags for better organization and search" position="bottom">
+            <button @click="handleManageTags" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center">
+              <Tag class="h-4 w-4 mr-2" />
+              Manage Tags
+            </button>
+          </Tooltip>
+          <Tooltip text="Configure access permissions and security settings for files" position="bottom">
+            <button @click="handleAccessControl" class="px-4 py-2 border-2 border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center">
+              <Shield class="h-4 w-4 mr-2" />
+              Access Control
+            </button>
+          </Tooltip>
         </div>
         
-        <div class="text-sm text-gray-500">
+        <div class="text-sm text-brand-teal">
           {{ selectedFiles.length }} file(s) selected
         </div>
       </div>
@@ -99,58 +108,77 @@
 
       <!-- Features Demo -->
       <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="card p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Key Features</h3>
+        <div class="card p-6 bg-white/90 backdrop-blur-sm border border-brand-cyan/20 shadow-lg">
+          <h3 class="text-lg font-semibold text-brand-navy mb-4">Key Features</h3>
           <ul class="space-y-3">
             <li class="flex items-center space-x-2">
-              <Shield class="h-4 w-4 text-green-600" />
-              <span>Virus scanning with multiple providers (ClamAV, VirusTotal, AWS GuardDuty)</span>
+              <Shield class="h-4 w-4 text-brand-teal" />
+              <span class="text-brand-navy">Virus scanning with multiple providers (ClamAV, VirusTotal, AWS GuardDuty)</span>
             </li>
             <li class="flex items-center space-x-2">
-              <FileText class="h-4 w-4 text-blue-600" />
-              <span>OCR processing with Tesseract, AWS Textract, Azure Cognitive Services</span>
+              <FileText class="h-4 w-4 text-brand-cyan" />
+              <span class="text-brand-navy">OCR processing with Tesseract, AWS Textract, Azure Cognitive Services</span>
             </li>
             <li class="flex items-center space-x-2">
-              <Shield class="h-4 w-4 text-purple-600" />
-              <span>Blockchain anchoring for document integrity verification</span>
+              <Shield class="h-4 w-4 text-brand-purple" />
+              <span class="text-brand-navy">Blockchain anchoring for document integrity verification</span>
             </li>
             <li class="flex items-center space-x-2">
-              <Tag class="h-4 w-4 text-orange-600" />
-              <span>Advanced tagging and categorization system</span>
+              <Tag class="h-4 w-4 text-brand-orange" />
+              <span class="text-brand-navy">Advanced tagging and categorization system</span>
             </li>
             <li class="flex items-center space-x-2">
-              <Shield class="h-4 w-4 text-red-600" />
-              <span>Granular access control with role-based permissions</span>
+              <Shield class="h-4 w-4 text-brand-magenta" />
+              <span class="text-brand-navy">Granular access control with role-based permissions</span>
             </li>
           </ul>
         </div>
         
-        <div class="card p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Storage Providers</h3>
+        <div class="card p-6 bg-white/90 backdrop-blur-sm border border-brand-purple/20 shadow-lg">
+          <h3 class="text-lg font-semibold text-brand-navy mb-4">Storage Providers</h3>
           <div class="space-y-4">
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span class="font-medium">Amazon S3</span>
-              <span class="text-sm text-gray-600">Primary storage</span>
+            <div class="flex items-center justify-between p-3 bg-gradient-to-r from-brand-cream to-brand-pink/30 rounded-lg border border-brand-cyan/20">
+              <span class="font-medium text-brand-navy">Amazon S3</span>
+              <span class="text-sm text-brand-teal">Primary storage</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span class="font-medium">Azure Blob Storage</span>
-              <span class="text-sm text-gray-600">Secondary storage</span>
+            <div class="flex items-center justify-between p-3 bg-gradient-to-r from-brand-cream to-brand-pink/30 rounded-lg border border-brand-cyan/20">
+              <span class="font-medium text-brand-navy">Azure Blob Storage</span>
+              <span class="text-sm text-brand-teal">Secondary storage</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span class="font-medium">Local Storage</span>
-              <span class="text-sm text-gray-600">Development</span>
+            <div class="flex items-center justify-between p-3 bg-gradient-to-r from-brand-cream to-brand-pink/30 rounded-lg border border-brand-cyan/20">
+              <span class="font-medium text-brand-navy">Local Storage</span>
+              <span class="text-sm text-brand-teal">Development</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Tag Management Modal -->
+  <TagManagementModal
+    :is-open="isTagModalOpen"
+    @close="closeTagModal"
+  />
+
+  <!-- Access Control Modal -->
+  <AccessControlModal
+    :is-open="isAccessControlModalOpen"
+    :selected-files="selectedFiles"
+    @close="closeAccessControlModal"
+    @save="handleAccessControlSave"
+  />
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Upload, Download, Eye, Trash2, Tag, Shield, FileText } from 'lucide-vue-next'
 import DataTable from '@/components/DataTable.vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
+import TagManagementModal from '@/components/TagManagementModal.vue'
+import AccessControlModal from '@/components/AccessControlModal.vue'
+import Tooltip from '@/components/Tooltip.vue'
 
 interface FileItem {
   id: string
@@ -224,6 +252,10 @@ const mockFiles: FileItem[] = [
 ]
 
 const selectedFiles = ref<FileItem[]>([])
+
+// Modal states
+const isTagModalOpen = ref(false)
+const isAccessControlModalOpen = ref(false)
 
 const columns = computed(() => [
   {
@@ -375,5 +407,35 @@ const handleRowClick = (row: FileItem) => {
 
 const handleExport = () => {
   console.log('Exporting files...')
+}
+
+// Button click handlers
+const handleUploadFiles = () => {
+  console.log('Upload Files clicked')
+  alert('Upload Files functionality would open file picker dialog')
+}
+
+const handleManageTags = () => {
+  console.log('Manage Tags clicked')
+  isTagModalOpen.value = true
+}
+
+const handleAccessControl = () => {
+  console.log('Access Control clicked')
+  isAccessControlModalOpen.value = true
+}
+
+// Modal handlers
+const closeTagModal = () => {
+  isTagModalOpen.value = false
+}
+
+const closeAccessControlModal = () => {
+  isAccessControlModalOpen.value = false
+}
+
+const handleAccessControlSave = (settings: any) => {
+  console.log('Access control settings saved:', settings)
+  isAccessControlModalOpen.value = false
 }
 </script>

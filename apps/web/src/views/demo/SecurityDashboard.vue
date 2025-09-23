@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -127,7 +128,7 @@
       <div v-if="activeTab === 'sessions'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Active Sessions</h2>
-          <button @click="revokeAllSessions" class="btn btn-outline text-red-600 hover:text-red-800">
+          <button @click="revokeAllSessions" class="px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300">
             <LogOut class="h-4 w-4 mr-2" />
             Revoke All Sessions
           </button>
@@ -154,7 +155,7 @@
                 <span :class="session.isCurrent ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'" class="px-3 py-1 rounded-full text-sm font-medium">
                   {{ session.isCurrent ? 'Current' : 'Active' }}
                 </span>
-                <button @click="revokeSession(session.id)" class="btn btn-outline btn-sm text-red-600 hover:text-red-800">
+                <button @click="revokeSession(session.id)" class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 text-sm">
                   <LogOut class="h-4 w-4 mr-1" />
                   Revoke
                 </button>
@@ -226,7 +227,7 @@
       <div v-if="activeTab === 'privacy'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Privacy Controls</h2>
-          <button @click="exportData" class="btn btn-primary">
+          <button @click="exportData" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Download class="h-4 w-4 mr-2" />
             Export My Data
           </button>
@@ -269,7 +270,7 @@
             <p class="text-sm text-gray-600 mb-4">
               Download a copy of all your personal data in a machine-readable format.
             </p>
-            <button @click="requestDataExport" class="btn btn-outline w-full">
+            <button @click="requestDataExport" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center justify-center">
               <Download class="h-4 w-4 mr-2" />
               Request Data Export
             </button>
@@ -280,7 +281,7 @@
             <p class="text-sm text-gray-600 mb-4">
               Request complete deletion of your personal data from our systems.
             </p>
-            <button @click="requestDataErasure" class="btn btn-outline w-full text-red-600 hover:text-red-800">
+            <button @click="requestDataErasure" class="w-full px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center justify-center">
               <Trash2 class="h-4 w-4 mr-2" />
               Request Data Erasure
             </button>
@@ -292,7 +293,7 @@
       <div v-if="activeTab === 'data-lifecycle'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Data Lifecycle Management</h2>
-          <button @click="showRetentionPolicyModal = true" class="btn btn-primary">
+          <button @click="showRetentionPolicyModal = true" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Retention Policy
           </button>
@@ -377,14 +378,14 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Security Events</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>All Severity</option>
               <option>Critical</option>
               <option>High</option>
               <option>Medium</option>
               <option>Low</option>
             </select>
-            <button class="btn btn-outline">
+            <button @click="handleRefresh" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center">
               <RefreshCw class="h-4 w-4 mr-2" />
               Refresh
             </button>
@@ -452,7 +453,7 @@
       <div v-if="activeTab === 'compliance'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Compliance Dashboard</h2>
-          <button @click="generateComplianceReport" class="btn btn-primary">
+          <button @click="generateComplianceReport" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <FileText class="h-4 w-4 mr-2" />
             Generate Report
           </button>
@@ -565,10 +566,12 @@
       </div>
     </div>
   </div>
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
 import { 
   Shield, 
   Lock, 
@@ -899,5 +902,11 @@ const formatTimeAgo = (date: Date) => {
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
   return `${Math.floor(diffInSeconds / 86400)}d ago`
+}
+
+// Button click handlers
+const handleRefresh = () => {
+  console.log('Refresh clicked')
+  alert('Security events refreshed!')
 }
 </script>

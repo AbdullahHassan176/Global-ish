@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -140,7 +141,7 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Shipment Management</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>All Carriers</option>
               <option>Maersk</option>
               <option>MSC</option>
@@ -148,7 +149,7 @@
               <option>DHL</option>
               <option>FedEx</option>
             </select>
-            <button class="btn btn-primary">
+            <button @click="createShipment" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Create Shipment
             </button>
@@ -212,9 +213,9 @@
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div class="flex items-center space-x-2">
-                      <button class="text-blue-600 hover:text-blue-900">Track</button>
-                      <button class="text-green-600 hover:text-green-900">View</button>
-                      <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                      <button @click="trackShipment(shipment.id)" class="text-blue-600 hover:text-blue-900">Track</button>
+                      <button @click="viewShipment(shipment.id)" class="text-green-600 hover:text-green-900">View</button>
+                      <button @click="updateShipment(shipment.id)" class="text-gray-600 hover:text-gray-900">Edit</button>
                     </div>
                   </td>
                 </tr>
@@ -229,8 +230,8 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Container Tracking</h2>
           <div class="flex items-center space-x-4">
-            <input type="text" placeholder="Search containers..." class="input" />
-            <button class="btn btn-primary">
+            <input type="text" placeholder="Search containers..." class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" />
+            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Add Container
             </button>
@@ -271,11 +272,11 @@
             </div>
             
             <div class="flex items-center space-x-2">
-              <button class="btn btn-primary btn-sm flex-1">
+              <button @click="trackContainer(container.id)" class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1">
                 <MapPin class="h-4 w-4 mr-1" />
                 Track
               </button>
-              <button class="btn btn-outline btn-sm">
+              <button @click="viewContainer(container.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Eye class="h-4 w-4" />
               </button>
             </div>
@@ -288,13 +289,13 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Live Container Positions</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>All Containers</option>
               <option>In Transit</option>
               <option>At Port</option>
               <option>At Customs</option>
             </select>
-            <button class="btn btn-primary">
+            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <RefreshCw class="h-4 w-4 mr-2" />
               Refresh
             </button>
@@ -346,17 +347,17 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Costs & Invoicing</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>All Shipments</option>
               <option>Pending Costs</option>
               <option>Approved Costs</option>
               <option>Paid Costs</option>
             </select>
-            <button class="btn btn-primary">
+            <button @click="updateCosts" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Add Cost
             </button>
-            <button class="btn btn-outline">
+            <button @click="exportCosts" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300">
               <FileText class="h-4 w-4 mr-2" />
               Generate Invoice
             </button>
@@ -564,18 +565,18 @@
                   <button
                     v-if="!alert.isRead"
                     @click="markAsRead(alert.id)"
-                    class="btn btn-primary btn-sm"
+                    class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm"
                   >
                     Mark Read
                   </button>
                   <button
                     v-if="!alert.isResolved"
                     @click="resolveAlert(alert.id)"
-                    class="btn btn-outline btn-sm"
+                    class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm"
                   >
                     Resolve
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Eye class="h-4 w-4 mr-1" />
                     View
                   </button>
@@ -591,7 +592,7 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Carrier Integrations</h2>
           <div class="flex items-center space-x-4">
-            <router-link to="/demo/logistics/integrations" class="btn btn-primary">
+            <router-link to="/demo/logistics/integrations" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Settings class="h-4 w-4 mr-2" />
               Manage Integrations
             </router-link>
@@ -687,15 +688,15 @@
           <div class="card p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
             <div class="space-y-3">
-              <button class="w-full btn btn-outline text-left">
+              <button @click="testConnection('all')" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
                 <RefreshCw class="h-4 w-4 mr-2" />
                 Sync All Integrations
               </button>
-              <button class="w-full btn btn-outline text-left">
+              <button @click="testConnection('all')" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
                 <TestTube class="h-4 w-4 mr-2" />
                 Test All Connections
               </button>
-              <button class="w-full btn btn-outline text-left">
+              <button @click="configureIntegration('webhooks')" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
                 <Settings class="h-4 w-4 mr-2" />
                 Configure Webhooks
               </button>
@@ -798,10 +799,37 @@
       </div>
     </div>
   </div>
+
+  <!-- Create Shipment Workflow Modal -->
+  <CreateShipmentWorkflow
+    :is-open="isCreateShipmentOpen"
+    @close="closeCreateShipment"
+    @submit="handleShipmentSubmit"
+  />
+
+  <!-- Carrier Integration Workflow Modal -->
+  <CarrierIntegrationWorkflow
+    :is-open="isCarrierIntegrationOpen"
+    @close="closeCarrierIntegration"
+    @submit="handleCarrierIntegrationSubmit"
+  />
+
+  <!-- Shipment Tracking Workflow Modal -->
+  <ShipmentTrackingWorkflow
+    :is-open="isTrackingOpen"
+    :shipment-id="selectedShipmentId"
+    @close="closeTracking"
+  />
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
+import Tooltip from '@/components/Tooltip.vue'
+import CreateShipmentWorkflow from '@/components/CreateShipmentWorkflow.vue'
+import CarrierIntegrationWorkflow from '@/components/CarrierIntegrationWorkflow.vue'
+import ShipmentTrackingWorkflow from '@/components/ShipmentTrackingWorkflow.vue'
 import { 
   Ship, 
   Package, 
@@ -826,6 +854,10 @@ import {
 
 const activeTab = ref<'shipments' | 'containers' | 'map' | 'costs' | 'alerts' | 'integrations'>('shipments')
 const alertFilter = ref<'all' | 'unread' | 'critical'>('all')
+const isCreateShipmentOpen = ref(false)
+const isCarrierIntegrationOpen = ref(false)
+const isTrackingOpen = ref(false)
+const selectedShipmentId = ref('')
 
 const mockShipments = [
   {
@@ -1086,5 +1118,129 @@ const markAsRead = (id: string) => {
 
 const resolveAlert = (id: string) => {
   console.log('Resolving alert:', id)
+}
+
+// Shipment management functions
+const createShipment = () => {
+  console.log('Opening shipment creation workflow')
+  isCreateShipmentOpen.value = true
+}
+
+const closeCreateShipment = () => {
+  isCreateShipmentOpen.value = false
+}
+
+const handleShipmentSubmit = (shipmentData: any) => {
+  console.log('Shipment created:', shipmentData)
+  // Add the new shipment to the mock data
+  const newShipment = {
+    id: String(Date.now()),
+    shipmentNumber: `SH-2024-${String(Date.now()).slice(-3)}`,
+    origin: `${shipmentData.origin.city}, ${shipmentData.origin.country}`,
+    destination: `${shipmentData.destination.city}, ${shipmentData.destination.country}`,
+    status: 'PENDING',
+    carrier: shipmentData.shipping.carrier,
+    etd: shipmentData.shipping.pickupDate,
+    eta: shipmentData.shipping.deliveryDate,
+    progress: 0
+  }
+  
+  // Add to mock shipments (in a real app, this would be an API call)
+  mockShipments.unshift(newShipment)
+  
+  alert(`Shipment ${newShipment.shipmentNumber} created successfully!`)
+  isCreateShipmentOpen.value = false
+}
+
+const viewShipment = (id: string) => {
+  console.log('Viewing shipment:', id)
+  alert(`Viewing shipment ${id} details`)
+}
+
+const trackShipment = (id: string) => {
+  console.log('Opening tracking for shipment:', id)
+  selectedShipmentId.value = id
+  isTrackingOpen.value = true
+}
+
+const closeTracking = () => {
+  isTrackingOpen.value = false
+  selectedShipmentId.value = ''
+}
+
+const updateShipment = (id: string) => {
+  console.log('Updating shipment:', id)
+  alert(`Opening update form for shipment ${id}`)
+}
+
+const cancelShipment = (id: string) => {
+  console.log('Cancelling shipment:', id)
+  if (confirm('Are you sure you want to cancel this shipment?')) {
+    alert(`Shipment ${id} cancelled`)
+  }
+}
+
+// Container management functions
+const createContainer = () => {
+  console.log('Creating new container')
+  alert('Create Container functionality would open container creation form')
+}
+
+const viewContainer = (id: string) => {
+  console.log('Viewing container:', id)
+  alert(`Viewing container ${id} details`)
+}
+
+const trackContainer = (id: string) => {
+  console.log('Opening tracking for container:', id)
+  selectedShipmentId.value = id
+  isTrackingOpen.value = true
+}
+
+const updateContainer = (id: string) => {
+  console.log('Updating container:', id)
+  alert(`Opening update form for container ${id}`)
+}
+
+// Cost management functions
+const viewCosts = () => {
+  console.log('Viewing cost breakdown')
+  alert('Opening detailed cost analysis and breakdown')
+}
+
+const exportCosts = () => {
+  console.log('Exporting costs')
+  alert('Exporting cost data to Excel/CSV')
+}
+
+const updateCosts = () => {
+  console.log('Updating cost data')
+  alert('Opening cost update form')
+}
+
+// Integration functions
+const connectCarrier = (carrier: string) => {
+  console.log('Connecting to carrier:', carrier)
+  isCarrierIntegrationOpen.value = true
+}
+
+const testConnection = (integration: string) => {
+  console.log('Testing connection:', integration)
+  isCarrierIntegrationOpen.value = true
+}
+
+const configureIntegration = (integration: string) => {
+  console.log('Configuring integration:', integration)
+  isCarrierIntegrationOpen.value = true
+}
+
+const closeCarrierIntegration = () => {
+  isCarrierIntegrationOpen.value = false
+}
+
+const handleCarrierIntegrationSubmit = (integrationData: any) => {
+  console.log('Carrier integration updated:', integrationData)
+  alert('Carrier integration settings updated successfully!')
+  isCarrierIntegrationOpen.value = false
 }
 </script>

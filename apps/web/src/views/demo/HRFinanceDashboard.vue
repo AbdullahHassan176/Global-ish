@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -118,13 +119,13 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Timesheet Management</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>All Users</option>
               <option>John Doe</option>
               <option>Jane Smith</option>
               <option>Mike Johnson</option>
             </select>
-            <button class="btn btn-primary">
+            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Add Timesheet
             </button>
@@ -228,7 +229,7 @@
       <div v-if="activeTab === 'projects'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Project Management</h2>
-          <button class="btn btn-primary">
+          <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Create Project
           </button>
@@ -283,11 +284,11 @@
             </div>
             
             <div class="flex items-center space-x-2">
-              <button class="btn btn-primary btn-sm flex-1">
+              <button class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1">
                 <Eye class="h-4 w-4 mr-1" />
                 View Details
               </button>
-              <button class="btn btn-outline btn-sm">
+              <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Edit class="h-4 w-4" />
               </button>
             </div>
@@ -299,7 +300,7 @@
       <div v-if="activeTab === 'clients'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Client Management</h2>
-          <button class="btn btn-primary">
+          <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Client
           </button>
@@ -350,11 +351,11 @@
                 </div>
                 
                 <div class="flex items-center space-x-2 ml-4">
-                  <button class="btn btn-outline btn-sm">
+                  <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Eye class="h-4 w-4 mr-1" />
                     View
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Edit class="h-4 w-4 mr-1" />
                     Edit
                   </button>
@@ -370,14 +371,14 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Financial Reports</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>This Month</option>
               <option>Last Month</option>
               <option>This Quarter</option>
               <option>Last Quarter</option>
               <option>This Year</option>
             </select>
-            <button class="btn btn-primary">
+            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Download class="h-4 w-4 mr-2" />
               Export Report
             </button>
@@ -509,10 +510,12 @@
       </div>
     </div>
   </div>
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
 import { 
   Clock, 
   DollarSign, 

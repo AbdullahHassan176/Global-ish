@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -11,11 +12,11 @@
             </p>
           </div>
           <div class="flex items-center space-x-4">
-            <router-link to="/demo/logistics" class="btn btn-outline">
+            <router-link to="/demo/logistics" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center">
               <ArrowLeft class="h-4 w-4 mr-2" />
               Back to Logistics
             </router-link>
-            <button @click="showAddIntegrationModal = true" class="btn btn-primary">
+            <button @click="showAddIntegrationModal = true" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Add Integration
             </button>
@@ -96,15 +97,15 @@
                 {{ integration.isActive ? 'Active' : 'Inactive' }}
               </span>
               <div class="flex items-center space-x-2">
-                <button @click="testIntegration(integration)" class="btn btn-outline btn-sm">
+                <button @click="testIntegration(integration)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                   <TestTube class="h-4 w-4 mr-1" />
                   Test
                 </button>
-                <button @click="editIntegration(integration)" class="btn btn-outline btn-sm">
+                <button @click="editIntegration(integration)" class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm">
                   <Edit class="h-4 w-4 mr-1" />
                   Edit
                 </button>
-                <button @click="deleteIntegration(integration)" class="btn btn-outline btn-sm text-red-600 hover:text-red-800">
+                <button @click="deleteIntegration(integration)" class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center text-sm">
                   <Trash2 class="h-4 w-4 mr-1" />
                   Delete
                 </button>
@@ -199,7 +200,7 @@
             <form @submit.prevent="addIntegration" class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Carrier</label>
-                <select v-model="newIntegration.carrier" class="input w-full" required>
+                <select v-model="newIntegration.carrier" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" required>
                   <option value="">Select Carrier</option>
                   <option value="MAERSK">Maersk</option>
                   <option value="MSC">MSC</option>
@@ -211,7 +212,7 @@
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Integration Type</label>
-                <select v-model="newIntegration.type" class="input w-full" required>
+                <select v-model="newIntegration.type" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" required>
                   <option value="">Select Type</option>
                   <option value="API">API</option>
                   <option value="WEBHOOK">Webhook</option>
@@ -220,29 +221,29 @@
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                <input v-model="newIntegration.name" type="text" class="input w-full" required />
+                <input v-model="newIntegration.name" type="text" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" required />
               </div>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">API Key</label>
-                <input v-model="newIntegration.apiKey" type="password" class="input w-full" />
+                <input v-model="newIntegration.apiKey" type="password" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" />
               </div>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">API Secret</label>
-                <input v-model="newIntegration.apiSecret" type="password" class="input w-full" />
+                <input v-model="newIntegration.apiSecret" type="password" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" />
               </div>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Webhook URL</label>
-                <input v-model="newIntegration.webhookUrl" type="url" class="input w-full" />
+                <input v-model="newIntegration.webhookUrl" type="url" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" />
               </div>
               
               <div class="flex items-center justify-end space-x-3 pt-4">
-                <button type="button" @click="showAddIntegrationModal = false" class="btn btn-outline">
+                <button type="button" @click="showAddIntegrationModal = false" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300">
                   Cancel
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300">
                   Add Integration
                 </button>
               </div>
@@ -252,10 +253,12 @@
       </div>
     </div>
   </div>
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
 import { 
   ArrowLeft, 
   Plus, 

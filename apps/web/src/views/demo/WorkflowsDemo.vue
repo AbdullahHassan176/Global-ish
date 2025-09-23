@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -146,14 +147,18 @@
                   <span :class="getStatusColor(selectedWorkflow.status)">
                     {{ selectedWorkflow.status }}
                   </span>
-                  <button class="btn btn-outline btn-sm">
-                    <Pause class="h-4 w-4 mr-1" />
-                    Pause
-                  </button>
-                  <button class="btn btn-primary btn-sm">
-                    <Play class="h-4 w-4 mr-1" />
-                    Resume
-                  </button>
+                  <Tooltip text="Pause the current workflow execution temporarily" position="top">
+                    <button @click="handlePauseWorkflow" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
+                      <Pause class="h-4 w-4 mr-1" />
+                      Pause
+                    </button>
+                  </Tooltip>
+                  <Tooltip text="Resume a paused workflow to continue execution" position="top">
+                    <button @click="handleResumeWorkflow" class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm">
+                      <Play class="h-4 w-4 mr-1" />
+                      Resume
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-4 text-sm">
@@ -211,7 +216,8 @@
                     </div>
                     <button
                       v-if="step.status === 'in_progress'"
-                      class="btn btn-primary btn-sm"
+                      @click="handleApproveStep(step)"
+                      class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm"
                     >
                       <CheckCircle class="h-4 w-4 mr-1" />
                       Approve
@@ -237,7 +243,7 @@
       <div v-if="activeTab === 'templates'" class="card p-6">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-lg font-semibold text-gray-900">Workflow Templates</h3>
-          <button class="btn btn-primary">
+          <button @click="handleCreateTemplate" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <FileText class="h-4 w-4 mr-2" />
             Create Template
           </button>
@@ -258,7 +264,7 @@
             <p class="text-sm text-gray-600 mb-3">{{ template.description }}</p>
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-500">{{ template.steps }} steps</span>
-              <button class="btn btn-outline btn-sm">
+              <button @click="handleStartWorkflow(template)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Play class="h-4 w-4 mr-1" />
                 Start
               </button>
@@ -319,11 +325,22 @@
       </div>
     </div>
   </div>
+
+  <!-- Create Workflow Template Workflow Modal -->
+  <CreateWorkflowTemplateWorkflow
+    :is-open="isCreateTemplateOpen"
+    @close="closeCreateTemplate"
+    @submit="handleTemplateSubmit"
+  />
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Play, Pause, CheckCircle, XCircle, Clock, Users, FileText, Shield } from 'lucide-vue-next'
+import SidebarLayout from '@/components/SidebarLayout.vue'
+import Tooltip from '@/components/Tooltip.vue'
+import CreateWorkflowTemplateWorkflow from '@/components/CreateWorkflowTemplateWorkflow.vue'
 
 interface WorkflowStep {
   id: string
@@ -349,6 +366,7 @@ interface WorkflowInstance {
 
 const activeTab = ref<'instances' | 'templates'>('instances')
 const selectedWorkflow = ref<WorkflowInstance | null>(null)
+const isCreateTemplateOpen = ref(false)
 
 const mockWorkflows: WorkflowInstance[] = [
   {
@@ -457,5 +475,41 @@ const getStepIcon = (status: string) => {
     default:
       return Clock
   }
+}
+
+// Button click handlers
+const handlePauseWorkflow = () => {
+  console.log('Pause Workflow clicked')
+  alert('Workflow paused successfully!')
+}
+
+const handleResumeWorkflow = () => {
+  console.log('Resume Workflow clicked')
+  alert('Workflow resumed successfully!')
+}
+
+const handleApproveStep = (step: any) => {
+  console.log('Approve Step clicked:', step)
+  alert(`Step "${step.name}" approved successfully!`)
+}
+
+const handleCreateTemplate = () => {
+  console.log('Opening workflow template creation workflow')
+  isCreateTemplateOpen.value = true
+}
+
+const closeCreateTemplate = () => {
+  isCreateTemplateOpen.value = false
+}
+
+const handleTemplateSubmit = (templateData: any) => {
+  console.log('Workflow template created:', templateData)
+  alert(`Workflow template "${templateData.name}" created successfully!`)
+  isCreateTemplateOpen.value = false
+}
+
+const handleStartWorkflow = (template: any) => {
+  console.log('Start Workflow clicked:', template)
+  alert(`Starting workflow: ${template.name}`)
 }
 </script>

@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -122,7 +123,7 @@
               <option value="2024-02">February 2024</option>
               <option value="2024-03">March 2024</option>
             </select>
-            <button @click="calculateKPIs" class="btn btn-primary">
+            <button @click="calculateKPIs" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <RefreshCw class="h-4 w-4 mr-2" />
               Calculate KPIs
             </button>
@@ -189,7 +190,7 @@
       <div v-if="activeTab === 'reports'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Reports & Exports</h2>
-          <button @click="generateReport" class="btn btn-primary">
+          <button @click="generateReport" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <FileText class="h-4 w-4 mr-2" />
             Generate Report
           </button>
@@ -250,7 +251,7 @@
       <div v-if="activeTab === 'predictions'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Predictive Analytics</h2>
-          <button @click="refreshPredictions" class="btn btn-primary">
+          <button @click="refreshPredictions" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <RefreshCw class="h-4 w-4 mr-2" />
             Refresh Predictions
           </button>
@@ -423,10 +424,12 @@
       </div>
     </div>
   </div>
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
 import { 
   BarChart3, TrendingUp, Clock, Brain, RefreshCw, FileText, 
   Ship, Users, Shield, DollarSign, Megaphone, Target

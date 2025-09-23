@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -117,7 +118,7 @@
         <!-- Contract Actions -->
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Contract Management</h2>
-          <button class="btn btn-primary">
+          <button @click="createContract" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Create Contract
           </button>
@@ -168,16 +169,17 @@
                 <div class="flex items-center space-x-2 ml-4">
                   <button
                     v-if="contract.status === 'PENDING_SIGNATURE'"
-                    class="btn btn-primary btn-sm"
+                    @click="signContract(contract.id)"
+                    class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm"
                   >
                     <PenTool class="h-4 w-4 mr-1" />
                     Send for Signature
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button @click="viewContract(contract.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Eye class="h-4 w-4 mr-1" />
                     View
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button @click="downloadContract(contract.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Download class="h-4 w-4 mr-1" />
                     Download
                   </button>
@@ -192,7 +194,7 @@
       <div v-if="activeTab === 'templates'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Contract Templates</h2>
-          <button class="btn btn-primary">
+          <button @click="createTemplate" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Create Template
           </button>
@@ -230,11 +232,11 @@
             </div>
             
             <div class="flex items-center space-x-2">
-              <button class="btn btn-primary btn-sm flex-1">
+              <button @click="useTemplate(template.id)" class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1">
                 <FileText class="h-4 w-4 mr-1" />
                 Use Template
               </button>
-              <button class="btn btn-outline btn-sm">
+              <button @click="editTemplate(template.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Edit class="h-4 w-4" />
               </button>
             </div>
@@ -247,13 +249,13 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Sensitive Records Locker</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>All Records</option>
               <option>Contracts</option>
               <option>Licenses</option>
               <option>Certificates</option>
             </select>
-            <button class="btn btn-primary">
+            <button @click="createRecord" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Add Record
             </button>
@@ -302,15 +304,15 @@
                 </div>
                 
                 <div class="flex items-center space-x-2 ml-4">
-                  <button class="btn btn-outline btn-sm">
+                  <button @click="viewRecord(record.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Eye class="h-4 w-4 mr-1" />
                     View
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button @click="downloadRecord(record.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Download class="h-4 w-4 mr-1" />
                     Download
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button @click="editRecord(record.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Edit class="h-4 w-4 mr-1" />
                     Edit
                   </button>
@@ -404,12 +406,12 @@
                   <button
                     v-if="!reminder.isCompleted"
                     @click="completeReminder(reminder.id)"
-                    class="btn btn-primary btn-sm"
+                    class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm"
                   >
                     <CheckCircle class="h-4 w-4 mr-1" />
                     Mark Complete
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button @click="editReminder(reminder.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Edit class="h-4 w-4 mr-1" />
                     Edit
                   </button>
@@ -472,10 +474,13 @@
       </div>
     </div>
   </div>
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
+import Tooltip from '@/components/Tooltip.vue'
 import { 
   FileText, 
   CheckCircle, 
@@ -696,5 +701,111 @@ const getReminderStatusColor = (isCompleted: boolean) => {
 
 const completeReminder = (id: string) => {
   console.log('Completing reminder:', id)
+  // Update reminder status to completed
+  const reminder = mockReminders.find(r => r.id === id)
+  if (reminder) {
+    reminder.isCompleted = true
+  }
+}
+
+// Contract management functions
+const createContract = () => {
+  console.log('Creating new contract')
+  alert('Create Contract functionality would open contract creation form')
+}
+
+const viewContract = (id: string) => {
+  console.log('Viewing contract:', id)
+  alert(`Viewing contract ${id} details`)
+}
+
+const editContract = (id: string) => {
+  console.log('Editing contract:', id)
+  alert(`Editing contract ${id}`)
+}
+
+const signContract = (id: string) => {
+  console.log('Signing contract:', id)
+  alert(`Opening e-signature workflow for contract ${id}`)
+}
+
+const downloadContract = (id: string) => {
+  console.log('Downloading contract:', id)
+  alert(`Downloading contract ${id} as PDF`)
+}
+
+// Template management functions
+const createTemplate = () => {
+  console.log('Creating new template')
+  alert('Create Template functionality would open template creation form')
+}
+
+const viewTemplate = (id: string) => {
+  console.log('Viewing template:', id)
+  alert(`Viewing template ${id} details`)
+}
+
+const editTemplate = (id: string) => {
+  console.log('Editing template:', id)
+  alert(`Editing template ${id}`)
+}
+
+const useTemplate = (id: string) => {
+  console.log('Using template:', id)
+  alert(`Creating new contract from template ${id}`)
+}
+
+// Records management functions
+const createRecord = () => {
+  console.log('Creating new record')
+  alert('Create Record functionality would open record creation form')
+}
+
+const viewRecord = (id: string) => {
+  console.log('Viewing record:', id)
+  alert(`Viewing record ${id} details`)
+}
+
+const editRecord = (id: string) => {
+  console.log('Editing record:', id)
+  alert(`Editing record ${id}`)
+}
+
+const downloadRecord = (id: string) => {
+  console.log('Downloading record:', id)
+  alert(`Downloading record ${id} as PDF`)
+}
+
+const lockRecord = (id: string) => {
+  console.log('Locking record:', id)
+  alert(`Locking record ${id} for security`)
+}
+
+const unlockRecord = (id: string) => {
+  console.log('Unlocking record:', id)
+  alert(`Unlocking record ${id}`)
+}
+
+// Reminder management functions
+const createReminder = () => {
+  console.log('Creating new reminder')
+  alert('Create Reminder functionality would open reminder creation form')
+}
+
+const viewReminder = (id: string) => {
+  console.log('Viewing reminder:', id)
+  alert(`Viewing reminder ${id} details`)
+}
+
+const editReminder = (id: string) => {
+  console.log('Editing reminder:', id)
+  alert(`Editing reminder ${id}`)
+}
+
+const deleteReminder = (id: string) => {
+  console.log('Deleting reminder:', id)
+  if (confirm('Are you sure you want to delete this reminder?')) {
+    alert(`Reminder ${id} deleted`)
+  }
 }
 </script>

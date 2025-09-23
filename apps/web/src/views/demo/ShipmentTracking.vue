@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
@@ -11,11 +12,11 @@
             </p>
           </div>
           <div class="flex items-center space-x-4">
-            <router-link to="/demo/logistics" class="btn btn-outline">
+            <router-link to="/demo/logistics" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center">
               <ArrowLeft class="h-4 w-4 mr-2" />
               Back to Logistics
             </router-link>
-            <button class="btn btn-primary">
+            <button @click="handleNewShipment" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               New Shipment
             </button>
@@ -32,12 +33,12 @@
               v-model="searchQuery"
               type="text"
               placeholder="Shipment number, BL, container..."
-              class="input w-full"
+              class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300"
             />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Carrier</label>
-            <select v-model="selectedCarrier" class="input w-full">
+            <select v-model="selectedCarrier" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option value="">All Carriers</option>
               <option value="MAERSK">Maersk</option>
               <option value="MSC">MSC</option>
@@ -48,7 +49,7 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-            <select v-model="selectedStatus" class="input w-full">
+            <select v-model="selectedStatus" class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option value="">All Status</option>
               <option value="PLANNED">Planned</option>
               <option value="AT_ORIGIN">At Origin</option>
@@ -58,7 +59,7 @@
             </select>
           </div>
           <div class="flex items-end">
-            <button @click="searchShipments" class="btn btn-primary w-full">
+            <button @click="searchShipments" class="w-full px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center justify-center shadow-lg">
               <Search class="h-4 w-4 mr-2" />
               Search
             </button>
@@ -306,10 +307,12 @@
       </div>
     </div>
   </div>
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SidebarLayout from '@/components/SidebarLayout.vue'
 import { 
   ArrowLeft, 
   Plus, 
@@ -514,5 +517,16 @@ const getCarrierColor = (carrier: string) => {
     FEDEX: 'bg-purple-500'
   }
   return colors[carrier] || 'bg-gray-500'
+}
+
+// Button click handlers
+const handleNewShipment = () => {
+  console.log('New Shipment clicked')
+  alert('New Shipment functionality would open shipment creation dialog')
+}
+
+const searchShipments = () => {
+  console.log('Search Shipments clicked')
+  alert('Searching shipments...')
 }
 </script>

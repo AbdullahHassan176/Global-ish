@@ -1,12 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
+  <SidebarLayout>
+    <div class="min-h-screen bg-gradient-to-br from-background-cream to-brand-pink/20 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Marketing Dashboard</h1>
-        <p class="text-gray-600 mt-2">
-          Content calendar, repository, approval flow, and social media integrations
-        </p>
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Marketing Dashboard</h1>
+            <p class="text-gray-600 mt-2">
+              Content calendar, repository, approval flow, and social media integrations
+            </p>
+          </div>
+          <button @click="handleCreateCampaign" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+            <Plus class="h-4 w-4 mr-2" />
+            Create Campaign
+          </button>
+        </div>
       </div>
 
       <!-- Stats Cards -->
@@ -117,7 +126,7 @@
         <!-- Campaign Actions -->
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Marketing Campaigns</h2>
-          <button class="btn btn-primary">
+          <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Create Campaign
           </button>
@@ -165,7 +174,7 @@
                   <span>{{ campaign.integrationsCount }} platforms</span>
                 </div>
               </div>
-              <button class="btn btn-outline btn-sm">View Details</button>
+              <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">View Details</button>
             </div>
           </div>
         </div>
@@ -176,12 +185,12 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Content Calendar</h2>
           <div class="flex items-center space-x-4">
-            <select class="input">
+            <select class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300">
               <option>All Campaigns</option>
               <option>Q1 2024 Campaign</option>
               <option>Product Launch</option>
             </select>
-            <button class="btn btn-primary">
+            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Schedule Content
             </button>
@@ -307,7 +316,7 @@
                   <button
                     v-if="approval.status === 'PENDING'"
                     @click="approveContent(approval.id)"
-                    class="btn btn-primary btn-sm"
+                    class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm"
                   >
                     <CheckCircle class="h-4 w-4 mr-1" />
                     Approve
@@ -315,12 +324,12 @@
                   <button
                     v-if="approval.status === 'PENDING'"
                     @click="rejectContent(approval.id)"
-                    class="btn btn-outline btn-sm text-red-600 hover:text-red-700"
+                    class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center text-sm"
                   >
                     <XCircle class="h-4 w-4 mr-1" />
                     Reject
                   </button>
-                  <button class="btn btn-outline btn-sm">
+                  <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     View Details
                   </button>
                 </div>
@@ -334,7 +343,7 @@
       <div v-if="activeTab === 'integrations'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Social Media Integrations</h2>
-          <button class="btn btn-primary">
+          <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Integration
           </button>
@@ -379,17 +388,17 @@
             <div class="flex items-center space-x-2">
               <button
                 v-if="integration.status === 'INACTIVE'"
-                class="btn btn-primary btn-sm flex-1"
+                class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1"
               >
                 Connect
               </button>
               <button
                 v-else
-                class="btn btn-outline btn-sm flex-1"
+                class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm flex-1"
               >
                 Manage
               </button>
-              <button class="btn btn-outline btn-sm">
+              <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Settings class="h-4 w-4" />
               </button>
             </div>
@@ -469,6 +478,7 @@
       </div>
     </div>
   </div>
+  </SidebarLayout>
 </template>
 
 <script setup lang="ts">
@@ -489,6 +499,7 @@ import {
   DollarSign,
   Facebook
 } from 'lucide-vue-next'
+import SidebarLayout from '@/components/SidebarLayout.vue'
 
 const activeTab = ref<'campaigns' | 'calendar' | 'approvals' | 'integrations'>('campaigns')
 const approvalFilter = ref<'all' | 'pending' | 'approved'>('all')
@@ -696,5 +707,10 @@ const approveContent = (id: string) => {
 
 const rejectContent = (id: string) => {
   console.log('Rejecting content:', id)
+}
+
+const handleCreateCampaign = () => {
+  console.log('Opening campaign creation workflow')
+  alert('Create Campaign functionality would open campaign creation form')
 }
 </script>
