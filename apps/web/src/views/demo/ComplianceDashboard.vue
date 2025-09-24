@@ -481,6 +481,7 @@
 import { ref, computed } from 'vue'
 import SidebarLayout from '@/components/SidebarLayout.vue'
 import Tooltip from '@/components/Tooltip.vue'
+import { notify } from '@/composables/useNotifications'
 import { 
   FileText, 
   CheckCircle, 
@@ -711,101 +712,109 @@ const completeReminder = (id: string) => {
 // Contract management functions
 const createContract = () => {
   console.log('Creating new contract')
-  alert('Create Contract functionality would open contract creation form')
+  notify.info('Create Contract', 'Opening contract creation form...')
 }
 
 const viewContract = (id: string) => {
   console.log('Viewing contract:', id)
-  alert(`Viewing contract ${id} details`)
+  notify.info('View Contract', `Opening contract ${id} details`)
 }
 
 const editContract = (id: string) => {
   console.log('Editing contract:', id)
-  alert(`Editing contract ${id}`)
+  notify.info('Edit Contract', `Opening editor for contract ${id}`)
 }
 
 const signContract = (id: string) => {
   console.log('Signing contract:', id)
-  alert(`Opening e-signature workflow for contract ${id}`)
+  notify.info('E-Signature', `Opening e-signature workflow for contract ${id}`)
 }
 
 const downloadContract = (id: string) => {
   console.log('Downloading contract:', id)
-  alert(`Downloading contract ${id} as PDF`)
+  notify.success('Download Started', `Downloading contract ${id} as PDF`)
 }
 
 // Template management functions
 const createTemplate = () => {
   console.log('Creating new template')
-  alert('Create Template functionality would open template creation form')
+  notify.info('Create Template', 'Opening template creation form...')
 }
 
 const viewTemplate = (id: string) => {
   console.log('Viewing template:', id)
-  alert(`Viewing template ${id} details`)
+  notify.info('View Template', `Opening template ${id} details`)
 }
 
 const editTemplate = (id: string) => {
   console.log('Editing template:', id)
-  alert(`Editing template ${id}`)
+  notify.info('Edit Template', `Opening editor for template ${id}`)
 }
 
 const useTemplate = (id: string) => {
   console.log('Using template:', id)
-  alert(`Creating new contract from template ${id}`)
+  notify.success('Template Applied', `Creating new contract from template ${id}`)
 }
 
 // Records management functions
 const createRecord = () => {
   console.log('Creating new record')
-  alert('Create Record functionality would open record creation form')
+  notify.info('Create Record', 'Opening record creation form...')
 }
 
 const viewRecord = (id: string) => {
   console.log('Viewing record:', id)
-  alert(`Viewing record ${id} details`)
+  notify.info('View Record', `Opening record ${id} details`)
 }
 
 const editRecord = (id: string) => {
   console.log('Editing record:', id)
-  alert(`Editing record ${id}`)
+  notify.info('Edit Record', `Opening editor for record ${id}`)
 }
 
 const downloadRecord = (id: string) => {
   console.log('Downloading record:', id)
-  alert(`Downloading record ${id} as PDF`)
+  notify.success('Download Started', `Downloading record ${id} as PDF`)
 }
 
 const lockRecord = (id: string) => {
   console.log('Locking record:', id)
-  alert(`Locking record ${id} for security`)
+  notify.success('Record Locked', `Record ${id} has been locked for security`)
 }
 
 const unlockRecord = (id: string) => {
   console.log('Unlocking record:', id)
-  alert(`Unlocking record ${id}`)
+  notify.success('Record Unlocked', `Record ${id} has been unlocked`)
 }
 
 // Reminder management functions
 const createReminder = () => {
   console.log('Creating new reminder')
-  alert('Create Reminder functionality would open reminder creation form')
+  notify.info('Create Reminder', 'Opening reminder creation form...')
 }
 
 const viewReminder = (id: string) => {
   console.log('Viewing reminder:', id)
-  alert(`Viewing reminder ${id} details`)
+  notify.info('View Reminder', `Opening reminder ${id} details`)
 }
 
 const editReminder = (id: string) => {
   console.log('Editing reminder:', id)
-  alert(`Editing reminder ${id}`)
+  notify.info('Edit Reminder', `Opening editor for reminder ${id}`)
 }
 
-const deleteReminder = (id: string) => {
+const deleteReminder = async (id: string) => {
   console.log('Deleting reminder:', id)
-  if (confirm('Are you sure you want to delete this reminder?')) {
-    alert(`Reminder ${id} deleted`)
+  const confirmed = await notify.confirm({
+    title: 'Delete Reminder',
+    message: 'Are you sure you want to delete this reminder?',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    variant: 'danger'
+  })
+  
+  if (confirmed) {
+    notify.success('Reminder Deleted', `Reminder ${id} has been deleted`)
   }
 }
 </script>

@@ -418,7 +418,7 @@
       <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div class="text-center">
           <p class="text-brand-cream">
-            © 2024 Global Next. Built with Vue.js, NestJS, and modern technologies.
+            © 2025 Global Next. Built with Vue.js, NestJS, and modern technologies.
           </p>
         </div>
       </div>
@@ -430,6 +430,7 @@
 import { ref, computed, onMounted } from 'vue'
 import SidebarLayout from '@/components/SidebarLayout.vue'
 import Tooltip from '@/components/Tooltip.vue'
+import { notify } from '@/composables/useNotifications'
 import { 
   DollarSign, Briefcase, Users, Activity, RefreshCw, Calendar, Ship, Clock, 
   Shield, Settings, TrendingUp, CheckCircle, AlertTriangle, FileText, 
@@ -596,7 +597,6 @@ const refreshData = () => {
     if (deptData.activeWorkflows) deptData.activeWorkflows += Math.floor(Math.random() * 3) - 1
   })
   
-  alert('Company data refreshed successfully!')
 }
 
 // Lifecycle

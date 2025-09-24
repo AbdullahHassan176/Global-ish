@@ -231,6 +231,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { X, Plus, Trash2 } from 'lucide-vue-next'
+import { notify } from '@/composables/useNotifications'
 
 const props = defineProps<{
   isOpen: boolean
@@ -274,7 +275,7 @@ const removeStep = (index: number) => {
 
 const createTemplate = () => {
   if (!templateData.value.name || templateData.value.steps.length === 0) {
-    alert('Please fill in all required fields')
+    notify.warning('Validation Error', 'Please fill in all required fields')
     return
   }
   
@@ -285,7 +286,7 @@ const createTemplate = () => {
 
 const saveDraft = () => {
   console.log('Saving template draft:', templateData.value)
-  alert('Template draft saved successfully!')
+  notify.success('Draft Saved', 'Template draft saved successfully!')
 }
 
 const close = () => {

@@ -304,21 +304,61 @@
         <div class="card p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Integration Points</h3>
           <div class="space-y-4">
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span class="font-medium">DocuSign</span>
-              <span class="text-sm text-gray-600">E-signature</span>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" @click="handleDocuSignIntegration">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <FileText class="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <span class="font-medium">DocuSign</span>
+                  <span class="text-sm text-gray-600 block">E-signature</span>
+                </div>
+              </div>
+              <button class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm">
+                Configure
+              </button>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span class="font-medium">Adobe Sign</span>
-              <span class="text-sm text-gray-600">E-signature</span>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" @click="handleAdobeSignIntegration">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                  <FileText class="h-4 w-4 text-red-600" />
+                </div>
+                <div>
+                  <span class="font-medium">Adobe Sign</span>
+                  <span class="text-sm text-gray-600 block">E-signature</span>
+                </div>
+              </div>
+              <button class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm">
+                Configure
+              </button>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span class="font-medium">Email Service</span>
-              <span class="text-sm text-gray-600">Notifications</span>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" @click="handleEmailServiceIntegration">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <Mail class="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <span class="font-medium">Email Service</span>
+                  <span class="text-sm text-gray-600 block">Notifications</span>
+                </div>
+              </div>
+              <button class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm">
+                Configure
+              </button>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span class="font-medium">SMS Service</span>
-              <span class="text-sm text-gray-600">Alerts</span>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" @click="handleSMSServiceIntegration">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <MessageSquare class="h-4 w-4 text-purple-600" />
+                </div>
+                <div>
+                  <span class="font-medium">SMS Service</span>
+                  <span class="text-sm text-gray-600 block">Alerts</span>
+                </div>
+              </div>
+              <button class="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm">
+                Configure
+              </button>
             </div>
           </div>
         </div>
@@ -332,15 +372,69 @@
     @close="closeCreateTemplate"
     @submit="handleTemplateSubmit"
   />
+
+  <!-- Start Workflow Modal -->
+  <StartWorkflow
+    v-if="selectedTemplate"
+    :is-open="isStartWorkflowOpen"
+    :template="selectedTemplate"
+    @close="closeStartWorkflow"
+    @submit="handleWorkflowSubmit"
+  />
+
+  <!-- Pause Workflow Modal -->
+  <PauseWorkflow
+    :is-open="isPauseWorkflowOpen"
+    :workflow-name="selectedWorkflow?.name || ''"
+    @close="closePauseWorkflow"
+    @submit="handlePauseSubmit"
+  />
+
+  <!-- Approve Step Modal -->
+  <ApproveStepWorkflow
+    v-if="selectedStep"
+    :is-open="isApproveStepOpen"
+    :step="selectedStep"
+    @close="closeApproveStep"
+    @submit="handleApproveSubmit"
+  />
+
+  <!-- DocuSign Integration Modal -->
+  <DocuSignIntegrationWorkflow
+    :is-open="isDocuSignIntegrationOpen"
+    @close="closeDocuSignIntegration"
+    @submit="handleDocuSignSubmit"
+  />
+
+  <!-- Email Service Integration Modal -->
+  <EmailServiceIntegrationWorkflow
+    :is-open="isEmailServiceIntegrationOpen"
+    @close="closeEmailServiceIntegration"
+    @submit="handleEmailServiceSubmit"
+  />
+
+  <!-- SMS Service Integration Modal -->
+  <SMSServiceIntegrationWorkflow
+    :is-open="isSMSServiceIntegrationOpen"
+    @close="closeSMSServiceIntegration"
+    @submit="handleSMSServiceSubmit"
+  />
   </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Play, Pause, CheckCircle, XCircle, Clock, Users, FileText, Shield } from 'lucide-vue-next'
+import { Play, Pause, CheckCircle, XCircle, Clock, Users, FileText, Shield, Mail, MessageSquare } from 'lucide-vue-next'
 import SidebarLayout from '@/components/SidebarLayout.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import CreateWorkflowTemplateWorkflow from '@/components/CreateWorkflowTemplateWorkflow.vue'
+import StartWorkflow from '@/components/StartWorkflow.vue'
+import PauseWorkflow from '@/components/PauseWorkflow.vue'
+import ApproveStepWorkflow from '@/components/ApproveStepWorkflow.vue'
+import DocuSignIntegrationWorkflow from '@/components/DocuSignIntegrationWorkflow.vue'
+import EmailServiceIntegrationWorkflow from '@/components/EmailServiceIntegrationWorkflow.vue'
+import SMSServiceIntegrationWorkflow from '@/components/SMSServiceIntegrationWorkflow.vue'
+import { notify } from '@/composables/useNotifications'
 
 interface WorkflowStep {
   id: string
@@ -367,6 +461,14 @@ interface WorkflowInstance {
 const activeTab = ref<'instances' | 'templates'>('instances')
 const selectedWorkflow = ref<WorkflowInstance | null>(null)
 const isCreateTemplateOpen = ref(false)
+const isStartWorkflowOpen = ref(false)
+const selectedTemplate = ref<any>(null)
+const isPauseWorkflowOpen = ref(false)
+const isApproveStepOpen = ref(false)
+const selectedStep = ref<any>(null)
+const isDocuSignIntegrationOpen = ref(false)
+const isEmailServiceIntegrationOpen = ref(false)
+const isSMSServiceIntegrationOpen = ref(false)
 
 const mockWorkflows: WorkflowInstance[] = [
   {
@@ -480,17 +582,18 @@ const getStepIcon = (status: string) => {
 // Button click handlers
 const handlePauseWorkflow = () => {
   console.log('Pause Workflow clicked')
-  alert('Workflow paused successfully!')
+  isPauseWorkflowOpen.value = true
 }
 
 const handleResumeWorkflow = () => {
   console.log('Resume Workflow clicked')
-  alert('Workflow resumed successfully!')
+  notify.success('Workflow Resumed', 'Workflow has been resumed successfully!')
 }
 
 const handleApproveStep = (step: any) => {
   console.log('Approve Step clicked:', step)
-  alert(`Step "${step.name}" approved successfully!`)
+  selectedStep.value = step
+  isApproveStepOpen.value = true
 }
 
 const handleCreateTemplate = () => {
@@ -504,12 +607,100 @@ const closeCreateTemplate = () => {
 
 const handleTemplateSubmit = (templateData: any) => {
   console.log('Workflow template created:', templateData)
-  alert(`Workflow template "${templateData.name}" created successfully!`)
+  notify.success('Template Created', `Workflow template "${templateData.name}" has been created successfully!`)
   isCreateTemplateOpen.value = false
 }
 
 const handleStartWorkflow = (template: any) => {
   console.log('Start Workflow clicked:', template)
-  alert(`Starting workflow: ${template.name}`)
+  selectedTemplate.value = template
+  isStartWorkflowOpen.value = true
+}
+
+const closeStartWorkflow = () => {
+  isStartWorkflowOpen.value = false
+  selectedTemplate.value = null
+}
+
+const handleWorkflowSubmit = (workflowData: any) => {
+  console.log('Workflow started:', workflowData)
+  notify.success('Workflow Started', `Workflow "${workflowData.name}" has been started successfully!`)
+  isStartWorkflowOpen.value = false
+  selectedTemplate.value = null
+}
+
+const closePauseWorkflow = () => {
+  isPauseWorkflowOpen.value = false
+}
+
+const handlePauseSubmit = (pauseData: any) => {
+  console.log('Workflow paused:', pauseData)
+  notify.success('Workflow Paused', `Workflow has been paused successfully!`)
+  isPauseWorkflowOpen.value = false
+}
+
+const closeApproveStep = () => {
+  isApproveStepOpen.value = false
+  selectedStep.value = null
+}
+
+const handleApproveSubmit = (approvalData: any) => {
+  console.log('Step approved:', approvalData)
+  notify.success('Decision Submitted', `Decision for step "${approvalData.stepName}" has been submitted!`)
+  isApproveStepOpen.value = false
+  selectedStep.value = null
+}
+
+// Integration point handlers
+const handleDocuSignIntegration = () => {
+  console.log('DocuSign integration clicked')
+  isDocuSignIntegrationOpen.value = true
+}
+
+const handleAdobeSignIntegration = () => {
+  console.log('Adobe Sign integration clicked')
+  notify.info('Adobe Sign Integration', 'Adobe Sign integration workflow coming soon!')
+  // TODO: Create Adobe Sign integration workflow
+}
+
+const handleEmailServiceIntegration = () => {
+  console.log('Email Service integration clicked')
+  isEmailServiceIntegrationOpen.value = true
+}
+
+const handleSMSServiceIntegration = () => {
+  console.log('SMS Service integration clicked')
+  isSMSServiceIntegrationOpen.value = true
+}
+
+// Integration workflow handlers
+const closeDocuSignIntegration = () => {
+  isDocuSignIntegrationOpen.value = false
+}
+
+const handleDocuSignSubmit = (configData: any) => {
+  console.log('DocuSign configuration saved:', configData)
+  notify.success('DocuSign Configured', 'DocuSign integration has been configured successfully!')
+  isDocuSignIntegrationOpen.value = false
+}
+
+const closeEmailServiceIntegration = () => {
+  isEmailServiceIntegrationOpen.value = false
+}
+
+const handleEmailServiceSubmit = (configData: any) => {
+  console.log('Email Service configuration saved:', configData)
+  notify.success('Email Service Configured', 'Email service integration has been configured successfully!')
+  isEmailServiceIntegrationOpen.value = false
+}
+
+const closeSMSServiceIntegration = () => {
+  isSMSServiceIntegrationOpen.value = false
+}
+
+const handleSMSServiceSubmit = (configData: any) => {
+  console.log('SMS Service configuration saved:', configData)
+  notify.success('SMS Service Configured', 'SMS service integration has been configured successfully!')
+  isSMSServiceIntegrationOpen.value = false
 }
 </script>

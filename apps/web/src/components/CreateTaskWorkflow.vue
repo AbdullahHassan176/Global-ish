@@ -177,11 +177,21 @@
       </div>
     </div>
   </div>
+
+  <!-- Save Draft Workflow -->
+  <SaveDraftWorkflow
+    :is-open="isSaveDraftOpen"
+    :task-data="taskData"
+    @close="closeSaveDraft"
+    @submit="handleDraftSubmit"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { X, Upload } from 'lucide-vue-next'
+import { notify } from '@/composables/useNotifications'
+import SaveDraftWorkflow from './SaveDraftWorkflow.vue'
 
 const props = defineProps<{
   isOpen: boolean
@@ -203,6 +213,8 @@ const taskData = ref({
   attachments: []
 })
 
+const isSaveDraftOpen = ref(false)
+
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target.files) {
@@ -212,18 +224,33 @@ const handleFileUpload = (event: Event) => {
 
 const createTask = () => {
   if (!taskData.value.title || !taskData.value.assignedTo) {
-    alert('Please fill in all required fields')
+    notify.warning('Validation Error', 'Please fill in all required fields (Title and Assignee)')
     return
   }
   
   console.log('Creating task:', taskData.value)
+  notify.success('Task Created', `Task "${taskData.value.title}" has been created successfully!`)
   emit('submit', taskData.value)
   close()
 }
 
 const saveDraft = () => {
-  console.log('Saving task draft:', taskData.value)
-  alert('Task draft saved successfully!')
+  if (!taskData.value.title) {
+    notify.warning('Validation Error', 'Please provide at least a task title to save as draft')
+    return
+  }
+  
+  isSaveDraftOpen.value = true
+}
+
+const closeSaveDraft = () => {
+  isSaveDraftOpen.value = false
+}
+
+const handleDraftSubmit = (draftInfo: any) => {
+  console.log('Draft submitted:', draftInfo)
+  notify.success('Draft Saved', `Task draft "${draftInfo.name}" has been saved successfully!`)
+  isSaveDraftOpen.value = false
 }
 
 const close = () => {

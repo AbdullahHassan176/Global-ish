@@ -525,8 +525,4 @@ const handleNewShipment = () => {
   alert('New Shipment functionality would open shipment creation dialog')
 }
 
-const searchShipments = () => {
-  console.log('Search Shipments clicked')
-  alert('Searching shipments...')
-}
 </script>

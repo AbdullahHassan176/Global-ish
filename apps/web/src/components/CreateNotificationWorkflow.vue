@@ -219,6 +219,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { X } from 'lucide-vue-next'
+import { notify } from '@/composables/useNotifications'
 
 const props = defineProps<{
   isOpen: boolean
@@ -248,7 +249,7 @@ const notificationData = ref({
 
 const sendNotification = () => {
   if (!notificationData.value.subject || !notificationData.value.message) {
-    alert('Please fill in all required fields')
+    notify.warning('Validation Error', 'Please fill in all required fields')
     return
   }
   
@@ -259,7 +260,7 @@ const sendNotification = () => {
 
 const saveDraft = () => {
   console.log('Saving notification draft:', notificationData.value)
-  alert('Notification draft saved successfully!')
+  notify.success('Draft Saved', 'Notification draft saved successfully!')
 }
 
 const close = () => {

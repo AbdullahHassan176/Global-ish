@@ -373,6 +373,7 @@ import {
   X, RefreshCw, Clock, MapPin, FileText, Bell, CheckCircle,
   Ship, Package, Truck, AlertTriangle, Info, Download, Eye
 } from 'lucide-vue-next'
+import { notify } from '@/composables/useNotifications'
 
 const props = defineProps<{
   isOpen: boolean
@@ -594,22 +595,22 @@ const getAlertStatusColor = (status: string) => {
 const refreshTracking = () => {
   console.log('Refreshing tracking data for shipment:', props.shipmentId)
   lastUpdated.value = new Date().toLocaleTimeString()
-  alert('Tracking data refreshed successfully!')
+  notify.success('Data Refreshed', 'Tracking data refreshed successfully!')
 }
 
 const viewDocument = (documentId: string) => {
   console.log('Viewing document:', documentId)
-  alert(`Opening document ${documentId} in viewer`)
+  notify.info('Document Viewer', `Opening document ${documentId} in viewer`)
 }
 
 const downloadDocument = (documentId: string) => {
   console.log('Downloading document:', documentId)
-  alert(`Downloading document ${documentId}`)
+  notify.success('Download Started', `Downloading document ${documentId}`)
 }
 
 const viewAlert = (alertId: string) => {
   console.log('Viewing alert details:', alertId)
-  alert(`Opening details for alert ${alertId}`)
+  notify.info('Alert Details', `Opening details for alert ${alertId}`)
 }
 
 const dismissAlert = (alertId: string) => {
@@ -618,17 +619,17 @@ const dismissAlert = (alertId: string) => {
   if (alert) {
     alert.status = 'dismissed'
   }
-  alert('Alert dismissed')
+  notify.success('Alert Dismissed', 'Alert has been dismissed')
 }
 
 const exportTracking = () => {
   console.log('Exporting tracking report')
-  alert('Exporting comprehensive tracking report...')
+  notify.success('Export Started', 'Exporting comprehensive tracking report...')
 }
 
 const shareTracking = () => {
   console.log('Sharing tracking information')
-  alert('Generating shareable tracking link...')
+  notify.success('Share Link Generated', 'Generating shareable tracking link...')
 }
 
 const close = () => {

@@ -126,7 +126,7 @@
         <!-- Campaign Actions -->
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Marketing Campaigns</h2>
-          <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="handleCreateCampaign" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Create Campaign
           </button>
@@ -190,7 +190,7 @@
               <option>Q1 2024 Campaign</option>
               <option>Product Launch</option>
             </select>
-            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+            <button @click="handleScheduleContent" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Schedule Content
             </button>
@@ -329,7 +329,7 @@
                     <XCircle class="h-4 w-4 mr-1" />
                     Reject
                   </button>
-                  <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
+                  <button @click="handleViewDetails(approval)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     View Details
                   </button>
                 </div>
@@ -343,7 +343,7 @@
       <div v-if="activeTab === 'integrations'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Social Media Integrations</h2>
-          <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="handleAddIntegration" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Integration
           </button>
@@ -388,17 +388,19 @@
             <div class="flex items-center space-x-2">
               <button
                 v-if="integration.status === 'INACTIVE'"
+                @click="handleConnectIntegration(integration)"
                 class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1"
               >
                 Connect
               </button>
               <button
                 v-else
+                @click="handleManageIntegration(integration)"
                 class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm flex-1"
               >
                 Manage
               </button>
-              <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
+              <button @click="handleIntegrationSettings(integration)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Settings class="h-4 w-4" />
               </button>
             </div>
@@ -478,6 +480,50 @@
       </div>
     </div>
   </div>
+
+  <!-- Workflow Modals -->
+  <ViewDetailsWorkflow
+    :is-open="isViewDetailsOpen"
+    :content="selectedContent"
+    @close="closeViewDetails"
+    @edit="handleViewDetailsEdit"
+  />
+
+  <CreateCampaignWorkflow
+    :is-open="isCreateCampaignOpen"
+    @close="closeCreateCampaign"
+    @create="handleCreateCampaignSubmit"
+    @saveDraft="handleCreateCampaignSubmit"
+  />
+
+  <ScheduleContentWorkflow
+    :is-open="isScheduleContentOpen"
+    @close="closeScheduleContent"
+    @schedule="handleScheduleContentSubmit"
+    @saveDraft="handleScheduleContentSubmit"
+  />
+
+  <ApproveContentWorkflow
+    :is-open="isApproveContentOpen"
+    :content="selectedContent"
+    @close="closeApproveContent"
+    @approve="handleApproveContentSubmit"
+  />
+
+  <RejectContentWorkflow
+    :is-open="isRejectContentOpen"
+    :content="selectedContent"
+    @close="closeRejectContent"
+    @reject="handleRejectContentSubmit"
+  />
+
+  <IntegrationManagementWorkflow
+    :is-open="isIntegrationManagementOpen"
+    :integration="selectedIntegration"
+    @close="closeIntegrationManagement"
+    @save="handleIntegrationManagementSave"
+    @disconnect="handleIntegrationManagementDisconnect"
+  />
   </SidebarLayout>
 </template>
 
@@ -500,9 +546,26 @@ import {
   Facebook
 } from 'lucide-vue-next'
 import SidebarLayout from '@/components/SidebarLayout.vue'
+import ViewDetailsWorkflow from '@/components/ViewDetailsWorkflow.vue'
+import CreateCampaignWorkflow from '@/components/CreateCampaignWorkflow.vue'
+import ScheduleContentWorkflow from '@/components/ScheduleContentWorkflow.vue'
+import ApproveContentWorkflow from '@/components/ApproveContentWorkflow.vue'
+import RejectContentWorkflow from '@/components/RejectContentWorkflow.vue'
+import IntegrationManagementWorkflow from '@/components/IntegrationManagementWorkflow.vue'
+import { notify } from '@/composables/useNotifications'
 
 const activeTab = ref<'campaigns' | 'calendar' | 'approvals' | 'integrations'>('campaigns')
 const approvalFilter = ref<'all' | 'pending' | 'approved'>('all')
+
+// Modal states
+const isViewDetailsOpen = ref(false)
+const isCreateCampaignOpen = ref(false)
+const isScheduleContentOpen = ref(false)
+const isApproveContentOpen = ref(false)
+const isRejectContentOpen = ref(false)
+const isIntegrationManagementOpen = ref(false)
+const selectedContent = ref<any>(null)
+const selectedIntegration = ref<any>(null)
 
 const mockCampaigns = [
   {
@@ -703,14 +766,117 @@ const getPlatformIcon = (platform: string) => {
 
 const approveContent = (id: string) => {
   console.log('Approving content:', id)
+  const content = mockApprovals.find(a => a.id === id)
+  selectedContent.value = content
+  isApproveContentOpen.value = true
 }
 
 const rejectContent = (id: string) => {
   console.log('Rejecting content:', id)
+  const content = mockApprovals.find(a => a.id === id)
+  selectedContent.value = content
+  isRejectContentOpen.value = true
 }
 
 const handleCreateCampaign = () => {
   console.log('Opening campaign creation workflow')
-  alert('Create Campaign functionality would open campaign creation form')
+  isCreateCampaignOpen.value = true
+}
+
+const handleScheduleContent = () => {
+  console.log('Opening schedule content workflow')
+  isScheduleContentOpen.value = true
+}
+
+const handleViewDetails = (approval: any) => {
+  console.log('Viewing details for approval:', approval)
+  selectedContent.value = approval
+  isViewDetailsOpen.value = true
+}
+
+const handleAddIntegration = () => {
+  console.log('Opening add integration workflow')
+  notify.info('Add Integration', 'Opening integration setup workflow')
+}
+
+const handleConnectIntegration = (integration: any) => {
+  console.log('Connecting integration:', integration)
+  notify.info('Connect Integration', `Connecting to ${integration.platform}...`)
+}
+
+const handleManageIntegration = (integration: any) => {
+  console.log('Managing integration:', integration)
+  selectedIntegration.value = integration
+  isIntegrationManagementOpen.value = true
+}
+
+const handleIntegrationSettings = (integration: any) => {
+  console.log('Opening settings for integration:', integration)
+  selectedIntegration.value = integration
+  isIntegrationManagementOpen.value = true
+}
+
+// Workflow handlers
+const closeViewDetails = () => {
+  isViewDetailsOpen.value = false
+  selectedContent.value = null
+}
+
+const closeCreateCampaign = () => {
+  isCreateCampaignOpen.value = false
+}
+
+const closeScheduleContent = () => {
+  isScheduleContentOpen.value = false
+}
+
+const closeApproveContent = () => {
+  isApproveContentOpen.value = false
+  selectedContent.value = null
+}
+
+const closeRejectContent = () => {
+  isRejectContentOpen.value = false
+  selectedContent.value = null
+}
+
+const closeIntegrationManagement = () => {
+  isIntegrationManagementOpen.value = false
+  selectedIntegration.value = null
+}
+
+const handleCreateCampaignSubmit = (campaign: any) => {
+  console.log('Campaign created:', campaign)
+  notify.success('Campaign Created', 'Marketing campaign has been created successfully!')
+}
+
+const handleScheduleContentSubmit = (content: any) => {
+  console.log('Content scheduled:', content)
+  notify.success('Content Scheduled', 'Content has been scheduled successfully!')
+}
+
+const handleViewDetailsEdit = (content: any) => {
+  console.log('Editing content:', content)
+  notify.info('Edit Content', 'Opening content editor...')
+}
+
+const handleApproveContentSubmit = (data: any) => {
+  console.log('Content approved:', data)
+  notify.success('Content Approved', 'Content has been approved successfully!')
+}
+
+const handleRejectContentSubmit = (data: any) => {
+  console.log('Content rejected:', data)
+  notify.success('Content Rejected', 'Content has been rejected with feedback provided.')
+}
+
+const handleIntegrationManagementSave = (data: any) => {
+  console.log('Integration settings saved:', data)
+  notify.success('Settings Saved', 'Integration settings have been saved successfully!')
+}
+
+const handleIntegrationManagementDisconnect = (integration: any) => {
+  console.log('Integration disconnected:', integration)
+  notify.success('Integration Disconnected', 'Integration has been disconnected successfully.')
 }
 </script>

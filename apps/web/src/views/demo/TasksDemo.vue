@@ -119,24 +119,42 @@
             class="flex-shrink-0 w-80"
           >
             <!-- Column Header -->
-            <div class="bg-gray-100 rounded-lg p-4 mb-4">
+            <div 
+              :class="getColumnHeaderClass(column.id)"
+              class="rounded-lg p-4 mb-4"
+            >
               <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-900">
+                <h3 class="text-lg font-semibold text-white">
                   {{ column.title }}
                 </h3>
-                <span class="bg-gray-200 text-gray-700 text-sm px-2 py-1 rounded-full">
+                <span class="bg-white/20 text-white text-sm px-2 py-1 rounded-full">
                   {{ column.tasks.length }}
                 </span>
               </div>
             </div>
 
-            <!-- Tasks -->
-            <div class="space-y-3 min-h-96">
+            <!-- Drop Zone -->
+            <div
+              :class="getDropZoneClass(column.id)"
+              class="space-y-3 min-h-96 rounded-lg p-2 transition-all duration-200"
+              @dragover.prevent="handleDragOver"
+              @dragenter.prevent="handleDragEnter(column.id)"
+              @dragleave.prevent="handleDragLeave(column.id)"
+              @drop.prevent="handleDrop($event, column.id)"
+            >
               <div
                 v-for="task in column.tasks"
                 :key="task.id"
-                class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer p-4"
+                :class="[getTaskClass(task, column.id), { 'dragging': draggedTask?.id === task.id }]"
+                class="rounded-lg border shadow-sm hover:shadow-md transition-all duration-200 cursor-move p-4"
+                draggable="true"
+                @dragstart="handleDragStart($event, task)"
+                @dragend="handleDragEnd"
                 @click="selectedTask = task"
+                @dragover.stop
+                @dragenter.stop
+                @dragleave.stop
+                @drop.stop
               >
                 <div class="flex items-start justify-between mb-2">
                   <h4 class="font-medium text-gray-900 text-sm">{{ task.title }}</h4>
@@ -404,21 +422,73 @@
         <div class="card p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Task Views</h3>
           <div class="space-y-4">
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div 
+              @click="handleKanbanView"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <CheckCircle class="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
               <span class="font-medium">Kanban Board</span>
-              <span class="text-sm text-gray-600">Drag & drop</span>
+                  <span class="text-sm text-gray-600 block">Drag & drop</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              </div>
+              <button class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm">
+                Open
+              </button>
+            </div>
+            <div 
+              @click="handleListView"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <CheckCircle class="h-4 w-4 text-green-600" />
+                </div>
+                <div>
               <span class="font-medium">List View</span>
-              <span class="text-sm text-gray-600">Detailed table</span>
+                  <span class="text-sm text-gray-600 block">Detailed table</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              </div>
+              <button class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm">
+                Open
+              </button>
+            </div>
+            <div 
+              @click="handleCalendarView"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <Calendar class="h-4 w-4 text-orange-600" />
+                </div>
+                <div>
               <span class="font-medium">Calendar View</span>
-              <span class="text-sm text-gray-600">Timeline</span>
+                  <span class="text-sm text-gray-600 block">Timeline</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              </div>
+              <button class="px-3 py-1 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors text-sm">
+                Open
+              </button>
+            </div>
+            <div 
+              @click="handleMyTasks"
+              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <User class="h-4 w-4 text-purple-600" />
+                </div>
+                <div>
               <span class="font-medium">My Tasks</span>
-              <span class="text-sm text-gray-600">Personal view</span>
+                  <span class="text-sm text-gray-600 block">Personal view</span>
+                </div>
+              </div>
+              <button class="px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm">
+                Open
+              </button>
             </div>
           </div>
         </div>
@@ -432,6 +502,39 @@
     @close="closeCreateTask"
     @submit="handleTaskSubmit"
   />
+
+  <!-- Calendar View Workflow Modal -->
+  <CalendarViewWorkflow
+    :is-open="isCalendarViewOpen"
+    :tasks="mockTasks"
+    @close="closeCalendarView"
+    @submit="handleCalendarSubmit"
+  />
+
+  <!-- My Tasks Workflow Modal -->
+  <MyTasksWorkflow
+    :is-open="isMyTasksOpen"
+    :tasks="mockTasks"
+    :current-user="'Current User'"
+    @close="closeMyTasks"
+    @submit="handleMyTasksSubmit"
+  />
+
+  <!-- Kanban Board Workflow Modal -->
+  <KanbanBoardWorkflow
+    :is-open="isKanbanBoardOpen"
+    :tasks="mockTasks"
+    @close="closeKanbanBoard"
+    @submit="handleKanbanBoardSubmit"
+  />
+
+  <!-- List View Workflow Modal -->
+  <ListViewWorkflow
+    :is-open="isListViewOpen"
+    :tasks="mockTasks"
+    @close="closeListView"
+    @submit="handleListViewSubmit"
+  />
   </SidebarLayout>
 </template>
 
@@ -441,6 +544,11 @@ import { Plus, Calendar, User, MessageSquare, Paperclip, CheckCircle, Clock, Ale
 import SidebarLayout from '@/components/SidebarLayout.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import CreateTaskWorkflow from '@/components/CreateTaskWorkflow.vue'
+import CalendarViewWorkflow from '@/components/CalendarViewWorkflow.vue'
+import MyTasksWorkflow from '@/components/MyTasksWorkflow.vue'
+import KanbanBoardWorkflow from '@/components/KanbanBoardWorkflow.vue'
+import ListViewWorkflow from '@/components/ListViewWorkflow.vue'
+import { notify } from '@/composables/useNotifications'
 
 interface Task {
   id: string
@@ -461,6 +569,15 @@ interface Task {
 const viewMode = ref<'kanban' | 'list'>('kanban')
 const selectedTask = ref<Task | null>(null)
 const isCreateTaskOpen = ref(false)
+const isCalendarViewOpen = ref(false)
+const isMyTasksOpen = ref(false)
+const isKanbanBoardOpen = ref(false)
+const isListViewOpen = ref(false)
+
+// Drag and drop state
+const draggedTask = ref<any>(null)
+const draggedOverColumn = ref<string | null>(null)
+const isDragging = ref(false)
 
 const mockTasks: Task[] = [
   {
@@ -525,28 +642,31 @@ const mockTasks: Task[] = [
   }
 ]
 
-const kanbanColumns = computed(() => [
-  {
-    id: 'todo',
-    title: 'To Do',
-    tasks: mockTasks.filter(task => task.status === 'todo')
-  },
-  {
-    id: 'in_progress',
-    title: 'In Progress',
-    tasks: mockTasks.filter(task => task.status === 'in_progress')
-  },
-  {
-    id: 'in_review',
-    title: 'In Review',
-    tasks: mockTasks.filter(task => task.status === 'in_review')
-  },
-  {
-    id: 'completed',
-    title: 'Completed',
-    tasks: mockTasks.filter(task => task.status === 'completed')
-  }
-])
+const kanbanColumns = computed(() => {
+  console.log('kanbanColumns computed - mockTasks:', mockTasks)
+  return [
+    {
+      id: 'todo',
+      title: 'To Do',
+      tasks: mockTasks.filter(task => task.status === 'todo')
+    },
+    {
+      id: 'in_progress',
+      title: 'In Progress',
+      tasks: mockTasks.filter(task => task.status === 'in_progress')
+    },
+    {
+      id: 'in_review',
+      title: 'In Review',
+      tasks: mockTasks.filter(task => task.status === 'in_review')
+    },
+    {
+      id: 'completed',
+      title: 'Completed',
+      tasks: mockTasks.filter(task => task.status === 'completed')
+    }
+  ]
+})
 
 const getPriorityColor = (priority: string) => {
   const colors = {
@@ -601,7 +721,7 @@ const handleTaskSubmit = (taskData: any) => {
     id: String(Date.now()),
     title: taskData.title,
     description: taskData.description,
-    status: 'pending',
+    status: 'todo',
     priority: taskData.priority,
     progress: 0,
     dueDate: taskData.dueDate,
@@ -616,33 +736,318 @@ const handleTaskSubmit = (taskData: any) => {
   // Add to mock tasks (in a real app, this would be an API call)
   mockTasks.unshift(newTask)
   
-  alert(`Task "${newTask.title}" created successfully!`)
+  notify.success('Task Created', `Task "${newTask.title}" has been created successfully!`)
   isCreateTaskOpen.value = false
 }
 
 const handleCalendarView = () => {
   console.log('Calendar View clicked')
-  alert('Calendar View functionality would switch to calendar view')
+  isCalendarViewOpen.value = true
 }
 
 const handleMyTasks = () => {
   console.log('My Tasks clicked')
-  alert('My Tasks functionality would filter to show only user tasks')
+  isMyTasksOpen.value = true
+}
+
+// Task Views handlers
+const handleKanbanView = () => {
+  console.log('Kanban View clicked')
+  viewMode.value = 'kanban'
+  notify.success('View Changed', 'Switched to Kanban Board view with drag & drop functionality')
+}
+
+const handleListView = () => {
+  console.log('List View clicked')
+  isListViewOpen.value = true
 }
 
 const handleMarkComplete = () => {
   console.log('Mark Complete clicked')
-  alert('Task marked as complete!')
+  if (selectedTask.value) {
+    selectedTask.value.status = 'completed'
+    selectedTask.value.progress = 100
+    notify.success('Task Completed', `Task "${selectedTask.value.title}" has been marked as complete!`)
+  }
 }
 
 const handleAddComment = () => {
   console.log('Add Comment clicked')
-  alert('Add Comment functionality would open comment dialog')
+  notify.info('Add Comment', 'Opening comment dialog to add a new comment')
 }
 
 const handleAddAttachment = () => {
   console.log('Add Attachment clicked')
-  alert('Add Attachment functionality would open file picker')
+  notify.info('Add Attachment', 'Opening file picker to attach files to this task')
+}
+
+// Calendar View handlers
+const closeCalendarView = () => {
+  isCalendarViewOpen.value = false
+}
+
+const handleCalendarSubmit = (data: any) => {
+  console.log('Calendar action:', data)
+  switch (data.action) {
+    case 'createTask':
+      notify.info('Create Task', `Creating new task for ${data.date}`)
+      break
+    case 'editTask':
+      notify.info('Edit Task', `Opening edit dialog for "${data.task.title}"`)
+      break
+    case 'markComplete':
+      notify.success('Task Completed', `Task "${data.task.title}" has been marked as complete!`)
+      break
+    case 'createQuickTask':
+      notify.info('Create Task', 'Opening quick task creation dialog')
+      break
+    case 'viewUpcomingTasks':
+      notify.info('Upcoming Tasks', 'Showing tasks due in the next 7 days')
+      break
+    case 'exportCalendar':
+      notify.info('Export Calendar', 'Preparing calendar data for export')
+      break
+    case 'switchToCalendarView':
+      notify.success('Calendar View', 'Switching to calendar view mode')
+      break
+  }
+}
+
+// My Tasks handlers
+const closeMyTasks = () => {
+  isMyTasksOpen.value = false
+}
+
+const handleMyTasksSubmit = (data: any) => {
+  console.log('My Tasks action:', data)
+  switch (data.action) {
+    case 'createNewTask':
+      notify.info('Create Task', 'Opening task creation dialog')
+      break
+    case 'exportMyTasks':
+      notify.info('Export Tasks', 'Preparing your task list for export')
+      break
+    case 'applyFilters':
+      notify.success('Filters Applied', 'Task filters have been applied successfully!')
+      break
+  }
+}
+
+// Kanban Board handlers
+const closeKanbanBoard = () => {
+  isKanbanBoardOpen.value = false
+}
+
+const handleKanbanBoardSubmit = (data: any) => {
+  console.log('Kanban Board action:', data)
+  switch (data.action) {
+    case 'createNewTask':
+      notify.info('Create Task', 'Opening task creation dialog')
+      break
+    case 'exportBoard':
+      notify.info('Export Board', 'Preparing board data for export')
+      break
+    case 'resetBoard':
+      notify.info('Reset Board', 'Resetting board to default settings')
+      break
+    case 'saveConfiguration':
+      notify.success('Configuration Saved', 'Board configuration has been saved successfully!')
+      break
+  }
+}
+
+// List View handlers
+const closeListView = () => {
+  isListViewOpen.value = false
+}
+
+const handleListViewSubmit = (data: any) => {
+  console.log('List View action:', data)
+  switch (data.action) {
+    case 'exportList':
+      notify.info('Export List', 'Preparing task list for export')
+      break
+    case 'printList':
+      notify.info('Print List', 'Opening print dialog')
+      break
+    case 'saveConfiguration':
+      notify.success('Configuration Saved', 'List view configuration has been saved successfully!')
+      break
+  }
+}
+
+// Drag and drop handlers
+const handleDragStart = (event: DragEvent, task: any) => {
+  console.log('Drag start', { task })
+  draggedTask.value = task
+  isDragging.value = true
+  
+  // Add visual feedback
+  if (event.target instanceof HTMLElement) {
+    event.target.style.opacity = '0.5'
+  }
+  
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', task.id)
+  }
+}
+
+const handleDragEnd = () => {
+  console.log('Drag end')
+  draggedTask.value = null
+  isDragging.value = false
+  draggedOverColumn.value = null
+  
+  // Reset visual feedback
+  document.querySelectorAll('.dragging').forEach(el => {
+    if (el instanceof HTMLElement) {
+      el.style.opacity = '1'
+    }
+  })
+}
+
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'move'
+  }
+}
+
+const handleDragEnter = (columnId: string) => {
+  console.log('Drag enter', { columnId })
+  draggedOverColumn.value = columnId
+}
+
+const handleDragLeave = (columnId: string) => {
+  console.log('Drag leave', { columnId })
+  if (draggedOverColumn.value === columnId) {
+    draggedOverColumn.value = null
+  }
+}
+
+const handleDrop = (event: DragEvent, columnId: string) => {
+  event.preventDefault()
+  
+  console.log('Drop event triggered', { columnId, draggedTask: draggedTask.value })
+  
+  if (!draggedTask.value) {
+    console.log('No dragged task found')
+    return
+  }
+  
+  const taskId = event.dataTransfer?.getData('text/plain')
+  if (!taskId) {
+    console.log('No task ID in dataTransfer')
+    return
+  }
+  
+  // Find the task in mockTasks
+  const taskIndex = mockTasks.findIndex(task => task.id === taskId)
+  if (taskIndex === -1) {
+    console.log('Task not found in mockTasks', { taskId, mockTasks })
+    return
+  }
+  
+  const task = mockTasks[taskIndex]
+  const newStatus = getStatusFromColumnId(columnId)
+  
+  console.log('Updating task', { taskId, oldStatus: task.status, newStatus, columnId })
+  
+  // Update task status
+  task.status = newStatus as 'todo' | 'in_progress' | 'in_review' | 'completed' | 'cancelled'
+  
+  // If moved to completed, set progress to 100%
+  if (newStatus === 'completed') {
+    task.progress = 100
+    notify.success('Task Completed', `Task "${task.title}" has been marked as complete!`)
+  } else {
+    // Reset progress if moved away from completed
+    if (task.progress === 100 && newStatus !== 'completed') {
+      task.progress = Math.min(90, task.progress) // Reset to 90% max
+    }
+  }
+  
+  // Force reactivity update
+  mockTasks[taskIndex] = { ...task }
+  
+  console.log('Task updated', { task: mockTasks[taskIndex] })
+  
+  notify.success('Task Moved', `Task "${task.title}" moved to ${getColumnTitle(columnId)}`)
+  
+  draggedTask.value = null
+  isDragging.value = false
+  draggedOverColumn.value = null
+}
+
+// Helper functions for drag and drop
+const getStatusFromColumnId = (columnId: string): string => {
+  const statusMap: { [key: string]: string } = {
+    'todo': 'todo',
+    'in_progress': 'in_progress',
+    'in_review': 'in_review',
+    'completed': 'completed'
+  }
+  return statusMap[columnId] || 'todo'
+}
+
+const getColumnTitle = (columnId: string): string => {
+  const titleMap: { [key: string]: string } = {
+    'todo': 'To Do',
+    'in_progress': 'In Progress',
+    'in_review': 'In Review',
+    'completed': 'Completed'
+  }
+  return titleMap[columnId] || 'Unknown'
+}
+
+// Color-coded classes for columns and tasks
+const getColumnHeaderClass = (columnId: string): string => {
+  const classes: { [key: string]: string } = {
+    'todo': 'bg-gray-500',
+    'in_progress': 'bg-blue-500',
+    'in_review': 'bg-yellow-500',
+    'completed': 'bg-green-500'
+  }
+  return classes[columnId] || 'bg-gray-500'
+}
+
+const getDropZoneClass = (columnId: string): string => {
+  const baseClasses = 'border-2 border-dashed transition-all duration-200'
+  const classes: { [key: string]: string } = {
+    'todo': 'border-gray-300 bg-gray-50',
+    'in_progress': 'border-blue-300 bg-blue-50',
+    'in_review': 'border-yellow-300 bg-yellow-50',
+    'completed': 'border-green-300 bg-green-50'
+  }
+  
+  const baseClass = classes[columnId] || 'border-gray-300 bg-gray-50'
+  
+  // Add highlight when dragging over
+  if (draggedOverColumn.value === columnId && isDragging.value) {
+    return `${baseClasses} ${baseClass} ring-2 ring-opacity-50 ring-blue-400`
+  }
+  
+  return `${baseClasses} ${baseClass}`
+}
+
+const getTaskClass = (task: any, columnId: string): string => {
+  const baseClasses = 'transition-all duration-200'
+  const columnClasses: { [key: string]: string } = {
+    'todo': 'bg-white border-gray-200',
+    'in_progress': 'bg-blue-50 border-blue-200',
+    'in_review': 'bg-yellow-50 border-yellow-200',
+    'completed': 'bg-green-50 border-green-200'
+  }
+  
+  const columnClass = columnClasses[columnId] || 'bg-white border-gray-200'
+  
+  // Add dragging effect
+  if (draggedTask.value?.id === task.id && isDragging.value) {
+    return `${baseClasses} ${columnClass} opacity-50 scale-95 shadow-lg`
+  }
+  
+  return `${baseClasses} ${columnClass}`
 }
 </script>
 
@@ -656,5 +1061,72 @@ const handleAddAttachment = () => {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Drag and drop styles */
+.dragging {
+  transform: rotate(5deg);
+  opacity: 0.8;
+}
+
+.drop-zone-active {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgb(59, 130, 246);
+  border-style: solid;
+}
+
+/* Smooth transitions for drag and drop */
+.kanban-task {
+  transition: all 0.2s ease-in-out;
+}
+
+.kanban-task:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Column-specific hover effects */
+.kanban-column-todo:hover {
+  background-color: rgba(107, 114, 128, 0.05);
+}
+
+.kanban-column-in-progress:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.kanban-column-in-review:hover {
+  background-color: rgba(245, 158, 11, 0.05);
+}
+
+.kanban-column-completed:hover {
+  background-color: rgba(34, 197, 94, 0.05);
+}
+
+/* Task color transitions */
+.task-todo {
+  background-color: rgb(255, 255, 255);
+  border-color: rgb(229, 231, 235);
+}
+
+.task-in-progress {
+  background-color: rgb(239, 246, 255);
+  border-color: rgb(191, 219, 254);
+}
+
+.task-in-review {
+  background-color: rgb(254, 249, 195);
+  border-color: rgb(254, 240, 138);
+}
+
+.task-completed {
+  background-color: rgb(240, 253, 244);
+  border-color: rgb(187, 247, 208);
+}
+
+/* Drag preview styles */
+.drag-preview {
+  opacity: 0.5;
+  transform: scale(0.95);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 </style>

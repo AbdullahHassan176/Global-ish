@@ -362,7 +362,7 @@
                   :key="variable"
                   class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
                 >
-                  {{ '{{' + variable + '}}' }}
+                  {{ getVariableTemplate(variable) }}
                 </span>
               </div>
             </div>
@@ -618,22 +618,8 @@ const updatePreference = (type: string, channel: string, value: boolean) => {
 }
 
 // Button click handlers
-const handleMarkAsRead = (notifications: any[]) => {
-  console.log('Mark as Read clicked:', notifications)
-  alert(`${notifications.length} notification(s) marked as read!`)
-}
 
-const handleMarkAsUnread = (notifications: any[]) => {
-  console.log('Mark as Unread clicked:', notifications)
-  alert(`${notifications.length} notification(s) marked as unread!`)
-}
 
-const handleDelete = (notifications: any[]) => {
-  console.log('Delete clicked:', notifications)
-  if (confirm(`Are you sure you want to delete ${notifications.length} notification(s)?`)) {
-    alert(`${notifications.length} notification(s) deleted!`)
-  }
-}
 
 const handleMarkAllRead = () => {
   console.log('Mark All Read clicked')
@@ -658,5 +644,9 @@ const handleEditTemplate = (template: any) => {
 const handleTestTemplate = (template: any) => {
   console.log('Test Template clicked:', template)
   alert(`Testing template: ${template.name}`)
+}
+
+const getVariableTemplate = (variable: string) => {
+  return `{{${variable}}}`
 }
 </script>

@@ -356,6 +356,7 @@ import {
   X, Shield, Link, Webhook, TestTube, Plus, RefreshCw, FileText,
   Ship, Package, Truck, Plane, Globe, Zap
 } from 'lucide-vue-next'
+import { notify } from '@/composables/useNotifications'
 
 const props = defineProps<{
   isOpen: boolean
@@ -549,84 +550,92 @@ const getOverallStatus = () => {
 // Action functions
 const configureCarrier = (carrierId: string) => {
   console.log('Configuring carrier:', carrierId)
-  alert(`Opening configuration for carrier ${carrierId}`)
+  notify.info('Configuration', `Opening configuration for carrier ${carrierId}`)
 }
 
 const testCarrier = (carrierId: string) => {
   console.log('Testing carrier:', carrierId)
-  alert(`Testing connection for carrier ${carrierId}`)
+  notify.info('Testing Connection', `Testing connection for carrier ${carrierId}`)
 }
 
 const syncAllIntegrations = () => {
   console.log('Syncing all integrations')
-  alert('Syncing all carrier data...')
+  notify.info('Data Sync', 'Syncing all carrier data...')
 }
 
 const testAllConnections = () => {
   console.log('Testing all connections')
-  alert('Testing all carrier connections...')
+  notify.info('Testing Connections', 'Testing all carrier connections...')
 }
 
 const viewLogs = () => {
   console.log('Viewing integration logs')
-  alert('Opening integration activity logs')
+  notify.info('Activity Logs', 'Opening integration activity logs')
 }
 
 const addConnection = () => {
   if (newConnection.value.carrier && newConnection.value.name) {
     console.log('Adding new connection:', newConnection.value)
-    alert(`Adding ${newConnection.value.name} connection for ${newConnection.value.carrier}`)
+    notify.success('Connection Added', `Adding ${newConnection.value.name} connection for ${newConnection.value.carrier}`)
     newConnection.value = { carrier: '', name: '' }
   } else {
-    alert('Please fill in all fields')
+    notify.warning('Validation Error', 'Please fill in all required fields')
   }
 }
 
 const editConnection = (connectionId: string) => {
   console.log('Editing connection:', connectionId)
-  alert(`Editing connection ${connectionId}`)
+  notify.info('Edit Connection', `Opening editor for connection ${connectionId}`)
 }
 
-const deleteConnection = (connectionId: string) => {
-  if (confirm('Are you sure you want to delete this connection?')) {
+const deleteConnection = async (connectionId: string) => {
+  const confirmed = await notify.confirm({
+    title: 'Delete Connection',
+    message: 'Are you sure you want to delete this connection?',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    variant: 'danger'
+  })
+  
+  if (confirmed) {
     console.log('Deleting connection:', connectionId)
-    alert(`Connection ${connectionId} deleted`)
+    notify.success('Connection Deleted', `Connection ${connectionId} has been deleted`)
   }
 }
 
 const saveWebhookConfig = () => {
   console.log('Saving webhook configuration:', webhookConfig.value)
-  alert('Webhook configuration saved successfully!')
+  notify.success('Webhook Saved', 'Webhook configuration saved successfully!')
 }
 
 const testWebhook = () => {
   console.log('Testing webhook')
-  alert('Testing webhook endpoint...')
+  notify.info('Testing Webhook', 'Testing webhook endpoint...')
 }
 
 const viewLogDetails = (logId: string) => {
   console.log('Viewing log details:', logId)
-  alert(`Opening details for log ${logId}`)
+  notify.info('Log Details', `Opening details for log ${logId}`)
 }
 
 const runTest = (testId: string) => {
   console.log('Running test:', testId)
-  alert(`Running test ${testId}...`)
+  notify.info('Running Test', `Running test ${testId}...`)
 }
 
 const runAllTests = () => {
   console.log('Running all tests')
-  alert('Running complete test suite...')
+  notify.info('Test Suite', 'Running complete test suite...')
 }
 
 const generateTestReport = () => {
   console.log('Generating test report')
-  alert('Generating comprehensive test report...')
+  notify.success('Report Generated', 'Generating comprehensive test report...')
 }
 
 const refreshIntegrations = () => {
   console.log('Refreshing all integrations')
-  alert('Refreshing all carrier integrations...')
+  notify.info('Refreshing', 'Refreshing all carrier integrations...')
 }
 
 const close = () => {
