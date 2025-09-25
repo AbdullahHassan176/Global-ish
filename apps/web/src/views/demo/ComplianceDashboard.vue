@@ -453,19 +453,19 @@
         <div class="card p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Reminder Types</h3>
           <div class="space-y-4">
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors" @click="openVisaExpiry">
               <span class="font-medium">Visa Expiry</span>
               <span class="text-sm text-gray-600">Immigration compliance</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors" @click="openLicenseRenewal">
               <span class="font-medium">License Renewal</span>
               <span class="text-sm text-gray-600">Professional licenses</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors" @click="openProbationReview">
               <span class="font-medium">Probation Review</span>
               <span class="text-sm text-gray-600">Employee reviews</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors" @click="openContractRenewal">
               <span class="font-medium">Contract Renewal</span>
               <span class="text-sm text-gray-600">Contract management</span>
             </div>
@@ -502,6 +502,34 @@
     @print="handlePrintDocument"
     @email="handleEmailDocument"
   />
+
+  <VisaExpiryWorkflow
+    :is-open="isVisaExpiryOpen"
+    @close="closeVisaExpiry"
+    @submit="handleVisaExpirySubmit"
+    @saveDraft="handleVisaExpirySaveDraft"
+  />
+
+  <LicenseRenewalWorkflow
+    :is-open="isLicenseRenewalOpen"
+    @close="closeLicenseRenewal"
+    @submit="handleLicenseRenewalSubmit"
+    @saveDraft="handleLicenseRenewalSaveDraft"
+  />
+
+  <ProbationReviewWorkflow
+    :is-open="isProbationReviewOpen"
+    @close="closeProbationReview"
+    @submit="handleProbationReviewSubmit"
+    @saveDraft="handleProbationReviewSaveDraft"
+  />
+
+  <ContractRenewalWorkflow
+    :is-open="isContractRenewalOpen"
+    @close="closeContractRenewal"
+    @submit="handleContractRenewalSubmit"
+    @saveDraft="handleContractRenewalSaveDraft"
+  />
   </SidebarLayout>
 </template>
 
@@ -512,6 +540,10 @@ import Tooltip from '@/components/Tooltip.vue'
 import CreateContractWorkflow from '@/components/CreateContractWorkflow.vue'
 import SendSignatureWorkflow from '@/components/SendSignatureWorkflow.vue'
 import ViewDownloadWorkflow from '@/components/ViewDownloadWorkflow.vue'
+import VisaExpiryWorkflow from '@/components/VisaExpiryWorkflow.vue'
+import LicenseRenewalWorkflow from '@/components/LicenseRenewalWorkflow.vue'
+import ProbationReviewWorkflow from '@/components/ProbationReviewWorkflow.vue'
+import ContractRenewalWorkflow from '@/components/ContractRenewalWorkflow.vue'
 import { notify } from '@/composables/useNotifications'
 import { 
   FileText, 
@@ -537,6 +569,10 @@ const reminderFilter = ref<'all' | 'pending' | 'overdue'>('all')
 const isCreateContractOpen = ref(false)
 const isSendSignatureOpen = ref(false)
 const isViewDownloadOpen = ref(false)
+const isVisaExpiryOpen = ref(false)
+const isLicenseRenewalOpen = ref(false)
+const isProbationReviewOpen = ref(false)
+const isContractRenewalOpen = ref(false)
 const selectedContract = ref<any>(null)
 
 const mockContracts = [
@@ -928,5 +964,88 @@ const handleEditContract = (contract: any) => {
   console.log('Editing contract:', contract)
   notify.info('Edit Contract', 'Opening contract editor...')
   closeViewDownload()
+}
+
+// New workflow handlers
+const openVisaExpiry = () => {
+  isVisaExpiryOpen.value = true
+}
+
+const openLicenseRenewal = () => {
+  isLicenseRenewalOpen.value = true
+}
+
+const openProbationReview = () => {
+  isProbationReviewOpen.value = true
+}
+
+const openContractRenewal = () => {
+  isContractRenewalOpen.value = true
+}
+
+// Modal close handlers
+const closeVisaExpiry = () => {
+  isVisaExpiryOpen.value = false
+}
+
+const closeLicenseRenewal = () => {
+  isLicenseRenewalOpen.value = false
+}
+
+const closeProbationReview = () => {
+  isProbationReviewOpen.value = false
+}
+
+const closeContractRenewal = () => {
+  isContractRenewalOpen.value = false
+}
+
+// Workflow submit handlers
+const handleVisaExpirySubmit = (data: any) => {
+  console.log('Visa expiry submitted:', data)
+  notify.success('Visa Information Submitted', 'Visa expiry information has been submitted successfully!')
+  closeVisaExpiry()
+}
+
+const handleVisaExpirySaveDraft = (data: any) => {
+  console.log('Visa expiry draft saved:', data)
+  notify.success('Draft Saved', 'Visa expiry draft has been saved!')
+  closeVisaExpiry()
+}
+
+const handleLicenseRenewalSubmit = (data: any) => {
+  console.log('License renewal submitted:', data)
+  notify.success('License Information Submitted', 'License renewal information has been submitted successfully!')
+  closeLicenseRenewal()
+}
+
+const handleLicenseRenewalSaveDraft = (data: any) => {
+  console.log('License renewal draft saved:', data)
+  notify.success('Draft Saved', 'License renewal draft has been saved!')
+  closeLicenseRenewal()
+}
+
+const handleProbationReviewSubmit = (data: any) => {
+  console.log('Probation review submitted:', data)
+  notify.success('Review Submitted', 'Probation review has been submitted successfully!')
+  closeProbationReview()
+}
+
+const handleProbationReviewSaveDraft = (data: any) => {
+  console.log('Probation review draft saved:', data)
+  notify.success('Draft Saved', 'Probation review draft has been saved!')
+  closeProbationReview()
+}
+
+const handleContractRenewalSubmit = (data: any) => {
+  console.log('Contract renewal submitted:', data)
+  notify.success('Renewal Submitted', 'Contract renewal has been submitted successfully!')
+  closeContractRenewal()
+}
+
+const handleContractRenewalSaveDraft = (data: any) => {
+  console.log('Contract renewal draft saved:', data)
+  notify.success('Draft Saved', 'Contract renewal draft has been saved!')
+  closeContractRenewal()
 }
 </script>
