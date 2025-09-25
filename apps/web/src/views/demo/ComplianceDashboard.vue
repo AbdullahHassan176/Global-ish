@@ -474,6 +474,34 @@
       </div>
     </div>
   </div>
+
+  <!-- Workflow Modals -->
+  <CreateContractWorkflow
+    :is-open="isCreateContractOpen"
+    @close="closeCreateContract"
+    @create="handleCreateContract"
+    @saveDraft="handleSaveDraft"
+  />
+
+  <SendSignatureWorkflow
+    :is-open="isSendSignatureOpen"
+    :contract="selectedContract"
+    @close="closeSendSignature"
+    @send="handleSendSignature"
+    @preview="handlePreviewSignature"
+  />
+
+  <ViewDownloadWorkflow
+    :is-open="isViewDownloadOpen"
+    :contract="selectedContract"
+    @close="closeViewDownload"
+    @edit="handleEditContract"
+    @view="handleViewDocument"
+    @download="handleDownloadDocument"
+    @share="handleShareDocument"
+    @print="handlePrintDocument"
+    @email="handleEmailDocument"
+  />
   </SidebarLayout>
 </template>
 
@@ -481,6 +509,9 @@
 import { ref, computed } from 'vue'
 import SidebarLayout from '@/components/SidebarLayout.vue'
 import Tooltip from '@/components/Tooltip.vue'
+import CreateContractWorkflow from '@/components/CreateContractWorkflow.vue'
+import SendSignatureWorkflow from '@/components/SendSignatureWorkflow.vue'
+import ViewDownloadWorkflow from '@/components/ViewDownloadWorkflow.vue'
 import { notify } from '@/composables/useNotifications'
 import { 
   FileText, 
@@ -501,6 +532,12 @@ import {
 
 const activeTab = ref<'contracts' | 'templates' | 'records' | 'reminders'>('contracts')
 const reminderFilter = ref<'all' | 'pending' | 'overdue'>('all')
+
+// Modal state variables
+const isCreateContractOpen = ref(false)
+const isSendSignatureOpen = ref(false)
+const isViewDownloadOpen = ref(false)
+const selectedContract = ref<any>(null)
 
 const mockContracts = [
   {
@@ -712,12 +749,14 @@ const completeReminder = (id: string) => {
 // Contract management functions
 const createContract = () => {
   console.log('Creating new contract')
-  notify.info('Create Contract', 'Opening contract creation form...')
+  isCreateContractOpen.value = true
 }
 
 const viewContract = (id: string) => {
   console.log('Viewing contract:', id)
-  notify.info('View Contract', `Opening contract ${id} details`)
+  const contract = mockContracts.find(c => c.id === id)
+  selectedContract.value = contract
+  isViewDownloadOpen.value = true
 }
 
 const editContract = (id: string) => {
@@ -727,12 +766,16 @@ const editContract = (id: string) => {
 
 const signContract = (id: string) => {
   console.log('Signing contract:', id)
-  notify.info('E-Signature', `Opening e-signature workflow for contract ${id}`)
+  const contract = mockContracts.find(c => c.id === id)
+  selectedContract.value = contract
+  isSendSignatureOpen.value = true
 }
 
 const downloadContract = (id: string) => {
   console.log('Downloading contract:', id)
-  notify.success('Download Started', `Downloading contract ${id} as PDF`)
+  const contract = mockContracts.find(c => c.id === id)
+  selectedContract.value = contract
+  isViewDownloadOpen.value = true
 }
 
 // Template management functions
@@ -816,5 +859,74 @@ const deleteReminder = async (id: string) => {
   if (confirmed) {
     notify.success('Reminder Deleted', `Reminder ${id} has been deleted`)
   }
+}
+
+// Modal handlers
+const closeCreateContract = () => {
+  isCreateContractOpen.value = false
+}
+
+const closeSendSignature = () => {
+  isSendSignatureOpen.value = false
+}
+
+const closeViewDownload = () => {
+  isViewDownloadOpen.value = false
+  selectedContract.value = null
+}
+
+// Workflow handlers
+const handleCreateContract = (data: any) => {
+  console.log('Creating contract:', data)
+  notify.success('Contract Created', 'Contract has been created successfully!')
+  closeCreateContract()
+}
+
+const handleSaveDraft = (data: any) => {
+  console.log('Saving draft:', data)
+  notify.success('Draft Saved', 'Contract draft has been saved!')
+  closeCreateContract()
+}
+
+const handleSendSignature = (data: any) => {
+  console.log('Sending for signature:', data)
+  notify.success('Signature Request Sent', 'Contract has been sent for signature!')
+  closeSendSignature()
+}
+
+const handlePreviewSignature = (data: any) => {
+  console.log('Previewing signature:', data)
+  notify.info('Preview', 'Opening signature preview...')
+}
+
+const handleViewDocument = (contract: any) => {
+  console.log('Viewing document:', contract)
+  notify.info('View Document', 'Opening document viewer...')
+}
+
+const handleDownloadDocument = (contract: any, format: string) => {
+  console.log('Downloading document:', contract, format)
+  notify.success('Download Started', `Downloading contract as ${format.toUpperCase()}...`)
+}
+
+const handleShareDocument = (contract: any) => {
+  console.log('Sharing document:', contract)
+  notify.info('Share Document', 'Opening share options...')
+}
+
+const handlePrintDocument = (contract: any) => {
+  console.log('Printing document:', contract)
+  notify.info('Print Document', 'Opening print dialog...')
+}
+
+const handleEmailDocument = (contract: any) => {
+  console.log('Emailing document:', contract)
+  notify.info('Email Document', 'Opening email composer...')
+}
+
+const handleEditContract = (contract: any) => {
+  console.log('Editing contract:', contract)
+  notify.info('Edit Contract', 'Opening contract editor...')
+  closeViewDownload()
 }
 </script>
