@@ -530,6 +530,21 @@
     @submit="handleContractRenewalSubmit"
     @saveDraft="handleContractRenewalSaveDraft"
   />
+
+  <CreateTemplateWorkflow
+    :is-open="isCreateTemplateOpen"
+    @close="closeCreateTemplate"
+    @create="handleCreateTemplate"
+    @saveDraft="handleCreateTemplateSaveDraft"
+  />
+
+  <UseTemplateWorkflow
+    :is-open="isUseTemplateOpen"
+    :template="selectedTemplate"
+    @close="closeUseTemplate"
+    @create="handleUseTemplateCreate"
+    @saveDraft="handleUseTemplateSaveDraft"
+  />
   </SidebarLayout>
 </template>
 
@@ -544,6 +559,8 @@ import VisaExpiryWorkflow from '@/components/VisaExpiryWorkflow.vue'
 import LicenseRenewalWorkflow from '@/components/LicenseRenewalWorkflow.vue'
 import ProbationReviewWorkflow from '@/components/ProbationReviewWorkflow.vue'
 import ContractRenewalWorkflow from '@/components/ContractRenewalWorkflow.vue'
+import CreateTemplateWorkflow from '@/components/CreateTemplateWorkflow.vue'
+import UseTemplateWorkflow from '@/components/UseTemplateWorkflow.vue'
 import { notify } from '@/composables/useNotifications'
 import { 
   FileText, 
@@ -573,7 +590,10 @@ const isVisaExpiryOpen = ref(false)
 const isLicenseRenewalOpen = ref(false)
 const isProbationReviewOpen = ref(false)
 const isContractRenewalOpen = ref(false)
+const isCreateTemplateOpen = ref(false)
+const isUseTemplateOpen = ref(false)
 const selectedContract = ref<any>(null)
+const selectedTemplate = ref<any>(null)
 
 const mockContracts = [
   {
@@ -817,7 +837,7 @@ const downloadContract = (id: string) => {
 // Template management functions
 const createTemplate = () => {
   console.log('Creating new template')
-  notify.info('Create Template', 'Opening template creation form...')
+  isCreateTemplateOpen.value = true
 }
 
 const viewTemplate = (id: string) => {
@@ -832,7 +852,9 @@ const editTemplate = (id: string) => {
 
 const useTemplate = (id: string) => {
   console.log('Using template:', id)
-  notify.success('Template Applied', `Creating new contract from template ${id}`)
+  const template = mockTemplates.find(t => t.id === id)
+  selectedTemplate.value = template
+  isUseTemplateOpen.value = true
 }
 
 // Records management functions
@@ -1047,5 +1069,39 @@ const handleContractRenewalSaveDraft = (data: any) => {
   console.log('Contract renewal draft saved:', data)
   notify.success('Draft Saved', 'Contract renewal draft has been saved!')
   closeContractRenewal()
+}
+
+// Template workflow handlers
+const closeCreateTemplate = () => {
+  isCreateTemplateOpen.value = false
+}
+
+const closeUseTemplate = () => {
+  isUseTemplateOpen.value = false
+  selectedTemplate.value = null
+}
+
+const handleCreateTemplate = (data: any) => {
+  console.log('Creating template:', data)
+  notify.success('Template Created', 'Contract template has been created successfully!')
+  closeCreateTemplate()
+}
+
+const handleCreateTemplateSaveDraft = (data: any) => {
+  console.log('Template draft saved:', data)
+  notify.success('Draft Saved', 'Template draft has been saved!')
+  closeCreateTemplate()
+}
+
+const handleUseTemplateCreate = (data: any) => {
+  console.log('Creating document from template:', data)
+  notify.success('Document Created', 'Document has been created successfully using the template!')
+  closeUseTemplate()
+}
+
+const handleUseTemplateSaveDraft = (data: any) => {
+  console.log('Document draft saved:', data)
+  notify.success('Draft Saved', 'Document draft has been saved!')
+  closeUseTemplate()
 }
 </script>
