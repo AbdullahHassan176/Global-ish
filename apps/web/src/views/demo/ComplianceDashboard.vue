@@ -545,6 +545,29 @@
     @create="handleUseTemplateCreate"
     @saveDraft="handleUseTemplateSaveDraft"
   />
+
+  <AddRecordWorkflow
+    :is-open="isAddRecordOpen"
+    @close="closeAddRecord"
+    @add="handleAddRecord"
+    @saveDraft="handleAddRecordSaveDraft"
+  />
+
+  <ViewRecordWorkflow
+    :is-open="isViewRecordOpen"
+    :record="selectedRecord"
+    @close="closeViewRecord"
+    @download="handleViewRecordDownload"
+    @edit="handleViewRecordEdit"
+  />
+
+  <EditRecordWorkflow
+    :is-open="isEditRecordOpen"
+    :record="selectedRecord"
+    @close="closeEditRecord"
+    @update="handleEditRecordUpdate"
+    @saveDraft="handleEditRecordSaveDraft"
+  />
   </SidebarLayout>
 </template>
 
@@ -561,6 +584,9 @@ import ProbationReviewWorkflow from '@/components/ProbationReviewWorkflow.vue'
 import ContractRenewalWorkflow from '@/components/ContractRenewalWorkflow.vue'
 import CreateTemplateWorkflow from '@/components/CreateTemplateWorkflow.vue'
 import UseTemplateWorkflow from '@/components/UseTemplateWorkflow.vue'
+import AddRecordWorkflow from '@/components/AddRecordWorkflow.vue'
+import ViewRecordWorkflow from '@/components/ViewRecordWorkflow.vue'
+import EditRecordWorkflow from '@/components/EditRecordWorkflow.vue'
 import { notify } from '@/composables/useNotifications'
 import { 
   FileText, 
@@ -592,8 +618,12 @@ const isProbationReviewOpen = ref(false)
 const isContractRenewalOpen = ref(false)
 const isCreateTemplateOpen = ref(false)
 const isUseTemplateOpen = ref(false)
+const isAddRecordOpen = ref(false)
+const isViewRecordOpen = ref(false)
+const isEditRecordOpen = ref(false)
 const selectedContract = ref<any>(null)
 const selectedTemplate = ref<any>(null)
+const selectedRecord = ref<any>(null)
 
 const mockContracts = [
   {
@@ -860,17 +890,21 @@ const useTemplate = (id: string) => {
 // Records management functions
 const createRecord = () => {
   console.log('Creating new record')
-  notify.info('Create Record', 'Opening record creation form...')
+  isAddRecordOpen.value = true
 }
 
 const viewRecord = (id: string) => {
   console.log('Viewing record:', id)
-  notify.info('View Record', `Opening record ${id} details`)
+  const record = mockRecords.find(r => r.id === id)
+  selectedRecord.value = record
+  isViewRecordOpen.value = true
 }
 
 const editRecord = (id: string) => {
   console.log('Editing record:', id)
-  notify.info('Edit Record', `Opening editor for record ${id}`)
+  const record = mockRecords.find(r => r.id === id)
+  selectedRecord.value = record
+  isEditRecordOpen.value = true
 }
 
 const downloadRecord = (id: string) => {
@@ -1103,5 +1137,56 @@ const handleUseTemplateSaveDraft = (data: any) => {
   console.log('Document draft saved:', data)
   notify.success('Draft Saved', 'Document draft has been saved!')
   closeUseTemplate()
+}
+
+// Record workflow handlers
+const closeAddRecord = () => {
+  isAddRecordOpen.value = false
+}
+
+const closeViewRecord = () => {
+  isViewRecordOpen.value = false
+  selectedRecord.value = null
+}
+
+const closeEditRecord = () => {
+  isEditRecordOpen.value = false
+  selectedRecord.value = null
+}
+
+const handleAddRecord = (data: any) => {
+  console.log('Adding record:', data)
+  notify.success('Record Added', 'Sensitive record has been added successfully!')
+  closeAddRecord()
+}
+
+const handleAddRecordSaveDraft = (data: any) => {
+  console.log('Record draft saved:', data)
+  notify.success('Draft Saved', 'Record draft has been saved!')
+  closeAddRecord()
+}
+
+const handleViewRecordDownload = (record: any) => {
+  console.log('Downloading record:', record)
+  notify.success('Download Started', 'Record download has been initiated!')
+}
+
+const handleViewRecordEdit = (record: any) => {
+  console.log('Editing record:', record)
+  selectedRecord.value = record
+  isViewRecordOpen.value = false
+  isEditRecordOpen.value = true
+}
+
+const handleEditRecordUpdate = (data: any) => {
+  console.log('Updating record:', data)
+  notify.success('Record Updated', 'Sensitive record has been updated successfully!')
+  closeEditRecord()
+}
+
+const handleEditRecordSaveDraft = (data: any) => {
+  console.log('Record draft saved:', data)
+  notify.success('Draft Saved', 'Record draft has been saved!')
+  closeEditRecord()
 }
 </script>
