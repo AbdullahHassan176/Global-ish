@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { RequestInit } from 'node-fetch';
 import { 
   CarrierAdapter, 
   CarrierTrackingData, 

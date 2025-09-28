@@ -10,10 +10,11 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
-  Request,
+  Request as NestRequest,
   BadRequestException
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express-serve-static-core';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { FilesService } from '../services/files.service';
 import { UploadFileDto, CreateSignedUrlDto, UpdateFileDto } from '../dto/upload-file.dto';

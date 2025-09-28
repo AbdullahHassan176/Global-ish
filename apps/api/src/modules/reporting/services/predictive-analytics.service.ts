@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { 
-  PredictiveAnalyticsService,
+  PredictiveAnalyticsService as IPredictiveAnalyticsService,
   ETAPrediction,
   HSCodeSuggestion,
   DemurrageRisk,
@@ -10,7 +10,7 @@ import {
 import { ModelType, KPICategory } from '@prisma/client';
 
 @Injectable()
-export class PredictiveAnalyticsService implements PredictiveAnalyticsService {
+export class PredictiveAnalyticsService implements IPredictiveAnalyticsService {
   private readonly logger = new Logger(PredictiveAnalyticsService.name);
 
   constructor(private readonly prisma: PrismaService) {}

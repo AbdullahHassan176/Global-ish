@@ -292,7 +292,7 @@ export class TokenizationBridgeService implements ITokenizationBridge, EventPubl
     });
 
     // Publish to webhook endpoints
-    await this.publishKPIToWebhooks(tokenizationKPI);
+    await this.publishKPIToWebhooksFromModel(tokenizationKPI);
 
     return tokenizationKPI.id;
   }
@@ -339,7 +339,7 @@ export class TokenizationBridgeService implements ITokenizationBridge, EventPubl
     }
   }
 
-  async publishKPI(kpi: BridgeKPIPayload): Promise<void> {
+  async publishKPIToWebhooks(kpi: BridgeKPIPayload): Promise<void> {
     // Find webhook endpoints that subscribe to KPI events
     const webhookEndpoints = await this.prisma.webhookEndpoint.findMany({
       where: {
@@ -412,7 +412,7 @@ export class TokenizationBridgeService implements ITokenizationBridge, EventPubl
     await this.publish(payload);
   }
 
-  private async publishKPIToWebhooks(kpi: TokenizationKPIModel): Promise<void> {
+  private async publishKPIToWebhooksFromModel(kpi: TokenizationKPIModel): Promise<void> {
     const payload: BridgeKPIPayload = {
       kpiId: kpi.id,
       kpiType: kpi.kpiType,

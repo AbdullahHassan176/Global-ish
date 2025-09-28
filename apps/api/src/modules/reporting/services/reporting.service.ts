@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { KpiCalculationService } from './kpi-calculation.service';
 import { 
-  ReportingService,
+  ReportingService as IReportingService,
   ReportData,
   ReportSchedule,
   ReportExport,
@@ -16,7 +16,7 @@ import * as ExcelJS from 'exceljs';
 import * as csv from 'csv-writer';
 
 @Injectable()
-export class ReportingService implements ReportingService {
+export class ReportingService implements IReportingService {
   private readonly logger = new Logger(ReportingService.name);
 
   constructor(

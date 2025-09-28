@@ -19,7 +19,7 @@ import {
   DataRequestStatus
 } from '@prisma/client';
 import { 
-  GDPRComplianceService,
+  GDPRComplianceService as IGDPRComplianceService,
   ConsentManagement,
   DataLifecycleManagement,
   DataExportService,
@@ -27,7 +27,7 @@ import {
 } from '../interfaces/gdpr-compliance.interface';
 
 @Injectable()
-export class GDPRComplianceService implements GDPRComplianceService {
+export class GDPRComplianceService implements IGDPRComplianceService {
   private readonly logger = new Logger(GDPRComplianceService.name);
 
   constructor(

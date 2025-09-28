@@ -12,7 +12,7 @@ import {
   DeviceType
 } from '@prisma/client';
 import { 
-  SessionManagementService,
+  SessionManagementService as ISessionManagementService,
   DeviceManagementService,
   DeviceFingerprint,
   SessionInfo,
@@ -21,7 +21,7 @@ import {
 import { randomBytes, createHash } from 'crypto';
 
 @Injectable()
-export class SessionManagementService implements SessionManagementService, DeviceManagementService {
+export class SessionManagementService implements ISessionManagementService, DeviceManagementService {
   private readonly logger = new Logger(SessionManagementService.name);
 
   constructor(private readonly prisma: PrismaService) {}

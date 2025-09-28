@@ -153,7 +153,7 @@ export class SignatureService implements SignatureProvider {
             name: signer.name,
             routingOrder: signer.order || (index + 1).toString(),
             tabs: {
-              signHereTabs: doc.fields?.filter(field => field.type === 'signature').map(field => ({
+              signHereTabs: request.documents[0]?.fields?.filter(field => field.type === 'signature').map(field => ({
                 documentId: '1',
                 pageNumber: field.page,
                 xPosition: field.x,

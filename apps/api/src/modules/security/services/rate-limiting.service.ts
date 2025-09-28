@@ -7,14 +7,14 @@ import {
   RateLimitRecord
 } from '@prisma/client';
 import { 
-  RateLimitingService,
+  RateLimitingService as IRateLimitingService,
   RateLimitRule,
   RateLimitViolation,
   RateLimitStats
 } from '../interfaces/rate-limiting.interface';
 
 @Injectable()
-export class RateLimitingService implements RateLimitingService {
+export class RateLimitingService implements IRateLimitingService {
   private readonly logger = new Logger(RateLimitingService.name);
   private readonly defaultRules: RateLimitRule[] = [
     {
