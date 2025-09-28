@@ -117,7 +117,7 @@
       <div v-if="activeTab === 'credentials'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Credential Vault</h2>
-          <button @click="showAddCredentialModal = true" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="openAddCredential" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Credential
           </button>
@@ -161,14 +161,14 @@
             </div>
             
             <div class="flex items-center space-x-2">
-              <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm flex-1">
+              <button @click="openTestCredential(credential)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm flex-1">
                 <TestTube class="h-4 w-4 mr-1" />
                 Test
               </button>
-              <button class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm">
+              <button @click="openEditCredential(credential)" class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Edit class="h-4 w-4" />
               </button>
-              <button class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center text-sm">
+              <button @click="openDeleteCredential(credential)" class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Trash2 class="h-4 w-4" />
               </button>
             </div>
@@ -180,7 +180,7 @@
       <div v-if="activeTab === 'webhooks'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Webhook Registry</h2>
-          <button @click="showAddWebhookModal = true" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="openAddWebhook" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Webhook
           </button>
@@ -203,7 +203,7 @@
                   {{ webhook.isActive ? 'Active' : 'Inactive' }}
                 </span>
                 <div class="flex items-center space-x-2">
-                  <button class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm">
+                  <button @click="openTestWebhook(webhook)" class="px-3 py-1 border-2 border-brand-purple text-brand-purple rounded-md hover:bg-brand-purple hover:text-white transition-all duration-300 flex items-center text-sm">
                     <TestTube class="h-4 w-4 mr-1" />
                     Test
                   </button>
@@ -508,6 +508,61 @@
       </div>
     </div>
   </div>
+
+  <!-- Workflow Modals -->
+  <AddCredentialWorkflow
+    :is-open="isAddCredentialOpen"
+    @close="closeAddCredential"
+    @submit="handleAddCredentialSubmit"
+    @saveDraft="handleSaveDraft"
+  />
+
+  <TestCredentialWorkflow
+    :is-open="isTestCredentialOpen"
+    :credential-name="selectedCredentialName"
+    :credential-provider="selectedCredentialProvider"
+    :credential-type="selectedCredentialType"
+    :credential-environment="selectedCredentialEnvironment"
+    @close="closeTestCredential"
+    @submit="handleTestCredentialSubmit"
+    @saveDraft="handleSaveDraft"
+  />
+
+  <EditCredentialWorkflow
+    :is-open="isEditCredentialOpen"
+    :credential="selectedCredential"
+    @close="closeEditCredential"
+    @submit="handleEditCredentialSubmit"
+    @saveDraft="handleSaveDraft"
+    @delete="handleDeleteCredentialSubmit"
+  />
+
+  <DeleteCredentialWorkflow
+    :is-open="isDeleteCredentialOpen"
+    :credential-name="selectedCredentialName"
+    :credential-provider="selectedCredentialProvider"
+    :credential-type="selectedCredentialType"
+    :credential-environment="selectedCredentialEnvironment"
+    @close="closeDeleteCredential"
+    @delete="handleDeleteCredentialSubmit"
+  />
+
+  <AddWebhookWorkflow
+    :is-open="isAddWebhookOpen"
+    @close="closeAddWebhook"
+    @submit="handleAddWebhookSubmit"
+    @saveDraft="handleSaveDraft"
+  />
+
+  <TestWebhookWorkflow
+    :is-open="isTestWebhookOpen"
+    :webhook-name="selectedWebhookName"
+    :webhook-url="selectedWebhookUrl"
+    :webhook-status="selectedWebhookStatus"
+    @close="closeTestWebhook"
+    @submit="handleTestWebhookSubmit"
+    @saveDraft="handleSaveDraft"
+  />
   </SidebarLayout>
 </template>
 
@@ -530,10 +585,38 @@ import {
   Mail,
   Cloud
 } from 'lucide-vue-next'
+import AddCredentialWorkflow from '@/components/AddCredentialWorkflow.vue'
+import TestCredentialWorkflow from '@/components/TestCredentialWorkflow.vue'
+import EditCredentialWorkflow from '@/components/EditCredentialWorkflow.vue'
+import DeleteCredentialWorkflow from '@/components/DeleteCredentialWorkflow.vue'
+import AddWebhookWorkflow from '@/components/AddWebhookWorkflow.vue'
+import TestWebhookWorkflow from '@/components/TestWebhookWorkflow.vue'
+import { notify } from '@/composables/useNotifications'
 
 const activeTab = ref<'credentials' | 'webhooks' | 'tokenization' | 'delivery-log'>('credentials')
 const showAddCredentialModal = ref(false)
 const showAddWebhookModal = ref(false)
+
+// New workflow modal states
+const isAddCredentialOpen = ref(false)
+const isTestCredentialOpen = ref(false)
+const isEditCredentialOpen = ref(false)
+const isDeleteCredentialOpen = ref(false)
+const isAddWebhookOpen = ref(false)
+const isTestWebhookOpen = ref(false)
+
+// Selected items for workflows
+const selectedCredential = ref<any>(null)
+const selectedWebhook = ref<any>(null)
+const selectedCredentialId = ref<string>('')
+const selectedCredentialName = ref<string>('')
+const selectedCredentialProvider = ref<string>('')
+const selectedCredentialType = ref<string>('')
+const selectedCredentialEnvironment = ref<string>('')
+const selectedWebhookId = ref<string>('')
+const selectedWebhookName = ref<string>('')
+const selectedWebhookUrl = ref<string>('')
+const selectedWebhookStatus = ref<string>('')
 
 const newCredential = ref({
   name: '',
@@ -805,5 +888,135 @@ const getDeliveryStatusColor = (status: string) => {
     PENDING: 'bg-gray-100 text-gray-800'
   }
   return colors[status] || 'bg-gray-100 text-gray-800'
+}
+
+// New workflow functions
+const openAddCredential = () => {
+  isAddCredentialOpen.value = true
+}
+
+const closeAddCredential = () => {
+  isAddCredentialOpen.value = false
+}
+
+const openTestCredential = (credential: any) => {
+  selectedCredential.value = credential
+  selectedCredentialId.value = credential.id
+  selectedCredentialName.value = credential.name
+  selectedCredentialProvider.value = credential.provider
+  selectedCredentialType.value = credential.type
+  selectedCredentialEnvironment.value = credential.environment || 'PRODUCTION'
+  isTestCredentialOpen.value = true
+}
+
+const closeTestCredential = () => {
+  isTestCredentialOpen.value = false
+  selectedCredential.value = null
+  selectedCredentialId.value = ''
+  selectedCredentialName.value = ''
+  selectedCredentialProvider.value = ''
+  selectedCredentialType.value = ''
+  selectedCredentialEnvironment.value = ''
+}
+
+const openEditCredential = (credential: any) => {
+  selectedCredential.value = credential
+  selectedCredentialId.value = credential.id
+  isEditCredentialOpen.value = true
+}
+
+const closeEditCredential = () => {
+  isEditCredentialOpen.value = false
+  selectedCredential.value = null
+  selectedCredentialId.value = ''
+}
+
+const openDeleteCredential = (credential: any) => {
+  selectedCredential.value = credential
+  selectedCredentialId.value = credential.id
+  selectedCredentialName.value = credential.name
+  selectedCredentialProvider.value = credential.provider
+  selectedCredentialType.value = credential.type
+  selectedCredentialEnvironment.value = credential.environment || 'PRODUCTION'
+  isDeleteCredentialOpen.value = true
+}
+
+const closeDeleteCredential = () => {
+  isDeleteCredentialOpen.value = false
+  selectedCredential.value = null
+  selectedCredentialId.value = ''
+  selectedCredentialName.value = ''
+  selectedCredentialProvider.value = ''
+  selectedCredentialType.value = ''
+  selectedCredentialEnvironment.value = ''
+}
+
+const openAddWebhook = () => {
+  isAddWebhookOpen.value = true
+}
+
+const closeAddWebhook = () => {
+  isAddWebhookOpen.value = false
+}
+
+const openTestWebhook = (webhook: any) => {
+  selectedWebhook.value = webhook
+  selectedWebhookId.value = webhook.id
+  selectedWebhookName.value = webhook.name
+  selectedWebhookUrl.value = webhook.url
+  selectedWebhookStatus.value = webhook.isActive ? 'Active' : 'Inactive'
+  isTestWebhookOpen.value = true
+}
+
+const closeTestWebhook = () => {
+  isTestWebhookOpen.value = false
+  selectedWebhook.value = null
+  selectedWebhookId.value = ''
+  selectedWebhookName.value = ''
+  selectedWebhookUrl.value = ''
+  selectedWebhookStatus.value = ''
+}
+
+// Workflow handlers
+const handleAddCredentialSubmit = (data: any) => {
+  console.log('Add credential workflow submitted:', data)
+  notify.success('Credential Added', 'Credential has been added successfully!')
+  closeAddCredential()
+}
+
+const handleTestCredentialSubmit = (data: any) => {
+  console.log('Test credential workflow submitted:', data)
+  notify.success('Test Completed', 'Credential test has been completed!')
+  closeTestCredential()
+}
+
+const handleEditCredentialSubmit = (data: any) => {
+  console.log('Edit credential workflow submitted:', data)
+  notify.success('Credential Updated', 'Credential has been updated successfully!')
+  closeEditCredential()
+}
+
+const handleDeleteCredentialSubmit = (data: any) => {
+  console.log('Delete credential workflow submitted:', data)
+  notify.success('Credential Deleted', 'Credential has been deleted successfully!')
+  closeDeleteCredential()
+}
+
+const handleAddWebhookSubmit = (data: any) => {
+  console.log('Add webhook workflow submitted:', data)
+  notify.success('Webhook Added', 'Webhook has been added successfully!')
+  closeAddWebhook()
+}
+
+const handleTestWebhookSubmit = (data: any) => {
+  console.log('Test webhook workflow submitted:', data)
+  notify.success('Test Completed', 'Webhook test has been completed!')
+  closeTestWebhook()
+}
+
+// Save draft handlers
+const handleSaveDraft = (data: any) => {
+  console.log('Save draft:', data)
+  notify.success('Draft Saved', 'Draft has been saved successfully!')
 }
 </script>

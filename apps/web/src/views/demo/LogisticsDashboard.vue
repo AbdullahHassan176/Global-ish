@@ -213,9 +213,9 @@
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div class="flex items-center space-x-2">
-                      <button @click="trackShipment(shipment.id)" class="text-blue-600 hover:text-blue-900">Track</button>
-                      <button @click="viewShipment(shipment.id)" class="text-green-600 hover:text-green-900">View</button>
-                      <button @click="updateShipment(shipment.id)" class="text-gray-600 hover:text-gray-900">Edit</button>
+                      <button @click="openTrack(shipment.id, 'shipment')" class="text-blue-600 hover:text-blue-900">Track</button>
+                      <button @click="openView(shipment.id, 'shipment', shipment.shipmentNumber)" class="text-green-600 hover:text-green-900">View</button>
+                      <button @click="openEdit(shipment.id, 'shipment')" class="text-gray-600 hover:text-gray-900">Edit</button>
                     </div>
                   </td>
                 </tr>
@@ -231,7 +231,7 @@
           <h2 class="text-xl font-semibold text-gray-900">Container Tracking</h2>
           <div class="flex items-center space-x-4">
             <input type="text" placeholder="Search containers..." class="w-full px-4 py-2 border border-brand-teal/30 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-brand-orange transition-all duration-300" />
-            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+            <button @click="openAddContainer" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Add Container
             </button>
@@ -272,11 +272,11 @@
             </div>
             
             <div class="flex items-center space-x-2">
-              <button @click="trackContainer(container.id)" class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1">
+              <button @click="openTrack(container.id, 'container')" class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1">
                 <MapPin class="h-4 w-4 mr-1" />
                 Track
               </button>
-              <button @click="viewContainer(container.id)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
+              <button @click="openView(container.id, 'container', container.containerNumber)" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Eye class="h-4 w-4" />
               </button>
             </div>
@@ -295,7 +295,7 @@
               <option>At Port</option>
               <option>At Customs</option>
             </select>
-            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+            <button @click="openRefresh" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <RefreshCw class="h-4 w-4 mr-2" />
               Refresh
             </button>
@@ -353,11 +353,11 @@
               <option>Approved Costs</option>
               <option>Paid Costs</option>
             </select>
-            <button @click="updateCosts" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+            <button @click="openAddCost" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Add Cost
             </button>
-            <button @click="exportCosts" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300">
+            <button @click="openGenerateInvoice" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300">
               <FileText class="h-4 w-4 mr-2" />
               Generate Invoice
             </button>
@@ -564,14 +564,14 @@
                 <div class="flex items-center space-x-2 ml-4">
                   <button
                     v-if="!alert.isRead"
-                    @click="markAsRead(alert.id)"
+                    @click="openMarkRead(alert.id, 'alert', alert.title, alert.priority)"
                     class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm"
                   >
                     Mark Read
                   </button>
                   <button
                     v-if="!alert.isResolved"
-                    @click="resolveAlert(alert.id)"
+                    @click="openResolve(alert.id, 'alert', alert.title, alert.priority)"
                     class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm"
                   >
                     Resolve
@@ -688,15 +688,15 @@
           <div class="card p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
             <div class="space-y-3">
-              <button @click="testConnection('all')" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
+              <button @click="openQuickActions" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
                 <RefreshCw class="h-4 w-4 mr-2" />
                 Sync All Integrations
               </button>
-              <button @click="testConnection('all')" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
+              <button @click="openQuickActions" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
                 <TestTube class="h-4 w-4 mr-2" />
                 Test All Connections
               </button>
-              <button @click="configureIntegration('webhooks')" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
+              <button @click="openCarrierIntegrations" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 text-left">
                 <Settings class="h-4 w-4 mr-2" />
                 Configure Webhooks
               </button>
@@ -820,6 +820,98 @@
     :shipment-id="selectedShipmentId"
     @close="closeTracking"
   />
+
+  <!-- New Workflow Modals -->
+  <TrackWorkflow
+    :is-open="isTrackOpen"
+    :item-id="selectedItemId"
+    :item-type="selectedItemType"
+    @close="closeTrack"
+    @submit="handleTrackSubmit"
+  />
+
+  <ViewWorkflow
+    :is-open="isViewOpen"
+    :item-id="selectedItemId"
+    :item-type="selectedItemType"
+    :item-title="selectedItemTitle"
+    @close="closeView"
+    @submit="handleViewSubmit"
+  />
+
+  <EditWorkflow
+    :is-open="isEditOpen"
+    :item-id="selectedItemId"
+    :item-type="selectedItemType"
+    @close="closeEdit"
+    @submit="handleEditSubmit"
+  />
+
+  <AddContainerWorkflow
+    :is-open="isAddContainerOpen"
+    @close="closeAddContainer"
+    @submit="handleAddContainerSubmit"
+  />
+
+  <RefreshWorkflow
+    :is-open="isRefreshOpen"
+    @close="closeRefresh"
+    @submit="handleRefreshSubmit"
+  />
+
+  <AddCostWorkflow
+    :is-open="isAddCostOpen"
+    @close="closeAddCost"
+    @submit="handleAddCostSubmit"
+  />
+
+  <GenerateInvoiceWorkflow
+    :is-open="isGenerateInvoiceOpen"
+    @close="closeGenerateInvoice"
+    @submit="handleGenerateInvoiceSubmit"
+  />
+
+  <ApproveWorkflow
+    :is-open="isApproveOpen"
+    :item-id="selectedItemId"
+    :item-type="selectedItemType"
+    :item-name="selectedItemTitle"
+    :item-amount="selectedItemAmount"
+    @close="closeApprove"
+    @submit="handleApproveSubmit"
+  />
+
+  <MarkReadWorkflow
+    :is-open="isMarkReadOpen"
+    :item-id="selectedItemId"
+    :item-type="selectedItemType"
+    :item-title="selectedItemTitle"
+    :item-priority="selectedItemPriority"
+    @close="closeMarkRead"
+    @submit="handleMarkReadSubmit"
+  />
+
+  <ResolveWorkflow
+    :is-open="isResolveOpen"
+    :item-id="selectedItemId"
+    :item-type="selectedItemType"
+    :item-title="selectedItemTitle"
+    :item-priority="selectedItemPriority"
+    @close="closeResolve"
+    @submit="handleResolveSubmit"
+  />
+
+  <QuickActionsWorkflow
+    :is-open="isQuickActionsOpen"
+    @close="closeQuickActions"
+    @submit="handleQuickActionsSubmit"
+  />
+
+  <CarrierIntegrationsWorkflow
+    :is-open="isCarrierIntegrationsOpen"
+    @close="closeCarrierIntegrations"
+    @submit="handleCarrierIntegrationsSubmit"
+  />
   </SidebarLayout>
 </template>
 
@@ -830,6 +922,19 @@ import Tooltip from '@/components/Tooltip.vue'
 import CreateShipmentWorkflow from '@/components/CreateShipmentWorkflow.vue'
 import CarrierIntegrationWorkflow from '@/components/CarrierIntegrationWorkflow.vue'
 import ShipmentTrackingWorkflow from '@/components/ShipmentTrackingWorkflow.vue'
+import TrackWorkflow from '@/components/TrackWorkflow.vue'
+import ViewWorkflow from '@/components/ViewWorkflow.vue'
+import EditWorkflow from '@/components/EditWorkflow.vue'
+import AddContainerWorkflow from '@/components/AddContainerWorkflow.vue'
+import RefreshWorkflow from '@/components/RefreshWorkflow.vue'
+import AddCostWorkflow from '@/components/AddCostWorkflow.vue'
+import GenerateInvoiceWorkflow from '@/components/GenerateInvoiceWorkflow.vue'
+import ApproveWorkflow from '@/components/ApproveWorkflow.vue'
+import MarkReadWorkflow from '@/components/MarkReadWorkflow.vue'
+import ResolveWorkflow from '@/components/ResolveWorkflow.vue'
+import QuickActionsWorkflow from '@/components/QuickActionsWorkflow.vue'
+import CarrierIntegrationsWorkflow from '@/components/CarrierIntegrationsWorkflow.vue'
+import { notify } from '@/composables/useNotifications'
 import { 
   Ship, 
   Package, 
@@ -858,6 +963,28 @@ const isCreateShipmentOpen = ref(false)
 const isCarrierIntegrationOpen = ref(false)
 const isTrackingOpen = ref(false)
 const selectedShipmentId = ref('')
+
+// New workflow modal states
+const isTrackOpen = ref(false)
+const isViewOpen = ref(false)
+const isEditOpen = ref(false)
+const isAddContainerOpen = ref(false)
+const isRefreshOpen = ref(false)
+const isAddCostOpen = ref(false)
+const isGenerateInvoiceOpen = ref(false)
+const isApproveOpen = ref(false)
+const isMarkReadOpen = ref(false)
+const isResolveOpen = ref(false)
+const isQuickActionsOpen = ref(false)
+const isCarrierIntegrationsOpen = ref(false)
+
+// Selected items for workflows
+const selectedItem = ref<any>(null)
+const selectedItemType = ref<string>('')
+const selectedItemId = ref<string>('')
+const selectedItemTitle = ref<string>('')
+const selectedItemPriority = ref<string>('')
+const selectedItemAmount = ref<string>('')
 
 const mockShipments = [
   {
@@ -1242,5 +1369,219 @@ const handleCarrierIntegrationSubmit = (integrationData: any) => {
   console.log('Carrier integration updated:', integrationData)
   alert('Carrier integration settings updated successfully!')
   isCarrierIntegrationOpen.value = false
+}
+
+// New workflow functions
+const openTrack = (itemId: string, itemType: string = 'shipment') => {
+  selectedItemId.value = itemId
+  selectedItemType.value = itemType
+  isTrackOpen.value = true
+}
+
+const closeTrack = () => {
+  isTrackOpen.value = false
+  selectedItemId.value = ''
+  selectedItemType.value = ''
+}
+
+const openView = (itemId: string, itemType: string = 'shipment', itemTitle: string = '') => {
+  selectedItemId.value = itemId
+  selectedItemType.value = itemType
+  selectedItemTitle.value = itemTitle
+  isViewOpen.value = true
+}
+
+const closeView = () => {
+  isViewOpen.value = false
+  selectedItemId.value = ''
+  selectedItemType.value = ''
+  selectedItemTitle.value = ''
+}
+
+const openEdit = (itemId: string, itemType: string = 'shipment') => {
+  selectedItemId.value = itemId
+  selectedItemType.value = itemType
+  isEditOpen.value = true
+}
+
+const closeEdit = () => {
+  isEditOpen.value = false
+  selectedItemId.value = ''
+  selectedItemType.value = ''
+}
+
+const openAddContainer = () => {
+  isAddContainerOpen.value = true
+}
+
+const closeAddContainer = () => {
+  isAddContainerOpen.value = false
+}
+
+const openRefresh = () => {
+  isRefreshOpen.value = true
+}
+
+const closeRefresh = () => {
+  isRefreshOpen.value = false
+}
+
+const openAddCost = () => {
+  isAddCostOpen.value = true
+}
+
+const closeAddCost = () => {
+  isAddCostOpen.value = false
+}
+
+const openGenerateInvoice = () => {
+  isGenerateInvoiceOpen.value = true
+}
+
+const closeGenerateInvoice = () => {
+  isGenerateInvoiceOpen.value = false
+}
+
+const openApprove = (itemId: string, itemType: string = 'cost', itemName: string = '', itemAmount: string = '') => {
+  selectedItemId.value = itemId
+  selectedItemType.value = itemType
+  selectedItemTitle.value = itemName
+  selectedItemAmount.value = itemAmount
+  isApproveOpen.value = true
+}
+
+const closeApprove = () => {
+  isApproveOpen.value = false
+  selectedItemId.value = ''
+  selectedItemType.value = ''
+  selectedItemTitle.value = ''
+  selectedItemAmount.value = ''
+}
+
+const openMarkRead = (itemId: string, itemType: string = 'alert', itemTitle: string = '', itemPriority: string = '') => {
+  selectedItemId.value = itemId
+  selectedItemType.value = itemType
+  selectedItemTitle.value = itemTitle
+  selectedItemPriority.value = itemPriority
+  isMarkReadOpen.value = true
+}
+
+const closeMarkRead = () => {
+  isMarkReadOpen.value = false
+  selectedItemId.value = ''
+  selectedItemType.value = ''
+  selectedItemTitle.value = ''
+  selectedItemPriority.value = ''
+}
+
+const openResolve = (itemId: string, itemType: string = 'alert', itemTitle: string = '', itemPriority: string = '') => {
+  selectedItemId.value = itemId
+  selectedItemType.value = itemType
+  selectedItemTitle.value = itemTitle
+  selectedItemPriority.value = itemPriority
+  isResolveOpen.value = true
+}
+
+const closeResolve = () => {
+  isResolveOpen.value = false
+  selectedItemId.value = ''
+  selectedItemType.value = ''
+  selectedItemTitle.value = ''
+  selectedItemPriority.value = ''
+}
+
+const openQuickActions = () => {
+  isQuickActionsOpen.value = true
+}
+
+const closeQuickActions = () => {
+  isQuickActionsOpen.value = false
+}
+
+const openCarrierIntegrations = () => {
+  isCarrierIntegrationsOpen.value = true
+}
+
+const closeCarrierIntegrations = () => {
+  isCarrierIntegrationsOpen.value = false
+}
+
+// Workflow handlers
+const handleTrackSubmit = (data: any) => {
+  console.log('Track workflow submitted:', data)
+  notify.success('Tracking Started', 'Tracking has been initiated successfully!')
+  closeTrack()
+}
+
+const handleViewSubmit = (data: any) => {
+  console.log('View workflow submitted:', data)
+  notify.success('View Opened', 'Item details have been displayed!')
+  closeView()
+}
+
+const handleEditSubmit = (data: any) => {
+  console.log('Edit workflow submitted:', data)
+  notify.success('Item Updated', 'Item has been updated successfully!')
+  closeEdit()
+}
+
+const handleAddContainerSubmit = (data: any) => {
+  console.log('Add container workflow submitted:', data)
+  notify.success('Container Added', 'Container has been added successfully!')
+  closeAddContainer()
+}
+
+const handleRefreshSubmit = (data: any) => {
+  console.log('Refresh workflow submitted:', data)
+  notify.success('Data Refreshed', 'Data has been refreshed successfully!')
+  closeRefresh()
+}
+
+const handleAddCostSubmit = (data: any) => {
+  console.log('Add cost workflow submitted:', data)
+  notify.success('Cost Added', 'Cost item has been added successfully!')
+  closeAddCost()
+}
+
+const handleGenerateInvoiceSubmit = (data: any) => {
+  console.log('Generate invoice workflow submitted:', data)
+  notify.success('Invoice Generated', 'Invoice has been generated successfully!')
+  closeGenerateInvoice()
+}
+
+const handleApproveSubmit = (data: any) => {
+  console.log('Approve workflow submitted:', data)
+  notify.success('Item Approved', 'Item has been approved successfully!')
+  closeApprove()
+}
+
+const handleMarkReadSubmit = (data: any) => {
+  console.log('Mark read workflow submitted:', data)
+  notify.success('Item Marked as Read', 'Item has been marked as read!')
+  closeMarkRead()
+}
+
+const handleResolveSubmit = (data: any) => {
+  console.log('Resolve workflow submitted:', data)
+  notify.success('Item Resolved', 'Item has been resolved successfully!')
+  closeResolve()
+}
+
+const handleQuickActionsSubmit = (data: any) => {
+  console.log('Quick actions workflow submitted:', data)
+  notify.success('Actions Executed', 'Quick actions have been executed successfully!')
+  closeQuickActions()
+}
+
+const handleCarrierIntegrationsSubmit = (data: any) => {
+  console.log('Carrier integrations workflow submitted:', data)
+  notify.success('Integration Updated', 'Carrier integration has been updated successfully!')
+  closeCarrierIntegrations()
+}
+
+// Save draft handlers
+const handleSaveDraft = (data: any) => {
+  console.log('Save draft:', data)
+  notify.success('Draft Saved', 'Draft has been saved successfully!')
 }
 </script>

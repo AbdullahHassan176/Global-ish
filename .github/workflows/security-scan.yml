@@ -28,14 +28,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8.15.0'
 
       - name: Install dependencies
-        run: |
-          cd apps/api
-          npm ci
-          cd ../web
-          npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run ESLint Security Rules
         run: |
@@ -115,21 +115,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8.15.0'
 
       - name: Install dependencies
-        run: |
-          cd apps/api
-          npm ci
-          cd ../web
-          npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Run npm audit
+      - name: Run pnpm audit
         run: |
-          cd apps/api
-          npm audit --audit-level=moderate --json > api-audit.json
-          cd ../web
-          npm audit --audit-level=moderate --json > web-audit.json
+          pnpm audit --audit-level=moderate --json > audit-results.json
 
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
@@ -156,8 +153,7 @@ jobs:
         with:
           name: dependency-scan-results
           path: |
-            api-audit.json
-            web-audit.json
+            audit-results.json
             trivy-results.sarif
 
   # Container Security Scanning
@@ -346,9 +342,9 @@ jobs:
           fi
           
           # Add dependency scan results
-          if [ -f "dependency-scan-results/api-audit.json" ]; then
+          if [ -f "dependency-scan-results/audit-results.json" ]; then
             echo "## Dependency Scan Results" >> security-report.md
-            echo "- npm audit completed" >> security-report.md
+            echo "- pnpm audit completed" >> security-report.md
           fi
           
           # Add container scan results
@@ -389,14 +385,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8.15.0'
 
       - name: Install dependencies
-        run: |
-          cd apps/api
-          npm ci
-          cd ../web
-          npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build application
         run: |

@@ -418,7 +418,7 @@
       <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div class="text-center">
           <p class="text-brand-cream">
-            © 2025 Global Next. Built with Vue.js, NestJS, and modern technologies.
+            © 2025 Global Next.
           </p>
         </div>
       </div>
@@ -427,14 +427,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import SidebarLayout from '@/components/SidebarLayout.vue'
 import Tooltip from '@/components/Tooltip.vue'
-import { notify } from '@/composables/useNotifications'
 import { 
   DollarSign, Briefcase, Users, Activity, RefreshCw, Calendar, Ship, Clock, 
-  Shield, Settings, TrendingUp, CheckCircle, AlertTriangle, FileText, 
-  Bell, Zap, Target, BarChart3
+  Shield, Settings, CheckCircle
 } from 'lucide-vue-next'
 
 // Reactive data
@@ -589,12 +587,12 @@ const refreshData = () => {
   // Update department statuses
   Object.keys(departmentStatus.value).forEach(dept => {
     const deptData = departmentStatus.value[dept as keyof typeof departmentStatus.value]
-    if (deptData.activeCampaigns) deptData.activeCampaigns += Math.floor(Math.random() * 3) - 1
-    if (deptData.activeShipments) deptData.activeShipments += Math.floor(Math.random() * 5) - 2
-    if (deptData.activeTimesheets) deptData.activeTimesheets += Math.floor(Math.random() * 3) - 1
-    if (deptData.activeAudits) deptData.activeAudits += Math.floor(Math.random() * 2) - 1
-    if (deptData.activeProjects) deptData.activeProjects += Math.floor(Math.random() * 2) - 1
-    if (deptData.activeWorkflows) deptData.activeWorkflows += Math.floor(Math.random() * 3) - 1
+    if ('activeCampaigns' in deptData) deptData.activeCampaigns += Math.floor(Math.random() * 3) - 1
+    if ('activeShipments' in deptData) deptData.activeShipments += Math.floor(Math.random() * 5) - 2
+    if ('activeTimesheets' in deptData) deptData.activeTimesheets += Math.floor(Math.random() * 3) - 1
+    if ('activeAudits' in deptData) deptData.activeAudits += Math.floor(Math.random() * 2) - 1
+    if ('activeProjects' in deptData) deptData.activeProjects += Math.floor(Math.random() * 2) - 1
+    if ('activeWorkflows' in deptData) deptData.activeWorkflows += Math.floor(Math.random() * 3) - 1
   })
   
 }

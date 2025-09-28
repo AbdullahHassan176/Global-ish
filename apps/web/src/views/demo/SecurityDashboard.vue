@@ -128,7 +128,7 @@
       <div v-if="activeTab === 'sessions'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Active Sessions</h2>
-          <button @click="revokeAllSessions" class="px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300">
+          <button @click="openRevokeAllSessions" class="px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300">
             <LogOut class="h-4 w-4 mr-2" />
             Revoke All Sessions
           </button>
@@ -155,7 +155,11 @@
                 <span :class="session.isCurrent ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'" class="px-3 py-1 rounded-full text-sm font-medium">
                   {{ session.isCurrent ? 'Current' : 'Active' }}
                 </span>
-                <button @click="revokeSession(session.id)" class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 text-sm">
+                <button @click="openSessionInfo(session)" class="px-3 py-1 border-2 border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition-all duration-300 text-sm mr-2">
+                  <Shield class="h-4 w-4 mr-1" />
+                  Session Info
+                </button>
+                <button @click="openRevokeSession(session)" class="px-3 py-1 border-2 border-red-500 text-red-500 rounded-md hover:bg-red-500 hover:text-white transition-all duration-300 text-sm">
                   <LogOut class="h-4 w-4 mr-1" />
                   Revoke
                 </button>
@@ -227,7 +231,7 @@
       <div v-if="activeTab === 'privacy'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Privacy Controls</h2>
-          <button @click="exportData" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="openExportData" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Download class="h-4 w-4 mr-2" />
             Export My Data
           </button>
@@ -566,6 +570,57 @@
       </div>
     </div>
   </div>
+
+  <!-- Workflow Modals -->
+  <RevokeAllSessionsWorkflow
+    :is-open="isRevokeAllSessionsOpen"
+    :total-sessions="activeSessions"
+    :trusted-devices="trustedDevices"
+    :current-device="'Current Device'"
+    @close="closeRevokeAllSessions"
+    @revoke="handleRevokeAllSessionsSubmit"
+  />
+
+  <RevokeSessionWorkflow
+    :is-open="isRevokeSessionOpen"
+    :session-device-name="selectedSessionDeviceName"
+    :session-browser="selectedSessionBrowser"
+    :session-ip-address="selectedSessionIpAddress"
+    :session-location="selectedSessionLocation"
+    :session-last-activity="selectedSessionLastActivity"
+    :session-is-trusted="selectedSessionIsTrusted"
+    @close="closeRevokeSession"
+    @revoke="handleRevokeSessionSubmit"
+  />
+
+  <SessionInfoWorkflow
+    :is-open="isSessionInfoOpen"
+    :session-device-name="selectedSessionDeviceName"
+    :session-device-type="selectedSessionDeviceType"
+    :session-browser="selectedSessionBrowser"
+    :session-os="selectedSessionOs"
+    :session-ip-address="selectedSessionIpAddress"
+    :session-location="selectedSessionLocation"
+    :session-is-current="selectedSessionIsCurrent"
+    :session-is-trusted="selectedSessionIsTrusted"
+    :session-created-at="selectedSessionCreatedAt"
+    :session-last-activity="selectedSessionLastActivity"
+    :session-expires-at="selectedSessionExpiresAt"
+    :session-duration="selectedSessionDuration"
+    :session-auth-method="selectedSessionAuthMethod"
+    :session-mfa-enabled="selectedSessionMfaEnabled"
+    :session-id="selectedSessionId"
+    :session-user-agent="selectedSessionUserAgent"
+    @close="closeSessionInfo"
+    @revoke="handleSessionInfoRevoke"
+    @trust="handleSessionInfoTrust"
+  />
+
+  <ExportDataWorkflow
+    :is-open="isExportDataOpen"
+    @close="closeExportData"
+    @export="handleExportDataSubmit"
+  />
   </SidebarLayout>
 </template>
 
@@ -588,9 +643,39 @@ import {
   Tablet,
   Laptop
 } from 'lucide-vue-next'
+import RevokeAllSessionsWorkflow from '@/components/RevokeAllSessionsWorkflow.vue'
+import RevokeSessionWorkflow from '@/components/RevokeSessionWorkflow.vue'
+import SessionInfoWorkflow from '@/components/SessionInfoWorkflow.vue'
+import ExportDataWorkflow from '@/components/ExportDataWorkflow.vue'
+import { notify } from '@/composables/useNotifications'
 
 const activeTab = ref<'sessions' | 'privacy' | 'data-lifecycle' | 'security-events' | 'compliance'>('sessions')
 const showRetentionPolicyModal = ref(false)
+
+// New workflow modal states
+const isRevokeAllSessionsOpen = ref(false)
+const isRevokeSessionOpen = ref(false)
+const isSessionInfoOpen = ref(false)
+const isExportDataOpen = ref(false)
+
+// Selected items for workflows
+const selectedSession = ref<any>(null)
+const selectedSessionId = ref<string>('')
+const selectedSessionDeviceName = ref<string>('')
+const selectedSessionBrowser = ref<string>('')
+const selectedSessionIpAddress = ref<string>('')
+const selectedSessionLocation = ref<string>('')
+const selectedSessionLastActivity = ref<string>('')
+const selectedSessionIsTrusted = ref<boolean>(false)
+const selectedSessionIsCurrent = ref<boolean>(false)
+const selectedSessionDeviceType = ref<string>('')
+const selectedSessionOs = ref<string>('')
+const selectedSessionCreatedAt = ref<string>('')
+const selectedSessionExpiresAt = ref<string>('')
+const selectedSessionDuration = ref<string>('')
+const selectedSessionAuthMethod = ref<string>('')
+const selectedSessionMfaEnabled = ref<boolean>(false)
+const selectedSessionUserAgent = ref<string>('')
 
 // Mock data
 const mockSessions = ref([
@@ -908,5 +993,130 @@ const formatTimeAgo = (date: Date) => {
 const handleRefresh = () => {
   console.log('Refresh clicked')
   alert('Security events refreshed!')
+}
+
+// New workflow functions
+const openRevokeAllSessions = () => {
+  isRevokeAllSessionsOpen.value = true
+}
+
+const closeRevokeAllSessions = () => {
+  isRevokeAllSessionsOpen.value = false
+}
+
+const openRevokeSession = (session: any) => {
+  selectedSession.value = session
+  selectedSessionId.value = session.id
+  selectedSessionDeviceName.value = session.deviceName || 'Unknown Device'
+  selectedSessionBrowser.value = `${session.browserName} ${session.browserVersion}`
+  selectedSessionIpAddress.value = session.ipAddress
+  selectedSessionLocation.value = session.location || 'Unknown'
+  selectedSessionLastActivity.value = formatTimeAgo(session.lastActivityAt)
+  selectedSessionIsTrusted.value = session.isTrusted
+  isRevokeSessionOpen.value = true
+}
+
+const closeRevokeSession = () => {
+  isRevokeSessionOpen.value = false
+  selectedSession.value = null
+  selectedSessionId.value = ''
+  selectedSessionDeviceName.value = ''
+  selectedSessionBrowser.value = ''
+  selectedSessionIpAddress.value = ''
+  selectedSessionLocation.value = ''
+  selectedSessionLastActivity.value = ''
+  selectedSessionIsTrusted.value = false
+}
+
+const openSessionInfo = (session: any) => {
+  selectedSession.value = session
+  selectedSessionId.value = session.id
+  selectedSessionDeviceName.value = session.deviceName || 'Unknown Device'
+  selectedSessionDeviceType.value = session.deviceType
+  selectedSessionBrowser.value = `${session.browserName} ${session.browserVersion}`
+  selectedSessionOs.value = `${session.osName} ${session.osVersion}`
+  selectedSessionIpAddress.value = session.ipAddress
+  selectedSessionLocation.value = session.location || 'Unknown'
+  selectedSessionIsCurrent.value = session.isCurrent
+  selectedSessionIsTrusted.value = session.isTrusted
+  selectedSessionCreatedAt.value = formatDate(session.createdAt)
+  selectedSessionLastActivity.value = formatTimeAgo(session.lastActivityAt)
+  selectedSessionExpiresAt.value = formatTimeAgo(session.expiresAt)
+  selectedSessionDuration.value = formatDuration(session.createdAt, session.expiresAt)
+  selectedSessionAuthMethod.value = 'Password + MFA'
+  selectedSessionMfaEnabled.value = true
+  selectedSessionUserAgent.value = `${session.browserName} ${session.browserVersion} on ${session.osName} ${session.osVersion}`
+  isSessionInfoOpen.value = true
+}
+
+const closeSessionInfo = () => {
+  isSessionInfoOpen.value = false
+  selectedSession.value = null
+  selectedSessionId.value = ''
+  selectedSessionDeviceName.value = ''
+  selectedSessionDeviceType.value = ''
+  selectedSessionBrowser.value = ''
+  selectedSessionOs.value = ''
+  selectedSessionIpAddress.value = ''
+  selectedSessionLocation.value = ''
+  selectedSessionIsCurrent.value = false
+  selectedSessionIsTrusted.value = false
+  selectedSessionCreatedAt.value = ''
+  selectedSessionLastActivity.value = ''
+  selectedSessionExpiresAt.value = ''
+  selectedSessionDuration.value = ''
+  selectedSessionAuthMethod.value = ''
+  selectedSessionMfaEnabled.value = false
+  selectedSessionUserAgent.value = ''
+}
+
+const openExportData = () => {
+  isExportDataOpen.value = true
+}
+
+const closeExportData = () => {
+  isExportDataOpen.value = false
+}
+
+// Workflow handlers
+const handleRevokeAllSessionsSubmit = (data: any) => {
+  console.log('Revoke all sessions workflow submitted:', data)
+  notify.success('All Sessions Revoked', 'All active sessions have been revoked successfully!')
+  closeRevokeAllSessions()
+}
+
+const handleRevokeSessionSubmit = (data: any) => {
+  console.log('Revoke session workflow submitted:', data)
+  notify.success('Session Revoked', 'Session has been revoked successfully!')
+  closeRevokeSession()
+}
+
+const handleSessionInfoRevoke = () => {
+  console.log('Revoke session from session info')
+  closeSessionInfo()
+  openRevokeSession(selectedSession.value)
+}
+
+const handleSessionInfoTrust = () => {
+  console.log('Trust/Untrust session from session info')
+  if (selectedSession.value) {
+    selectedSession.value.isTrusted = !selectedSession.value.isTrusted
+    notify.success('Device Status Updated', `Device has been ${selectedSession.value.isTrusted ? 'trusted' : 'untrusted'}`)
+  }
+  closeSessionInfo()
+}
+
+const handleExportDataSubmit = (data: any) => {
+  console.log('Export data workflow submitted:', data)
+  notify.success('Data Export Requested', 'Your data export request has been submitted successfully!')
+  closeExportData()
+}
+
+// Helper functions
+const formatDuration = (startDate: Date, endDate: Date) => {
+  const diffInHours = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60))
+  if (diffInHours < 24) return `${diffInHours}h`
+  const days = Math.floor(diffInHours / 24)
+  return `${days}d ${diffInHours % 24}h`
 }
 </script>

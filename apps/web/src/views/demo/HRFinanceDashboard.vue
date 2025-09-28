@@ -125,7 +125,7 @@
               <option>Jane Smith</option>
               <option>Mike Johnson</option>
             </select>
-            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+            <button @click="openAddTimesheet" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Plus class="h-4 w-4 mr-2" />
               Add Timesheet
             </button>
@@ -213,7 +213,7 @@
                       >
                         Reject
                       </button>
-                      <button class="text-blue-600 hover:text-blue-900">
+                      <button @click="openViewDetails(timesheet, 'timesheet')" class="text-blue-600 hover:text-blue-900">
                         Edit
                       </button>
                     </div>
@@ -229,7 +229,7 @@
       <div v-if="activeTab === 'projects'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Project Management</h2>
-          <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="openCreateProject" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Create Project
           </button>
@@ -284,11 +284,11 @@
             </div>
             
             <div class="flex items-center space-x-2">
-              <button class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1">
+              <button @click="openViewDetails(project, 'project')" class="px-3 py-1 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-md hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center text-sm flex-1">
                 <Eye class="h-4 w-4 mr-1" />
                 View Details
               </button>
-              <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
+              <button @click="openViewDetails(project, 'project')" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                 <Edit class="h-4 w-4" />
               </button>
             </div>
@@ -300,7 +300,7 @@
       <div v-if="activeTab === 'clients'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Client Management</h2>
-          <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="openAddClient" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Client
           </button>
@@ -351,11 +351,11 @@
                 </div>
                 
                 <div class="flex items-center space-x-2 ml-4">
-                  <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
+                  <button @click="openViewDetails(client, 'client')" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Eye class="h-4 w-4 mr-1" />
                     View
                   </button>
-                  <button class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
+                  <button @click="openViewDetails(client, 'client')" class="px-3 py-1 border-2 border-brand-teal text-brand-teal rounded-md hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center text-sm">
                     <Edit class="h-4 w-4 mr-1" />
                     Edit
                   </button>
@@ -378,7 +378,7 @@
               <option>Last Quarter</option>
               <option>This Year</option>
             </select>
-            <button class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+            <button @click="openExportReport" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <Download class="h-4 w-4 mr-2" />
               Export Report
             </button>
@@ -444,15 +444,15 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div class="card p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Revenue by Client</h3>
-            <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-              <p class="text-gray-500">Revenue Chart Placeholder</p>
+            <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors" @click="openRevenueChart">
+              <p class="text-gray-500">Revenue Chart Placeholder - Click to View</p>
             </div>
           </div>
           
           <div class="card p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Hours by Project</h3>
-            <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-              <p class="text-gray-500">Hours Chart Placeholder</p>
+            <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors" @click="openHoursChart">
+              <p class="text-gray-500">Hours Chart Placeholder - Click to View</p>
             </div>
           </div>
         </div>
@@ -489,19 +489,19 @@
         <div class="card p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Formats</h3>
           <div class="space-y-4">
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" @click="openExportFormats">
               <span class="font-medium">CSV</span>
               <span class="text-sm text-gray-600">Spreadsheet format</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" @click="openExportFormats">
               <span class="font-medium">Excel</span>
               <span class="text-sm text-gray-600">Microsoft Excel</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" @click="openExportFormats">
               <span class="font-medium">PDF</span>
               <span class="text-sm text-gray-600">Printable reports</span>
             </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" @click="openExportFormats">
               <span class="font-medium">QuickBooks</span>
               <span class="text-sm text-gray-600">Accounting integration</span>
             </div>
@@ -510,12 +510,81 @@
       </div>
     </div>
   </div>
+
+  <!-- Workflow Modals -->
+  <AddTimesheetWorkflow
+    :is-open="isAddTimesheetOpen"
+    @close="closeAddTimesheet"
+    @submit="handleAddTimesheetSubmit"
+    @saveDraft="handleAddTimesheetSaveDraft"
+  />
+
+  <ExportFormatsWorkflow
+    :is-open="isExportFormatsOpen"
+    @close="closeExportFormats"
+    @export="handleExportFormatsSubmit"
+    @preview="handleExportFormatsPreview"
+  />
+
+  <ViewDetailsWorkflow
+    :is-open="isViewDetailsOpen"
+    :item="selectedItem"
+    :item-type="selectedItemType"
+    @close="closeViewDetails"
+    @edit="handleViewDetailsEdit"
+    @download="handleViewDetailsDownload"
+    @share="handleViewDetailsShare"
+    @print="handleViewDetailsPrint"
+    @email="handleViewDetailsEmail"
+  />
+
+  <CreateProjectWorkflow
+    :is-open="isCreateProjectOpen"
+    @close="closeCreateProject"
+    @submit="handleCreateProjectSubmit"
+    @saveDraft="handleCreateProjectSaveDraft"
+  />
+
+  <AddClientWorkflow
+    :is-open="isAddClientOpen"
+    @close="closeAddClient"
+    @submit="handleAddClientSubmit"
+    @saveDraft="handleAddClientSaveDraft"
+  />
+
+  <ExportReportWorkflow
+    :is-open="isExportReportOpen"
+    @close="closeExportReport"
+    @export="handleExportReportSubmit"
+    @preview="handleExportReportPreview"
+  />
+
+  <RevenueChartWorkflow
+    :is-open="isRevenueChartOpen"
+    @close="closeRevenueChart"
+    @export="handleRevenueChartExport"
+  />
+
+  <HoursChartWorkflow
+    :is-open="isHoursChartOpen"
+    @close="closeHoursChart"
+    @export="handleHoursChartExport"
+  />
   </SidebarLayout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import SidebarLayout from '@/components/SidebarLayout.vue'
+import AddTimesheetWorkflow from '@/components/AddTimesheetWorkflow.vue'
+import ExportFormatsWorkflow from '@/components/ExportFormatsWorkflow.vue'
+import ViewDetailsWorkflow from '@/components/ViewDetailsWorkflow.vue'
+import CreateProjectWorkflow from '@/components/CreateProjectWorkflow.vue'
+import AddClientWorkflow from '@/components/AddClientWorkflow.vue'
+import ExportReportWorkflow from '@/components/ExportReportWorkflow.vue'
+import RevenueChartWorkflow from '@/components/RevenueChartWorkflow.vue'
+import HoursChartWorkflow from '@/components/HoursChartWorkflow.vue'
+import { notify } from '@/composables/useNotifications'
 import { 
   Clock, 
   DollarSign, 
@@ -533,6 +602,18 @@ import {
 } from 'lucide-vue-next'
 
 const activeTab = ref<'timesheets' | 'projects' | 'clients' | 'reports'>('timesheets')
+
+// Modal state variables
+const isAddTimesheetOpen = ref(false)
+const isExportFormatsOpen = ref(false)
+const isViewDetailsOpen = ref(false)
+const isCreateProjectOpen = ref(false)
+const isAddClientOpen = ref(false)
+const isExportReportOpen = ref(false)
+const isRevenueChartOpen = ref(false)
+const isHoursChartOpen = ref(false)
+const selectedItem = ref<any>(null)
+const selectedItemType = ref<'project' | 'client' | 'timesheet' | null>(null)
 
 const mockTimesheets = [
   {
@@ -667,5 +748,169 @@ const approveTimesheet = (id: string) => {
 
 const rejectTimesheet = (id: string) => {
   console.log('Rejecting timesheet:', id)
+}
+
+// Workflow functions
+const openAddTimesheet = () => {
+  isAddTimesheetOpen.value = true
+}
+
+const openExportFormats = () => {
+  isExportFormatsOpen.value = true
+}
+
+const openViewDetails = (item: any, type: 'project' | 'client' | 'timesheet') => {
+  selectedItem.value = item
+  selectedItemType.value = type
+  isViewDetailsOpen.value = true
+}
+
+const openCreateProject = () => {
+  isCreateProjectOpen.value = true
+}
+
+const openAddClient = () => {
+  isAddClientOpen.value = true
+}
+
+const openExportReport = () => {
+  isExportReportOpen.value = true
+}
+
+const openRevenueChart = () => {
+  isRevenueChartOpen.value = true
+}
+
+const openHoursChart = () => {
+  isHoursChartOpen.value = true
+}
+
+// Modal close handlers
+const closeAddTimesheet = () => {
+  isAddTimesheetOpen.value = false
+}
+
+const closeExportFormats = () => {
+  isExportFormatsOpen.value = false
+}
+
+const closeViewDetails = () => {
+  isViewDetailsOpen.value = false
+  selectedItem.value = null
+  selectedItemType.value = null
+}
+
+const closeCreateProject = () => {
+  isCreateProjectOpen.value = false
+}
+
+const closeAddClient = () => {
+  isAddClientOpen.value = false
+}
+
+const closeExportReport = () => {
+  isExportReportOpen.value = false
+}
+
+const closeRevenueChart = () => {
+  isRevenueChartOpen.value = false
+}
+
+const closeHoursChart = () => {
+  isHoursChartOpen.value = false
+}
+
+// Workflow handlers
+const handleAddTimesheetSubmit = (data: any) => {
+  console.log('Adding timesheet:', data)
+  notify.success('Timesheet Added', 'Timesheet entry has been added successfully!')
+  closeAddTimesheet()
+}
+
+const handleAddTimesheetSaveDraft = (data: any) => {
+  console.log('Saving timesheet draft:', data)
+  notify.success('Draft Saved', 'Timesheet draft has been saved!')
+  closeAddTimesheet()
+}
+
+const handleExportFormatsSubmit = (data: any) => {
+  console.log('Exporting data:', data)
+  notify.success('Export Started', 'Data export has been initiated!')
+  closeExportFormats()
+}
+
+const handleExportFormatsPreview = (data: any) => {
+  console.log('Previewing export:', data)
+  notify.info('Preview', 'Opening export preview...')
+}
+
+const handleViewDetailsEdit = (item: any) => {
+  console.log('Editing item:', item)
+  notify.info('Edit', 'Opening editor...')
+}
+
+const handleViewDetailsDownload = (item: any) => {
+  console.log('Downloading item:', item)
+  notify.success('Download Started', 'Download has been initiated!')
+}
+
+const handleViewDetailsShare = (item: any) => {
+  console.log('Sharing item:', item)
+  notify.info('Share', 'Opening share options...')
+}
+
+const handleViewDetailsPrint = (item: any) => {
+  console.log('Printing item:', item)
+  notify.info('Print', 'Opening print dialog...')
+}
+
+const handleViewDetailsEmail = (item: any) => {
+  console.log('Emailing item:', item)
+  notify.info('Email', 'Opening email composer...')
+}
+
+const handleCreateProjectSubmit = (data: any) => {
+  console.log('Creating project:', data)
+  notify.success('Project Created', 'Project has been created successfully!')
+  closeCreateProject()
+}
+
+const handleCreateProjectSaveDraft = (data: any) => {
+  console.log('Saving project draft:', data)
+  notify.success('Draft Saved', 'Project draft has been saved!')
+  closeCreateProject()
+}
+
+const handleAddClientSubmit = (data: any) => {
+  console.log('Adding client:', data)
+  notify.success('Client Added', 'Client has been added successfully!')
+  closeAddClient()
+}
+
+const handleAddClientSaveDraft = (data: any) => {
+  console.log('Saving client draft:', data)
+  notify.success('Draft Saved', 'Client draft has been saved!')
+  closeAddClient()
+}
+
+const handleExportReportSubmit = (data: any) => {
+  console.log('Exporting report:', data)
+  notify.success('Report Export Started', 'Report export has been initiated!')
+  closeExportReport()
+}
+
+const handleExportReportPreview = (data: any) => {
+  console.log('Previewing report:', data)
+  notify.info('Preview', 'Opening report preview...')
+}
+
+const handleRevenueChartExport = (data: any) => {
+  console.log('Exporting revenue chart:', data)
+  notify.success('Chart Export Started', 'Revenue chart export has been initiated!')
+}
+
+const handleHoursChartExport = (data: any) => {
+  console.log('Exporting hours chart:', data)
+  notify.success('Chart Export Started', 'Hours chart export has been initiated!')
 }
 </script>

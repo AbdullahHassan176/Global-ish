@@ -123,7 +123,7 @@
               <option value="2024-02">February 2024</option>
               <option value="2024-03">March 2024</option>
             </select>
-            <button @click="calculateKPIs" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+            <button @click="openCalculateKPIs" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
               <RefreshCw class="h-4 w-4 mr-2" />
               Calculate KPIs
             </button>
@@ -190,7 +190,7 @@
       <div v-if="activeTab === 'reports'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Reports & Exports</h2>
-          <button @click="generateReport" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="openGenerateReport" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <FileText class="h-4 w-4 mr-2" />
             Generate Report
           </button>
@@ -251,7 +251,7 @@
       <div v-if="activeTab === 'predictions'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Predictive Analytics</h2>
-          <button @click="refreshPredictions" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="openRefreshPredictions" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <RefreshCw class="h-4 w-4 mr-2" />
             Refresh Predictions
           </button>
@@ -424,6 +424,25 @@
       </div>
     </div>
   </div>
+
+  <!-- Workflow Modals -->
+  <CalculateKPIsWorkflow
+    :is-open="isCalculateKPIsOpen"
+    @close="closeCalculateKPIs"
+    @calculate="handleCalculateKPIsSubmit"
+  />
+
+  <GenerateReportWorkflow
+    :is-open="isGenerateReportOpen"
+    @close="closeGenerateReport"
+    @generate="handleGenerateReportSubmit"
+  />
+
+  <RefreshPredictionsWorkflow
+    :is-open="isRefreshPredictionsOpen"
+    @close="closeRefreshPredictions"
+    @refresh="handleRefreshPredictionsSubmit"
+  />
   </SidebarLayout>
 </template>
 
@@ -434,11 +453,20 @@ import {
   BarChart3, TrendingUp, Clock, Brain, RefreshCw, FileText, 
   Ship, Users, Shield, DollarSign, Megaphone, Target
 } from 'lucide-vue-next'
+import CalculateKPIsWorkflow from '@/components/CalculateKPIsWorkflow.vue'
+import GenerateReportWorkflow from '@/components/GenerateReportWorkflow.vue'
+import RefreshPredictionsWorkflow from '@/components/RefreshPredictionsWorkflow.vue'
+import { notify } from '@/composables/useNotifications'
 
 // Reactive data
 const activeTab = ref('kpis')
 const selectedPeriod = ref('2024-01')
 const selectedRole = ref('executive')
+
+// New workflow modal states
+const isCalculateKPIsOpen = ref(false)
+const isGenerateReportOpen = ref(false)
+const isRefreshPredictionsOpen = ref(false)
 
 // Mock data
 const activeKPIs = ref(24)
@@ -670,6 +698,50 @@ const selectReportType = (type: string) => {
 const refreshPredictions = () => {
   console.log('Refreshing predictions')
   // In real app, this would call the API
+}
+
+// New workflow functions
+const openCalculateKPIs = () => {
+  isCalculateKPIsOpen.value = true
+}
+
+const closeCalculateKPIs = () => {
+  isCalculateKPIsOpen.value = false
+}
+
+const openGenerateReport = () => {
+  isGenerateReportOpen.value = true
+}
+
+const closeGenerateReport = () => {
+  isGenerateReportOpen.value = false
+}
+
+const openRefreshPredictions = () => {
+  isRefreshPredictionsOpen.value = true
+}
+
+const closeRefreshPredictions = () => {
+  isRefreshPredictionsOpen.value = false
+}
+
+// Workflow handlers
+const handleCalculateKPIsSubmit = (data: any) => {
+  console.log('Calculate KPIs workflow submitted:', data)
+  notify.success('KPIs Calculation Started', 'KPI calculation has been initiated successfully!')
+  closeCalculateKPIs()
+}
+
+const handleGenerateReportSubmit = (data: any) => {
+  console.log('Generate report workflow submitted:', data)
+  notify.success('Report Generation Started', 'Report generation has been initiated successfully!')
+  closeGenerateReport()
+}
+
+const handleRefreshPredictionsSubmit = (data: any) => {
+  console.log('Refresh predictions workflow submitted:', data)
+  notify.success('Predictions Refresh Started', 'Prediction refresh has been initiated successfully!')
+  closeRefreshPredictions()
 }
 
 const getKPIColor = (value: number, target: number) => {

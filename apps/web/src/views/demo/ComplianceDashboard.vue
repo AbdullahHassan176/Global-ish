@@ -328,6 +328,10 @@
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Compliance Reminders</h2>
           <div class="flex items-center space-x-2">
+            <button @click="openReminderTypes" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+              <Plus class="h-4 w-4 mr-2" />
+              Reminder Types
+            </button>
             <button
               @click="reminderFilter = 'all'"
               :class="[
@@ -568,6 +572,22 @@
     @update="handleEditRecordUpdate"
     @saveDraft="handleEditRecordSaveDraft"
   />
+
+  <ReminderTypesWorkflow
+    :is-open="isReminderTypesOpen"
+    @close="closeReminderTypes"
+    @submit="handleReminderTypesSubmit"
+    @saveDraft="handleReminderTypesSaveDraft"
+  />
+
+  <EditReminderWorkflow
+    :is-open="isEditReminderOpen"
+    :reminder="selectedReminder"
+    @close="closeEditReminder"
+    @update="handleEditReminderUpdate"
+    @saveDraft="handleEditReminderSaveDraft"
+    @delete="handleEditReminderDelete"
+  />
   </SidebarLayout>
 </template>
 
@@ -587,6 +607,8 @@ import UseTemplateWorkflow from '@/components/UseTemplateWorkflow.vue'
 import AddRecordWorkflow from '@/components/AddRecordWorkflow.vue'
 import ViewRecordWorkflow from '@/components/ViewRecordWorkflow.vue'
 import EditRecordWorkflow from '@/components/EditRecordWorkflow.vue'
+import ReminderTypesWorkflow from '@/components/ReminderTypesWorkflow.vue'
+import EditReminderWorkflow from '@/components/EditReminderWorkflow.vue'
 import { notify } from '@/composables/useNotifications'
 import { 
   FileText, 
@@ -621,9 +643,12 @@ const isUseTemplateOpen = ref(false)
 const isAddRecordOpen = ref(false)
 const isViewRecordOpen = ref(false)
 const isEditRecordOpen = ref(false)
+const isReminderTypesOpen = ref(false)
+const isEditReminderOpen = ref(false)
 const selectedContract = ref<any>(null)
 const selectedTemplate = ref<any>(null)
 const selectedRecord = ref<any>(null)
+const selectedReminder = ref<any>(null)
 
 const mockContracts = [
   {
@@ -825,10 +850,11 @@ const getReminderStatusColor = (isCompleted: boolean) => {
 
 const completeReminder = (id: string) => {
   console.log('Completing reminder:', id)
-  // Update reminder status to completed
   const reminder = mockReminders.find(r => r.id === id)
   if (reminder) {
     reminder.isCompleted = true
+    reminder.completedBy = 'Current User'
+    notify.success('Reminder Completed', `Reminder "${reminder.title}" has been marked as completed!`)
   }
 }
 
@@ -935,7 +961,11 @@ const viewReminder = (id: string) => {
 
 const editReminder = (id: string) => {
   console.log('Editing reminder:', id)
-  notify.info('Edit Reminder', `Opening editor for reminder ${id}`)
+  const reminder = mockReminders.find(r => r.id === id)
+  if (reminder) {
+    selectedReminder.value = reminder
+    isEditReminderOpen.value = true
+  }
 }
 
 const deleteReminder = async (id: string) => {
@@ -1188,5 +1218,69 @@ const handleEditRecordSaveDraft = (data: any) => {
   console.log('Record draft saved:', data)
   notify.success('Draft Saved', 'Record draft has been saved!')
   closeEditRecord()
+}
+
+// New reminder workflow functions
+const openReminderTypes = () => {
+  isReminderTypesOpen.value = true
+}
+
+const closeReminderTypes = () => {
+  isReminderTypesOpen.value = false
+}
+
+const closeEditReminder = () => {
+  isEditReminderOpen.value = false
+  selectedReminder.value = null
+}
+
+const handleReminderTypesSubmit = (data: any) => {
+  console.log('Creating reminder:', data)
+  // Add new reminder to mock data
+  const newReminder = {
+    id: Date.now().toString(),
+    title: data.title,
+    description: data.description,
+    type: data.type,
+    dueDate: data.dueDate,
+    isCompleted: false,
+    createdBy: 'Current User',
+    completedBy: null
+  }
+  mockReminders.push(newReminder)
+  notify.success('Reminder Created', `Reminder "${data.title}" has been created successfully!`)
+  closeReminderTypes()
+}
+
+const handleReminderTypesSaveDraft = (data: any) => {
+  console.log('Reminder draft saved:', data)
+  notify.success('Draft Saved', 'Reminder draft has been saved!')
+  closeReminderTypes()
+}
+
+const handleEditReminderUpdate = (data: any) => {
+  console.log('Updating reminder:', data)
+  const reminder = mockReminders.find(r => r.id === data.id)
+  if (reminder) {
+    Object.assign(reminder, data)
+    notify.success('Reminder Updated', `Reminder "${data.title}" has been updated successfully!`)
+  }
+  closeEditReminder()
+}
+
+const handleEditReminderSaveDraft = (data: any) => {
+  console.log('Reminder draft saved:', data)
+  notify.success('Draft Saved', 'Reminder draft has been saved!')
+  closeEditReminder()
+}
+
+const handleEditReminderDelete = (id: string) => {
+  console.log('Deleting reminder:', id)
+  const index = mockReminders.findIndex(r => r.id === id)
+  if (index > -1) {
+    mockReminders.splice(index, 1)
+    notify.success('Reminder Deleted', 'Reminder has been deleted successfully!')
+  }
+  closeEditReminder()
 }
 </script>
