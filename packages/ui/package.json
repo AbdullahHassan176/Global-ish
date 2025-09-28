@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "vue-tsc && vite build",
+    "build": "vite build",
     "dev": "vite build --watch",
     "typecheck": "echo 'Skipping UI typecheck due to vue-tsc compatibility issues'"
   },

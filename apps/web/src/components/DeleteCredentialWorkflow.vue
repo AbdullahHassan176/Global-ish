@@ -114,7 +114,7 @@
                   v-model="formData.confirmationText"
                   type="text"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-teal focus:border-brand-teal"
-                  :placeholder="`Type "${credentialName}" to confirm`"
+                  :placeholder="`Type '${credentialName}' to confirm`"
                 />
               </div>
 
