@@ -1,12 +1,12 @@
 # GitHub Actions Failure Summary
 
 **Repository:** AbdullahHassan176/Global-ish  
-**Generated:** 2025-09-28 21:52:09 UTC  
+**Generated:** 2025-09-28 21:56:35 UTC  
 **Limit:** 50 runs per workflow
 
 ## Summary
 
-**Total Failed Runs:** 156
+**Total Failed Runs:** 164
 
 ## Failed Runs
 
@@ -20,6 +20,7 @@
 | Aggregate Workflow Failures | [18080121127](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080121127) | failure | 2025-09-28T21:32:33Z | `5c4720a` | aggregate-failures | Run Error Summarizer; |  |
 | Aggregate Workflow Failures | [18080114463](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080114463) | failure | 2025-09-28T21:31:56Z | `5c4720a` | aggregate-failures | Run Error Summarizer; |  |
 | Aggregate Workflow Failures | [18080111675](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080111675) | failure | 2025-09-28T21:31:40Z | `5c4720a` | aggregate-failures | Run Error Summarizer; |  |
+| Azure Static Web Apps CI/CD | [18080306625](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080306625) | failure | 2025-09-28T21:51:59Z | `07a2246` | Build and Deploy Job | Build applications; |  |
 | Azure Static Web Apps CI/CD | [18080274634](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080274634) | failure | 2025-09-28T21:48:29Z | `2d9ae77` | Build and Deploy Job | Build applications; |  |
 | Azure Static Web Apps CI/CD | [18080263657](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080263657) | failure | 2025-09-28T21:47:24Z | `e44d5f2` | Build and Deploy Job | Build applications; |  |
 | Azure Static Web Apps CI/CD | [18080212967](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080212967) | failure | 2025-09-28T21:41:31Z | `db41aa2` | Build and Deploy Job | Build applications; |  |
@@ -34,6 +35,9 @@
 | Azure Static Web Apps CI/CD | [18079352096](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18079352096) | failure | 2025-09-28T20:22:37Z | `55241af` | Build and Deploy Job | Build And Deploy; |  |
 | Azure Static Web Apps CI/CD | [18079332230](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18079332230) | failure | 2025-09-28T20:20:47Z | `87f1055` | Build and Deploy Job | Build And Deploy; |  |
 | Azure Static Web Apps CI/CD | [18033502945](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18033502945) | failure | 2025-09-26T09:16:54Z | `d043704` | Build and Deploy Job | Build And Deploy; |  |
+| CI/CD Pipeline | [18080306626](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080306626) | failure | 2025-09-28T21:51:59Z | `07a2246` | Type Check | Run TypeScript check; |  |
+| CI/CD Pipeline | [18080306626](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080306626) | failure | 2025-09-28T21:51:59Z | `07a2246` | Lint | Run ESLint; |  |
+| CI/CD Pipeline | [18080306626](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080306626) | failure | 2025-09-28T21:51:59Z | `07a2246` | Test | Run tests; |  |
 | CI/CD Pipeline | [18080274632](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080274632) | failure | 2025-09-28T21:48:29Z | `2d9ae77` | Lint | Run ESLint; |  |
 | CI/CD Pipeline | [18080274632](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080274632) | failure | 2025-09-28T21:48:29Z | `2d9ae77` | Type Check | Run TypeScript check; |  |
 | CI/CD Pipeline | [18080274632](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080274632) | failure | 2025-09-28T21:48:29Z | `2d9ae77` | Test | Run tests; |  |
@@ -88,6 +92,10 @@
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Lint | Run ESLint; |  |
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Type Check | Run TypeScript check; |  |
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Test | Run tests; |  |
+| Security Scanning & Compliance | [18080306635](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080306635) | failure | 2025-09-28T21:51:59Z | `07a2246` | SAST Analysis | Run ESLint Security Rules; |  |
+| Security Scanning & Compliance | [18080306635](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080306635) | failure | 2025-09-28T21:51:59Z | `07a2246` | Dependency Vulnerability Scan | Run pnpm audit; |  |
+| Security Scanning & Compliance | [18080306635](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080306635) | failure | 2025-09-28T21:51:59Z | `07a2246` | Security Policy Compliance | Set up job; |  |
+| Security Scanning & Compliance | [18080306635](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080306635) | failure | 2025-09-28T21:51:59Z | `07a2246` | Build Application | Build application; |  |
 | Security Scanning & Compliance | [18080274633](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080274633) | failure | 2025-09-28T21:48:29Z | `2d9ae77` | Security Policy Compliance | Set up job; |  |
 | Security Scanning & Compliance | [18080274633](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080274633) | failure | 2025-09-28T21:48:29Z | `2d9ae77` | Dependency Vulnerability Scan | Run pnpm audit; |  |
 | Security Scanning & Compliance | [18080274633](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18080274633) | failure | 2025-09-28T21:48:29Z | `2d9ae77` | SAST Analysis | Run ESLint Security Rules; |  |
