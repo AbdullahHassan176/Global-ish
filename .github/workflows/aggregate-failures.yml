@@ -71,23 +71,34 @@ jobs:
           # Configure git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-
-          # Create or checkout reports branch
-          git checkout -B gha-reports 2>/dev/null || git checkout gha-reports
-
+          
+          # Fetch all branches first
+          git fetch origin
+          
+          # Create or checkout reports branch with proper handling
+          if git show-ref --verify --quiet refs/remotes/origin/gha-reports; then
+            # Branch exists remotely, checkout and pull
+            git checkout -b gha-reports origin/gha-reports 2>/dev/null || git checkout gha-reports
+            git pull origin gha-reports
+          else
+            # Branch doesn't exist, create it
+            git checkout -B gha-reports
+          fi
+          
           # Create reports directory if it doesn't exist
           mkdir -p reports
-
+          
           # Copy generated files
           cp reports/summary.md reports/ 2>/dev/null || echo "No summary.md found"
           cp reports/summary.csv reports/ 2>/dev/null || echo "No summary.csv found"
-
+          
           # Add and commit files
           git add reports/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
             git commit -m "Update workflow failure summary - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-            git push origin gha-reports
+            # Force push to handle any conflicts
+            git push origin gha-reports --force-with-lease
             echo "Committed summary to gha-reports branch"
           fi
