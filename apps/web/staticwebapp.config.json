@@ -1,0 +1,7 @@
+{
+  "platform": {
+    "apiRuntime": "node:18"
+  },
+  "buildCommand": "pnpm install && pnpm build",
+  "outputLocation": "dist"
+}
