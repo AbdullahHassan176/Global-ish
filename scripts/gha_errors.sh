@@ -19,15 +19,15 @@ NC='\033[0m' # No Color
 
 # Logging functions
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+    echo "[INFO] $1"
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    echo "[WARN] $1"
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo "[ERROR] $1"
 }
 
 # Check dependencies
@@ -78,7 +78,10 @@ get_workflows() {
     local repo="$1"
     log_info "Fetching workflows for $repo..."
     
-    gh api "repos/$repo/actions/workflows" --jq '.workflows[] | {id: .id, name: .name, path: .path}' | jq -s '.'
+    if ! gh api "repos/$repo/actions/workflows" --jq '.workflows[] | {id: .id, name: .name, path: .path}' | jq -s '.'; then
+        log_error "Failed to fetch workflows for $repo"
+        exit 1
+    fi
 }
 
 # Get workflow runs
@@ -90,7 +93,7 @@ get_workflow_runs() {
     
     log_info "Fetching runs for workflow: $workflow_name (limit: $limit)"
     
-    gh api "repos/$repo/actions/workflows/$workflow_id/runs" \
+    if ! gh api "repos/$repo/actions/workflows/$workflow_id/runs" \
         --jq ".workflow_runs[] | select(.conclusion != \"success\") | {
             id: .id,
             conclusion: .conclusion,
@@ -98,7 +101,10 @@ get_workflow_runs() {
             html_url: .html_url,
             head_sha: .head_sha,
             workflow_name: \"$workflow_name\"
-        }" | jq -s '.'
+        }" | jq -s '.'; then
+        log_warn "Failed to fetch runs for workflow $workflow_name"
+        echo "[]"
+    fi
 }
 
 # Get jobs for a run
@@ -106,14 +112,17 @@ get_run_jobs() {
     local repo="$1"
     local run_id="$2"
     
-    gh api "repos/$repo/actions/runs/$run_id/jobs" --jq '.jobs[] | {
+    if ! gh api "repos/$repo/actions/runs/$run_id/jobs" --jq '.jobs[] | {
         name: .name,
         conclusion: .conclusion,
         steps: [.steps[] | select(.conclusion == "failure") | {
             name: .name,
             conclusion: .conclusion
         }]
-    }' | jq -s '.'
+    }' | jq -s '.'; then
+        log_warn "Failed to fetch jobs for run $run_id"
+        echo "[]"
+    fi
 }
 
 # Extract error lines from logs
