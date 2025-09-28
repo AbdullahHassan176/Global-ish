@@ -18,10 +18,10 @@ import { Express } from 'express-serve-static-core';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { FilesService } from '../services/files.service';
 import { UploadFileDto, CreateSignedUrlDto, UpdateFileDto } from '../dto/upload-file.dto';
-import { JwtAuthGuard } from '@global-next/auth';
-import { RequirePermission } from '@global-next/auth';
-import { CurrentUser } from '@global-next/auth';
-import { User } from '@global-next/types';
+import { JwtAuthGuard } from '../../../../packages/auth/src/guards/jwt-auth.guard';
+import { RequirePermission } from '../../../../packages/auth/src/decorators/require-permission.decorator';
+import { CurrentUser } from '../../../../packages/auth/src/decorators/current-user.decorator';
+import { User } from '../../../../packages/types/src/index';
 
 @ApiTags('Files')
 @ApiBearerAuth()

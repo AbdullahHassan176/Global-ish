@@ -34,6 +34,16 @@ model User {
   webauthnCredentials WebAuthnCredential[]
   auditLogs         AuditLog[]
   policies          Policy[]
+  accounts          Account[]
+  files             File[]
+  fileAccessControls FileAccessControl[]
+  workflows         Workflow[]
+  workflowInstances WorkflowInstance[]
+  tasks             Task[]
+  taskAssignments   TaskAssignment[]
+  taskComments      TaskComment[]
+  notifications     Notification[]
+  notificationPreferences NotificationPreference[]
   
   // Consulting Modules Relations
   marketingCampaigns MarketingCampaign[]
@@ -46,9 +56,9 @@ model User {
   complianceContracts ComplianceContract[]
   complianceSignatures ComplianceSignature[]
   complianceRecords ComplianceRecord[]
-  complianceReminders ComplianceReminder[]
+  complianceReminders ComplianceReminder[] @relation("ComplianceReminderCreator")
   complianceRemindersCompleted ComplianceReminder[] @relation("ComplianceReminderCompleter")
-  timesheets        Timesheet[]
+  timesheets        Timesheet[] @relation("TimesheetUser")
   timesheetsCreated Timesheet[] @relation("TimesheetCreator")
   timesheetsApproved Timesheet[] @relation("TimesheetApprover")
   projects          Project[]
@@ -61,15 +71,20 @@ model User {
   costItems         CostItem[]
   invoices          Invoice[]
   carrierIntegrations CarrierIntegration[]
-  logisticsAlerts   LogisticsAlert[]
+  logisticsAlerts   LogisticsAlert[] @relation("LogisticsAlertCreator")
   logisticsAlertsResolved LogisticsAlert[] @relation("LogisticsAlertResolver")
   
   // Integrations Relations
   integrationCredentials IntegrationCredential[]
   webhookEndpoints   WebhookEndpoint[]
-  webhookDeliveries  WebhookDelivery[]
   tokenizationEvents TokenizationEvent[]
   tokenizationKPIs   TokenizationKPI[]
+  dataRequests       DataRequest[] @relation("DataRequestUser")
+  dataRequestsCreated DataRequest[] @relation("DataRequestCreator")
+  securityEvents     SecurityEvent[] @relation("SecurityEventUser")
+  securityEventsResolved SecurityEvent[] @relation("SecurityEventResolver")
+  hsCodeSuggestions HSCodeSuggestion[]
+  etaPredictions     ETAPrediction[]
   
   // Security & Privacy Relations
   userSessions       UserSession[]
@@ -77,7 +92,6 @@ model User {
   consentRecords     ConsentRecord[]
   dataRetentionPolicies DataRetentionPolicy[]
   piiEncryptionKeys  PIIEncryptionKey[]
-  rateLimitRecords   RateLimitRecord[]
   
   // Reporting & Analytics Relations
   kpiRecords         KPIRecord[]
@@ -87,6 +101,7 @@ model User {
   analyticsEvents    AnalyticsEvent[]
 
   @@map("users")
+  @@schema("public")
 }
 
 enum UserRole {
@@ -96,6 +111,8 @@ enum UserRole {
   CONSULTANT
   PARTNER
   VIEWER
+
+  @@schema("public")
 }
 
 // Session Management
@@ -114,6 +131,7 @@ model Session {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
+  @@schema("public")
 }
 
 // MFA Management
@@ -129,6 +147,7 @@ model MFASecret {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("mfa_secrets")
+  @@schema("public")
 }
 
 // WebAuthn Management
@@ -146,6 +165,7 @@ model WebAuthnCredential {
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("webauthn_credentials")
+  @@schema("public")
 }
 
 // RBAC/ABAC Policy Management
@@ -166,11 +186,14 @@ model Policy {
   creator     User         @relation(fields: [createdBy], references: [id])
 
   @@map("policies")
+  @@schema("public")
 }
 
 enum PolicyEffect {
   ALLOW
   DENY
+
+  @@schema("public")
 }
 
 // Audit Logging
@@ -214,6 +237,7 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
+  @@schema("public")
 }
 
 model VerificationToken {
@@ -223,21 +247,10 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+  @@schema("public")
 }
 
-// Add Account relation to User
-model User {
-  // ... existing fields ...
-  accounts Account[]
-  files File[]
-  workflows Workflow[]
-  workflowInstances WorkflowInstance[]
-  tasks Task[]
-  taskAssignments TaskAssignment[]
-  taskComments TaskComment[]
-  notifications Notification[]
-  notificationPreferences NotificationPreference[]
-}
+// Add Account relation to User (merged into main User model above)
 
 // Files Module
 model File {
@@ -272,6 +285,7 @@ model File {
   taskAttachments TaskAttachment[]
 
   @@map("files")
+  @@schema("public")
 }
 
 enum OCRStatus {
@@ -279,6 +293,8 @@ enum OCRStatus {
   PROCESSING
   COMPLETED
   FAILED
+
+  @@schema("public")
 }
 
 enum AccessLevel {
@@ -286,6 +302,8 @@ enum AccessLevel {
   INTERNAL
   PRIVATE
   CONFIDENTIAL
+
+  @@schema("public")
 }
 
 model FileAccessControl {
@@ -302,6 +320,7 @@ model FileAccessControl {
 
   @@unique([fileId, userId, role])
   @@map("file_access_controls")
+  @@schema("public")
 }
 
 enum FilePermission {
@@ -309,6 +328,8 @@ enum FilePermission {
   WRITE
   DELETE
   MANAGE
+
+  @@schema("public")
 }
 
 // Workflows Module
@@ -327,6 +348,7 @@ model Workflow {
   instances   WorkflowInstance[]
 
   @@map("workflows")
+  @@schema("public")
 }
 
 model WorkflowInstance {
@@ -347,6 +369,7 @@ model WorkflowInstance {
   attachments WorkflowAttachment[]
 
   @@map("workflow_instances")
+  @@schema("public")
 }
 
 enum WorkflowStatus {
@@ -355,6 +378,8 @@ enum WorkflowStatus {
   COMPLETED
   FAILED
   CANCELLED
+
+  @@schema("public")
 }
 
 model WorkflowStep {
@@ -375,6 +400,7 @@ model WorkflowStep {
 
   @@unique([instanceId, stepIndex])
   @@map("workflow_steps")
+  @@schema("public")
 }
 
 enum StepStatus {
@@ -383,6 +409,8 @@ enum StepStatus {
   COMPLETED
   FAILED
   SKIPPED
+
+  @@schema("public")
 }
 
 model WorkflowAttachment {
@@ -397,6 +425,7 @@ model WorkflowAttachment {
 
   @@unique([instanceId, fileId])
   @@map("workflow_attachments")
+  @@schema("public")
 }
 
 // Tasks Module
@@ -419,6 +448,7 @@ model Task {
   attachments TaskAttachment[]
 
   @@map("tasks")
+  @@schema("public")
 }
 
 enum TaskStatus {
@@ -427,6 +457,8 @@ enum TaskStatus {
   IN_REVIEW
   COMPLETED
   CANCELLED
+
+  @@schema("public")
 }
 
 enum Priority {
@@ -434,6 +466,8 @@ enum Priority {
   MEDIUM
   HIGH
   URGENT
+
+  @@schema("public")
 }
 
 model TaskAssignment {
@@ -448,6 +482,7 @@ model TaskAssignment {
 
   @@unique([taskId, userId])
   @@map("task_assignments")
+  @@schema("public")
 }
 
 model TaskComment {
@@ -462,6 +497,7 @@ model TaskComment {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("task_comments")
+  @@schema("public")
 }
 
 model TaskAttachment {
@@ -476,6 +512,7 @@ model TaskAttachment {
 
   @@unique([taskId, fileId])
   @@map("task_attachments")
+  @@schema("public")
 }
 
 // Notifications Module
@@ -495,6 +532,7 @@ model Notification {
   user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
+  @@schema("public")
 }
 
 enum NotificationType {
@@ -507,6 +545,8 @@ enum NotificationType {
   WORKFLOW_STEP
   FILE_UPLOADED
   APPROVAL_REQUIRED
+
+  @@schema("public")
 }
 
 model NotificationPreference {
@@ -525,6 +565,7 @@ model NotificationPreference {
 
   @@unique([userId, type])
   @@map("notification_preferences")
+  @@schema("public")
 }
 
 // ===== CONSULTING MODULES =====
@@ -550,6 +591,7 @@ model MarketingCampaign {
   integrations MarketingIntegration[]
 
   @@map("marketing_campaigns")
+  @@schema("public")
 }
 
 enum CampaignStatus {
@@ -558,6 +600,8 @@ enum CampaignStatus {
   PAUSED
   COMPLETED
   CANCELLED
+
+  @@schema("public")
 }
 
 model MarketingContent {
@@ -582,6 +626,7 @@ model MarketingContent {
   assets      MarketingAsset[]
 
   @@map("marketing_content")
+  @@schema("public")
 }
 
 enum ContentType {
@@ -592,6 +637,8 @@ enum ContentType {
   AD
   EMAIL
   WEBINAR
+
+  @@schema("public")
 }
 
 enum ContentStatus {
@@ -601,6 +648,8 @@ enum ContentStatus {
   SCHEDULED
   PUBLISHED
   REJECTED
+
+  @@schema("public")
 }
 
 model MarketingApproval {
@@ -620,12 +669,15 @@ model MarketingApproval {
 
   @@unique([contentId, approverId])
   @@map("marketing_approvals")
+  @@schema("public")
 }
 
 enum ApprovalStatus {
   PENDING
   APPROVED
   REJECTED
+
+  @@schema("public")
 }
 
 model MarketingAsset {
@@ -642,6 +694,7 @@ model MarketingAsset {
   content     MarketingContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   @@map("marketing_assets")
+  @@schema("public")
 }
 
 enum AssetType {
@@ -649,6 +702,8 @@ enum AssetType {
   VIDEO
   DOCUMENT
   TEMPLATE
+
+  @@schema("public")
 }
 
 model MarketingIntegration {
@@ -667,6 +722,7 @@ model MarketingIntegration {
 
   @@unique([campaignId, platform])
   @@map("marketing_integrations")
+  @@schema("public")
 }
 
 enum SocialPlatform {
@@ -676,6 +732,8 @@ enum SocialPlatform {
   TWITTER
   GOOGLE_ADS
   YOUTUBE
+
+  @@schema("public")
 }
 
 enum IntegrationStatus {
@@ -683,6 +741,8 @@ enum IntegrationStatus {
   ACTIVE
   ERROR
   EXPIRED
+
+  @@schema("public")
 }
 
 // Product Registration Module
@@ -707,6 +767,7 @@ model ProductRegistration {
   communications ProductCommunication[]
 
   @@map("product_registrations")
+  @@schema("public")
 }
 
 enum RegistrationStatus {
@@ -717,6 +778,8 @@ enum RegistrationStatus {
   APPROVED
   REJECTED
   EXPIRED
+
+  @@schema("public")
 }
 
 model ProductChecklist {
@@ -735,6 +798,7 @@ model ProductChecklist {
   registration ProductRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
 
   @@map("product_checklists")
+  @@schema("public")
 }
 
 model ProductDocument {
@@ -751,6 +815,7 @@ model ProductDocument {
   registration ProductRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
 
   @@map("product_documents")
+  @@schema("public")
 }
 
 enum DocumentType {
@@ -760,6 +825,8 @@ enum DocumentType {
   SPECIFICATION
   TEST_REPORT
   OTHER
+
+  @@schema("public")
 }
 
 model ProductSubmission {
@@ -780,6 +847,7 @@ model ProductSubmission {
   creator      User               @relation(fields: [createdBy], references: [id])
 
   @@map("product_submissions")
+  @@schema("public")
 }
 
 enum SubmissionStatus {
@@ -789,6 +857,8 @@ enum SubmissionStatus {
   ISSUE
   APPROVED
   REJECTED
+
+  @@schema("public")
 }
 
 model ProductCommunication {
@@ -808,6 +878,7 @@ model ProductCommunication {
   creator      User               @relation(fields: [createdBy], references: [id])
 
   @@map("product_communications")
+  @@schema("public")
 }
 
 enum CommunicationType {
@@ -816,11 +887,15 @@ enum CommunicationType {
   LETTER
   MEETING
   OTHER
+
+  @@schema("public")
 }
 
 enum CommunicationDirection {
   OUTBOUND
   INBOUND
+
+  @@schema("public")
 }
 
 // Compliance Module
@@ -842,6 +917,7 @@ model ComplianceTemplate {
   contracts   ComplianceContract[]
 
   @@map("compliance_templates")
+  @@schema("public")
 }
 
 enum TemplateType {
@@ -851,6 +927,8 @@ enum TemplateType {
   PROCEDURE
   FORM
   LETTER
+
+  @@schema("public")
 }
 
 model ComplianceContract {
@@ -874,6 +952,7 @@ model ComplianceContract {
   records     ComplianceRecord[]
 
   @@map("compliance_contracts")
+  @@schema("public")
 }
 
 enum ContractStatus {
@@ -882,6 +961,8 @@ enum ContractStatus {
   SIGNED
   EXPIRED
   TERMINATED
+
+  @@schema("public")
 }
 
 model ComplianceSignature {
@@ -902,6 +983,7 @@ model ComplianceSignature {
   signer      User               @relation(fields: [signerId], references: [id])
 
   @@map("compliance_signatures")
+  @@schema("public")
 }
 
 enum SignatureStatus {
@@ -909,6 +991,8 @@ enum SignatureStatus {
   SIGNED
   DECLINED
   EXPIRED
+
+  @@schema("public")
 }
 
 model ComplianceRecord {
@@ -930,6 +1014,7 @@ model ComplianceRecord {
   reminders   ComplianceReminder[]
 
   @@map("compliance_records")
+  @@schema("public")
 }
 
 enum RecordType {
@@ -941,6 +1026,8 @@ enum RecordType {
   PROCEDURE
   AUDIT_REPORT
   OTHER
+
+  @@schema("public")
 }
 
 model ComplianceReminder {
@@ -958,10 +1045,11 @@ model ComplianceReminder {
 
   // Relations
   record      ComplianceRecord? @relation(fields: [recordId], references: [id])
-  creator     User              @relation(fields: [createdBy], references: [id])
-  completer   User?             @relation(fields: [completedBy], references: [id])
+  creator     User              @relation("ComplianceReminderCreator", fields: [createdBy], references: [id])
+  completer   User?             @relation("ComplianceReminderCompleter", fields: [completedBy], references: [id])
 
   @@map("compliance_reminders")
+  @@schema("public")
 }
 
 enum ReminderType {
@@ -972,6 +1060,8 @@ enum ReminderType {
   AUDIT_DUE
   TRAINING_DUE
   OTHER
+
+  @@schema("public")
 }
 
 // Timesheets Module
@@ -993,13 +1083,14 @@ model Timesheet {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation("TimesheetUser", fields: [userId], references: [id])
   project     Project? @relation(fields: [projectId], references: [id])
   client      Client?  @relation(fields: [clientId], references: [id])
-  creator     User     @relation(fields: [createdBy], references: [id])
-  approver    User?    @relation(fields: [approvedBy], references: [id])
+  creator     User     @relation("TimesheetCreator", fields: [createdBy], references: [id])
+  approver    User?    @relation("TimesheetApprover", fields: [approvedBy], references: [id])
 
   @@map("timesheets")
+  @@schema("public")
 }
 
 enum TimesheetStatus {
@@ -1007,6 +1098,8 @@ enum TimesheetStatus {
   SUBMITTED
   APPROVED
   REJECTED
+
+  @@schema("public")
 }
 
 model Project {
@@ -1027,8 +1120,11 @@ model Project {
   client      Client?  @relation(fields: [clientId], references: [id])
   creator     User     @relation(fields: [createdBy], references: [id])
   timesheets  Timesheet[]
+  shipments   Shipment[]
+  invoices    Invoice[]
 
   @@map("projects")
+  @@schema("public")
 }
 
 enum ProjectStatus {
@@ -1037,6 +1133,8 @@ enum ProjectStatus {
   ON_HOLD
   COMPLETED
   CANCELLED
+
+  @@schema("public")
 }
 
 model Client {
@@ -1055,8 +1153,11 @@ model Client {
   creator     User     @relation(fields: [createdBy], references: [id])
   projects    Project[]
   timesheets  Timesheet[]
+  shipments   Shipment[]
+  invoices    Invoice[]
 
   @@map("clients")
+  @@schema("public")
 }
 
 // ===== LOGISTICS MODULE =====
@@ -1095,8 +1196,10 @@ model Shipment {
   carrierEvents   CarrierEvent[]
   costItems       CostItem[]
   invoices        Invoice[]
+  logisticsAlerts LogisticsAlert[]
 
   @@map("shipments")
+  @@schema("public")
 }
 
 enum Carrier {
@@ -1107,6 +1210,8 @@ enum Carrier {
   FEDEX
   UPS
   OTHER
+
+  @@schema("public")
 }
 
 enum ShipmentStatus {
@@ -1119,6 +1224,8 @@ enum ShipmentStatus {
   AT_DESTINATION
   DELIVERED
   CANCELLED
+
+  @@schema("public")
 }
 
 model Container {
@@ -1144,9 +1251,11 @@ model Container {
   creator         User     @relation(fields: [createdBy], references: [id])
   milestones      Milestone[]
   carrierEvents   CarrierEvent[]
+  logisticsAlerts LogisticsAlert[]
 
   @@unique([shipmentId, containerNumber])
   @@map("containers")
+  @@schema("public")
 }
 
 enum ContainerType {
@@ -1156,6 +1265,8 @@ enum ContainerType {
   FLAT_RACK
   OPEN_TOP
   HIGH_CUBE
+
+  @@schema("public")
 }
 
 enum ContainerStatus {
@@ -1166,6 +1277,8 @@ enum ContainerStatus {
   AT_CUSTOMS
   DELIVERED
   RETURNED
+
+  @@schema("public")
 }
 
 model Milestone {
@@ -1192,6 +1305,7 @@ model Milestone {
   creator         User     @relation(fields: [createdBy], references: [id])
 
   @@map("milestones")
+  @@schema("public")
 }
 
 enum MilestoneType {
@@ -1205,6 +1319,8 @@ enum MilestoneType {
   FREE_TIME_START
   FREE_TIME_END
   DEMURRAGE_START
+
+  @@schema("public")
 }
 
 enum MilestoneStatus {
@@ -1213,6 +1329,8 @@ enum MilestoneStatus {
   COMPLETED
   DELAYED
   CANCELLED
+
+  @@schema("public")
 }
 
 model CarrierEvent {
@@ -1235,6 +1353,7 @@ model CarrierEvent {
   container       Container? @relation(fields: [containerId], references: [id], onDelete: Cascade)
 
   @@map("carrier_events")
+  @@schema("public")
 }
 
 // Cost Management
@@ -1260,6 +1379,7 @@ model CostItem {
   creator         User     @relation(fields: [createdBy], references: [id])
 
   @@map("cost_items")
+  @@schema("public")
 }
 
 enum CostType {
@@ -1271,6 +1391,8 @@ enum CostType {
   DOCUMENTATION
   INSURANCE
   OTHER
+
+  @@schema("public")
 }
 
 enum CostStatus {
@@ -1278,6 +1400,8 @@ enum CostStatus {
   APPROVED
   PAID
   CANCELLED
+
+  @@schema("public")
 }
 
 model Invoice {
@@ -1304,6 +1428,7 @@ model Invoice {
   creator         User     @relation(fields: [createdBy], references: [id])
 
   @@map("invoices")
+  @@schema("public")
 }
 
 enum InvoiceStatus {
@@ -1312,6 +1437,8 @@ enum InvoiceStatus {
   PAID
   OVERDUE
   CANCELLED
+
+  @@schema("public")
 }
 
 // Carrier Integration
@@ -1336,6 +1463,7 @@ model CarrierIntegration {
 
   @@unique([carrier, name])
   @@map("carrier_integrations")
+  @@schema("public")
 }
 
 // Alerts and Notifications
@@ -1358,10 +1486,11 @@ model LogisticsAlert {
   // Relations
   shipment        Shipment? @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
   container       Container? @relation(fields: [containerId], references: [id], onDelete: Cascade)
-  creator         User     @relation(fields: [createdBy], references: [id])
-  resolver        User?    @relation(fields: [resolvedBy], references: [id])
+  creator         User     @relation("LogisticsAlertCreator", fields: [createdBy], references: [id])
+  resolver        User?    @relation("LogisticsAlertResolver", fields: [resolvedBy], references: [id])
 
   @@map("logistics_alerts")
+  @@schema("public")
 }
 
 enum AlertType {
@@ -1373,6 +1502,8 @@ enum AlertType {
   CONTAINER_DAMAGE
   ROUTE_CHANGE
   OTHER
+
+  @@schema("public")
 }
 
 enum AlertSeverity {
@@ -1380,6 +1511,8 @@ enum AlertSeverity {
   MEDIUM
   HIGH
   CRITICAL
+
+  @@schema("public")
 }
 
 // ===== INTEGRATIONS MODULE =====
@@ -1403,6 +1536,7 @@ model IntegrationCredential {
   webhookEndpoints WebhookEndpoint[]
 
   @@map("integration_credentials")
+  @@schema("public")
 }
 
 enum CredentialType {
@@ -1411,6 +1545,8 @@ enum CredentialType {
   BASIC_AUTH
   JWT
   WEBHOOK_SECRET
+
+  @@schema("public")
 }
 
 // Webhook Registry
@@ -1436,6 +1572,7 @@ model WebhookEndpoint {
   deliveries      WebhookDelivery[]
 
   @@map("webhook_endpoints")
+  @@schema("public")
 }
 
 // Delivery Log
@@ -1460,6 +1597,7 @@ model WebhookDelivery {
   webhook         WebhookEndpoint @relation(fields: [webhookId], references: [id])
 
   @@map("webhook_deliveries")
+  @@schema("public")
 }
 
 enum DeliveryStatus {
@@ -1468,6 +1606,8 @@ enum DeliveryStatus {
   FAILED
   RETRYING
   EXPIRED
+
+  @@schema("public")
 }
 
 // Tokenization Bridge
@@ -1488,6 +1628,7 @@ model TokenizationEvent {
   creator         User     @relation(fields: [createdBy], references: [id])
 
   @@map("tokenization_events")
+  @@schema("public")
 }
 
 enum TokenizationEventType {
@@ -1496,6 +1637,8 @@ enum TokenizationEventType {
   DOC_HASHED
   INVOICE_CREATED
   KPI_UPDATED
+
+  @@schema("public")
 }
 
 // KPI Read Model
@@ -1516,18 +1659,10 @@ model TokenizationKPI {
 
   @@unique([kpiType, period])
   @@map("tokenization_kpis")
+  @@schema("public")
 }
 
-enum KPIType {
-  SHIPMENT_VOLUME
-  DELIVERY_TIME_AVG
-  COST_PER_SHIPMENT
-  ON_TIME_DELIVERY_RATE
-  CUSTOMER_SATISFACTION
-  REVENUE_PER_CONTAINER
-  DEMURRAGE_COSTS
-  CARRIER_PERFORMANCE
-}
+// KPIType enum moved to reporting section below
 
 // ===== SECURITY & PRIVACY MODULE =====
 
@@ -1551,6 +1686,7 @@ model UserSession {
   device          UserDevice? @relation(fields: [deviceId], references: [id])
 
   @@map("user_sessions")
+  @@schema("public")
 }
 
 // User Device Management
@@ -1574,6 +1710,7 @@ model UserDevice {
   sessions        UserSession[]
 
   @@map("user_devices")
+  @@schema("public")
 }
 
 enum DeviceType {
@@ -1581,6 +1718,8 @@ enum DeviceType {
   MOBILE
   TABLET
   UNKNOWN
+
+  @@schema("public")
 }
 
 // GDPR Consent Management
@@ -1603,6 +1742,7 @@ model ConsentRecord {
   user            User     @relation(fields: [userId], references: [id])
 
   @@map("consent_records")
+  @@schema("public")
 }
 
 enum ConsentType {
@@ -1613,6 +1753,8 @@ enum ConsentType {
   THIRD_PARTY_SHARING
   DATA_RETENTION
   LOCATION_TRACKING
+
+  @@schema("public")
 }
 
 enum LegalBasis {
@@ -1622,6 +1764,8 @@ enum LegalBasis {
   VITAL_INTERESTS
   PUBLIC_TASK
   LEGITIMATE_INTERESTS
+
+  @@schema("public")
 }
 
 // Data Retention Policies
@@ -1642,6 +1786,7 @@ model DataRetentionPolicy {
 
   @@unique([recordType])
   @@map("data_retention_policies")
+  @@schema("public")
 }
 
 // PII Encryption Keys (KMS Envelope)
@@ -1662,6 +1807,7 @@ model PIIEncryptionKey {
   creator         User     @relation(fields: [createdBy], references: [id])
 
   @@map("pii_encryption_keys")
+  @@schema("public")
 }
 
 // Rate Limiting Records
@@ -1678,8 +1824,11 @@ model RateLimitRecord {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  // Relations
+
   @@unique([identifier, identifierType, route, windowStart])
   @@map("rate_limit_records")
+  @@schema("public")
 }
 
 enum RateLimitType {
@@ -1687,6 +1836,8 @@ enum RateLimitType {
   IP_ADDRESS
   ROUTE
   GLOBAL
+
+  @@schema("public")
 }
 
 // Data Export/Erase Requests (GDPR)
@@ -1705,10 +1856,11 @@ model DataRequest {
   updatedAt       DateTime @updatedAt
 
   // Relations
-  user            User     @relation(fields: [userId], references: [id])
-  creator         User     @relation(fields: [createdBy], references: [id])
+  user            User     @relation("DataRequestUser", fields: [userId], references: [id])
+  creator         User     @relation("DataRequestCreator", fields: [createdBy], references: [id])
 
   @@map("data_requests")
+  @@schema("public")
 }
 
 enum DataRequestType {
@@ -1716,6 +1868,8 @@ enum DataRequestType {
   ERASURE
   PORTABILITY
   RECTIFICATION
+
+  @@schema("public")
 }
 
 enum DataRequestStatus {
@@ -1724,6 +1878,8 @@ enum DataRequestStatus {
   COMPLETED
   FAILED
   EXPIRED
+
+  @@schema("public")
 }
 
 // Security Events Log
@@ -1743,10 +1899,11 @@ model SecurityEvent {
   createdAt       DateTime @default(now())
 
   // Relations
-  user            User?    @relation(fields: [userId], references: [id])
-  resolver        User?    @relation(fields: [resolvedBy], references: [id])
+  user            User?    @relation("SecurityEventUser", fields: [userId], references: [id])
+  resolver        User?    @relation("SecurityEventResolver", fields: [resolvedBy], references: [id])
 
   @@map("security_events")
+  @@schema("public")
 }
 
 enum SecurityEventType {
@@ -1765,6 +1922,8 @@ enum SecurityEventType {
   ENCRYPTION_KEY_ROTATION
   SECURITY_SCAN
   VULNERABILITY_DETECTED
+
+  @@schema("public")
 }
 
 enum SecuritySeverity {
@@ -1772,6 +1931,8 @@ enum SecuritySeverity {
   MEDIUM
   HIGH
   CRITICAL
+
+  @@schema("public")
 }
 
 // ===== REPORTING & ANALYTICS MODULE =====
@@ -1797,6 +1958,7 @@ model KPIRecord {
 
   @@unique([kpiType, period])
   @@map("kpi_records")
+  @@schema("public")
 }
 
 enum KPIType {
@@ -1840,6 +2002,8 @@ enum KPIType {
   REVENUE_PER_CLIENT
   COST_PER_CONTAINER
   PROFIT_MARGIN
+
+  @@schema("public")
 }
 
 enum KPICategory {
@@ -1850,6 +2014,8 @@ enum KPICategory {
   FINANCE
   SECURITY
   OVERALL
+
+  @@schema("public")
 }
 
 enum KPITrend {
@@ -1857,6 +2023,8 @@ enum KPITrend {
   DOWN
   STABLE
   VOLATILE
+
+  @@schema("public")
 }
 
 // Report Schedules
@@ -1882,6 +2050,7 @@ model ReportSchedule {
   exports         ReportExport[]
 
   @@map("report_schedules")
+  @@schema("public")
 }
 
 enum ReportType {
@@ -1891,6 +2060,8 @@ enum ReportType {
   FINANCIAL_OVERVIEW
   SECURITY_AUDIT
   CUSTOM_DASHBOARD
+
+  @@schema("public")
 }
 
 enum ReportFrequency {
@@ -1900,6 +2071,8 @@ enum ReportFrequency {
   QUARTERLY
   YEARLY
   ON_DEMAND
+
+  @@schema("public")
 }
 
 enum ReportFormat {
@@ -1907,6 +2080,8 @@ enum ReportFormat {
   XLSX
   PDF
   JSON
+
+  @@schema("public")
 }
 
 // Report Exports
@@ -1932,6 +2107,7 @@ model ReportExport {
   schedule        ReportSchedule? @relation(fields: [scheduleId], references: [id])
 
   @@map("report_exports")
+  @@schema("public")
 }
 
 enum ExportStatus {
@@ -1940,6 +2116,8 @@ enum ExportStatus {
   COMPLETED
   FAILED
   EXPIRED
+
+  @@schema("public")
 }
 
 // Predictive Models
@@ -1963,6 +2141,7 @@ model PredictiveModel {
   creator         User     @relation(fields: [createdBy], references: [id])
 
   @@map("predictive_models")
+  @@schema("public")
 }
 
 enum ModelType {
@@ -1972,6 +2151,8 @@ enum ModelType {
   UTILIZATION_FORECAST
   RENEWAL_PROBABILITY
   COST_OPTIMIZATION
+
+  @@schema("public")
 }
 
 // Analytics Events
@@ -1991,6 +2172,7 @@ model AnalyticsEvent {
   user            User?    @relation(fields: [userId], references: [id])
 
   @@map("analytics_events")
+  @@schema("public")
 }
 
 // HS Code Suggestions (for predictive analytics)
@@ -2013,6 +2195,7 @@ model HSCodeSuggestion {
   accepter        User?    @relation(fields: [acceptedBy], references: [id])
 
   @@map("hs_code_suggestions")
+  @@schema("public")
 }
 
 // ETA Predictions
@@ -2034,4 +2217,5 @@ model ETAPrediction {
   creator         User     @relation(fields: [createdBy], references: [id])
 
   @@map("eta_predictions")
+  @@schema("public")
 }
