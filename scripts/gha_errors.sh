@@ -19,15 +19,15 @@ NC='\033[0m' # No Color
 
 # Logging functions
 log_info() {
-    echo "[INFO] $1"
+    echo "[INFO] $1" >&2
 }
 
 log_warn() {
-    echo "[WARN] $1"
+    echo "[WARN] $1" >&2
 }
 
 log_error() {
-    echo "[ERROR] $1"
+    echo "[ERROR] $1" >&2
 }
 
 # Check dependencies
@@ -78,7 +78,7 @@ get_workflows() {
     local repo="$1"
     log_info "Fetching workflows for $repo..."
     
-    if ! gh api "repos/$repo/actions/workflows" --jq '.workflows[] | {id: .id, name: .name, path: .path}' | jq -s '.'; then
+    if ! gh api "repos/$repo/actions/workflows" --jq '.workflows[] | {id: .id, name: .name, path: .path}' 2>/dev/null | jq -s '.'; then
         log_error "Failed to fetch workflows for $repo"
         exit 1
     fi
@@ -101,7 +101,7 @@ get_workflow_runs() {
             html_url: .html_url,
             head_sha: .head_sha,
             workflow_name: \"$workflow_name\"
-        }" | jq -s '.'; then
+        }" 2>/dev/null | jq -s '.'; then
         log_warn "Failed to fetch runs for workflow $workflow_name"
         echo "[]"
     fi
@@ -119,7 +119,7 @@ get_run_jobs() {
             name: .name,
             conclusion: .conclusion
         }]
-    }' | jq -s '.'; then
+    }' 2>/dev/null | jq -s '.'; then
         log_warn "Failed to fetch jobs for run $run_id"
         echo "[]"
     fi
