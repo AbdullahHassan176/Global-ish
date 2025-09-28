@@ -1,0 +1,93 @@
+name: Aggregate Workflow Failures
+
+on:
+  workflow_run:
+    types: [completed]
+    workflows: ['*'] # Trigger on all workflows
+
+jobs:
+  aggregate-failures:
+    if: always() # Run even if the triggering workflow failed
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch full history for branch operations
+
+      - name: Setup GitHub CLI
+        run: |
+          # Install GitHub CLI if not available
+          if ! command -v gh &> /dev/null; then
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+            sudo apt update
+            sudo apt install gh -y
+          fi
+
+      - name: Setup jq
+        run: |
+          if ! command -v jq &> /dev/null; then
+            sudo apt update
+            sudo apt install jq -y
+          fi
+
+      - name: Authenticate GitHub CLI
+        run: |
+          # Use the GITHUB_TOKEN for authentication
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
+      - name: Run Error Summarizer
+        run: |
+          # Set environment variables
+          export REPO="${{ github.repository }}"
+          export LIMIT_RUNS="${LIMIT_RUNS:-50}"
+
+          # Make script executable and run it
+          chmod +x scripts/gha_errors.sh
+          ./scripts/gha_errors.sh
+        env:
+          LIMIT_RUNS: 50 # Adjust as needed
+
+      - name: Upload Summary Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gha-failure-summary
+          path: |
+            reports/summary.md
+            reports/summary.csv
+          retention-days: 30
+
+      - name: Commit to Reports Branch
+        if: always() && github.event_name == 'workflow_run'
+        run: |
+          # Configure git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # Create or checkout reports branch
+          git checkout -B gha-reports 2>/dev/null || git checkout gha-reports
+
+          # Create reports directory if it doesn't exist
+          mkdir -p reports
+
+          # Copy generated files
+          cp reports/summary.md reports/ 2>/dev/null || echo "No summary.md found"
+          cp reports/summary.csv reports/ 2>/dev/null || echo "No summary.csv found"
+
+          # Add and commit files
+          git add reports/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update workflow failure summary - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            git push origin gha-reports
+            echo "Committed summary to gha-reports branch"
+          fi

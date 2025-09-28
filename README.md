@@ -26,6 +26,7 @@ This monorepo contains:
 ### Installation
 
 1. **Clone and install dependencies:**
+
    ```bash
    git clone <repository-url>
    cd global-next-monorepo
@@ -33,33 +34,37 @@ This monorepo contains:
    ```
 
 2. **Set up environment variables:**
+
    ```bash
    # Copy example files
    cp apps/web/env.example apps/web/.env
    cp apps/api/env.example apps/api/.env
-   
+
    # Edit the files with your configuration
    ```
 
 3. **Start infrastructure services:**
+
    ```bash
    docker-compose up -d postgres redis
    ```
 
 4. **Set up the database:**
+
    ```bash
    # Generate Prisma client
    pnpm db:generate
-   
+
    # Run migrations
    pnpm db:migrate
    ```
 
 5. **Start development servers:**
+
    ```bash
    # Start all services
    pnpm dev
-   
+
    # Or start individually
    pnpm dev --filter=@global-next/web  # Vue.js app on http://localhost:3000
    pnpm dev --filter=@global-next/api  # NestJS API on http://localhost:3001
@@ -108,11 +113,11 @@ import { usePermission } from '@global-next/auth';
 
 function UserManagement() {
   const canManageUsers = usePermission('users', 'manage');
-  
+
   if (!canManageUsers) {
     return <AccessDenied />;
   }
-  
+
   return <UserManagementInterface />;
 }
 ```
@@ -242,6 +247,7 @@ global-next-monorepo/
 ## 🛠️ Technology Stack
 
 ### Frontend (Vue.js)
+
 - **Vue.js 3** - Progressive JavaScript framework
 - **Vite** - Fast build tool and dev server
 - **TypeScript** - Type-safe JavaScript
@@ -251,6 +257,7 @@ global-next-monorepo/
 - **Lucide Vue** - Beautiful icon library
 
 ### Backend (NestJS)
+
 - **NestJS** - Progressive Node.js framework
 - **TypeScript** - Type-safe JavaScript
 - **Prisma** - Next-generation ORM
@@ -260,6 +267,7 @@ global-next-monorepo/
 - **JWT** - JSON Web Tokens for auth
 
 ### DevOps & Tools
+
 - **pnpm** - Fast, disk space efficient package manager
 - **Turborepo** - High-performance build system
 - **Docker** - Containerization
@@ -305,8 +313,146 @@ CORS_ORIGINS="http://localhost:3000,http://localhost:3001"
 ## 📚 API Documentation
 
 API documentation is available at:
+
 - Development: `http://localhost:3001/api/docs`
 - Production: `https://api.globalnext.com/api/docs`
+
+## 🔧 Dev Tools
+
+### Actions Error Summary
+
+This repository includes an automated GitHub Actions error summarizer that tracks failed workflow runs and generates detailed reports.
+
+#### Features
+
+- **Auto-discovery**: Automatically detects all workflows in the repository
+- **Error extraction**: Extracts up to 3 error lines per failed run using case-insensitive pattern matching
+- **Multiple formats**: Generates both Markdown and CSV reports
+- **Artifact upload**: Uploads reports as GitHub Actions artifacts
+- **Branch commits**: Optionally commits reports to a dedicated `gha-reports` branch
+
+#### Installation
+
+1. **Install GitHub CLI:**
+
+   ```bash
+   # macOS
+   brew install gh
+
+   # Ubuntu/Debian
+   curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+   sudo apt update
+   sudo apt install gh
+
+   # Windows (PowerShell)
+   winget install GitHub.cli
+   ```
+
+2. **Install jq:**
+
+   ```bash
+   # macOS
+   brew install jq
+
+   # Ubuntu/Debian
+   sudo apt install jq
+
+   # Windows (PowerShell)
+   winget install jqlang.jq
+   ```
+
+3. **Authenticate GitHub CLI:**
+   ```bash
+   gh auth login
+   ```
+
+#### Usage
+
+**Run locally:**
+
+```bash
+# Basic usage (auto-detects repository)
+./scripts/gha_errors.sh
+
+# Specify repository explicitly
+REPO="owner/repo" ./scripts/gha_errors.sh
+
+# Limit number of runs per workflow
+LIMIT_RUNS=100 ./scripts/gha_errors.sh
+```
+
+**Environment Variables:**
+
+- `REPO`: Repository in format `owner/name` (auto-detected if not set)
+- `LIMIT_RUNS`: Maximum runs to check per workflow (default: 50)
+
+**Output Files:**
+
+- `reports/summary.md`: Markdown table with failed runs
+- `reports/summary.csv`: CSV data with detailed information
+
+#### CI Integration
+
+The error summarizer runs automatically via `.github/workflows/aggregate-failures.yml`:
+
+- **Trigger**: Runs after any workflow completion
+- **Artifacts**: Uploads `gha-failure-summary` artifact containing reports
+- **Branch**: Commits reports to `gha-reports` branch
+- **Permissions**: Requires `actions: read` and `contents: write`
+
+#### Reading the Output
+
+**Markdown Report (`summary.md`):**
+
+- Clean table format with workflow, run ID, status, and error snippets
+- Clickable run IDs link to GitHub Actions
+- Truncated error messages for readability
+
+**CSV Report (`summary.csv`):**
+
+- Machine-readable format with columns:
+  - `workflow`: Workflow name
+  - `run_id`: GitHub Actions run ID
+  - `run_url`: Direct link to the run
+  - `conclusion`: Run conclusion (failure, cancelled, etc.)
+  - `created_at`: Run creation timestamp
+  - `sha`: Commit SHA
+  - `job_name`: Failed job name
+  - `failed_steps`: Semicolon-separated list of failed steps
+  - `error_snippet`: Extracted error lines
+
+#### Troubleshooting
+
+**Missing GitHub CLI Authentication:**
+
+```bash
+gh auth login
+# Follow the prompts to authenticate
+```
+
+**Rate Limit Issues:**
+
+- The script respects GitHub API rate limits
+- Consider reducing `LIMIT_RUNS` for large repositories
+- Use `gh api --paginate` for large datasets
+
+**Private Repository Access:**
+
+- Ensure your GitHub CLI token has appropriate permissions
+- For organizations, check if SSO is required: `gh auth refresh -s repo`
+
+**Empty Logs:**
+
+- Some runs may not have downloadable logs
+- The script handles this gracefully and still includes the run in reports
+- Check GitHub Actions logs directly for more details
+
+**Permission Errors:**
+
+- Ensure the workflow has `actions: read` permission
+- For branch commits, ensure `contents: write` permission
+- Check repository settings for workflow permissions
 
 ## 🤝 Contributing
 
@@ -323,6 +469,7 @@ This project is proprietary software. All rights reserved.
 ## 🆘 Support
 
 For support and questions:
+
 - Create an issue in the repository
 - Contact the development team
 - Check the documentation wiki
