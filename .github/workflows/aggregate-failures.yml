@@ -75,6 +75,14 @@ jobs:
           # Fetch all branches first
           git fetch origin
           
+          # Handle untracked files that might conflict with checkout
+          if [ -f "reports/summary.md" ] || [ -f "reports/summary.csv" ]; then
+            echo "Stashing untracked files to avoid checkout conflicts..."
+            mkdir -p temp_reports
+            mv reports/summary.md temp_reports/ 2>/dev/null || true
+            mv reports/summary.csv temp_reports/ 2>/dev/null || true
+          fi
+          
           # Create or checkout reports branch with proper handling
           if git show-ref --verify --quiet refs/remotes/origin/gha-reports; then
             # Branch exists remotely, checkout and pull
@@ -88,9 +96,23 @@ jobs:
           # Create reports directory if it doesn't exist
           mkdir -p reports
           
-          # Copy generated files
-          cp reports/summary.md reports/ 2>/dev/null || echo "No summary.md found"
-          cp reports/summary.csv reports/ 2>/dev/null || echo "No summary.csv found"
+          # Restore stashed files or copy generated files
+          if [ -f "temp_reports/summary.md" ]; then
+            cp temp_reports/summary.md reports/
+            echo "Restored stashed summary.md"
+          else
+            cp reports/summary.md reports/ 2>/dev/null || echo "No summary.md found"
+          fi
+          
+          if [ -f "temp_reports/summary.csv" ]; then
+            cp temp_reports/summary.csv reports/
+            echo "Restored stashed summary.csv"
+          else
+            cp reports/summary.csv reports/ 2>/dev/null || echo "No summary.csv found"
+          fi
+          
+          # Clean up temp directory
+          rm -rf temp_reports 2>/dev/null || true
           
           # Add and commit files
           git add reports/
