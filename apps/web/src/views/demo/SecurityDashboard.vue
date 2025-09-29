@@ -274,7 +274,7 @@
             <p class="text-sm text-gray-600 mb-4">
               Download a copy of all your personal data in a machine-readable format.
             </p>
-            <button @click="requestDataExport" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center justify-center">
+            <button @click="openExportData" class="w-full px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center justify-center">
               <Download class="h-4 w-4 mr-2" />
               Request Data Export
             </button>
@@ -285,7 +285,7 @@
             <p class="text-sm text-gray-600 mb-4">
               Request complete deletion of your personal data from our systems.
             </p>
-            <button @click="requestDataErasure" class="w-full px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center justify-center">
+            <button @click="openRequestDataErasure" class="w-full px-4 py-2 border-2 border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all duration-300 flex items-center justify-center">
               <Trash2 class="h-4 w-4 mr-2" />
               Request Data Erasure
             </button>
@@ -297,7 +297,7 @@
       <div v-if="activeTab === 'data-lifecycle'" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-900">Data Lifecycle Management</h2>
-          <button @click="showRetentionPolicyModal = true" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
+          <button @click="openAddRetentionPolicy" class="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-magenta text-white rounded-lg hover:from-brand-orange/90 hover:to-brand-magenta/90 transition-all duration-300 flex items-center shadow-lg">
             <Plus class="h-4 w-4 mr-2" />
             Add Retention Policy
           </button>
@@ -345,8 +345,8 @@
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div class="flex items-center space-x-2">
-                      <button class="text-blue-600 hover:text-blue-900">Edit</button>
-                      <button class="text-red-600 hover:text-red-900">Delete</button>
+                      <button @click="openEditRetentionPolicy(policy)" class="text-blue-600 hover:text-blue-900">Edit</button>
+                      <button @click="openDeleteRetentionPolicy(policy)" class="text-red-600 hover:text-red-900">Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -389,7 +389,7 @@
               <option>Medium</option>
               <option>Low</option>
             </select>
-            <button @click="handleRefresh" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center">
+            <button @click="openRefreshSecurityEvents" class="px-4 py-2 border-2 border-brand-teal text-brand-teal rounded-lg hover:bg-brand-teal hover:text-white transition-all duration-300 flex items-center">
               <RefreshCw class="h-4 w-4 mr-2" />
               Refresh
             </button>
@@ -621,6 +621,49 @@
     @close="closeExportData"
     @export="handleExportDataSubmit"
   />
+
+  <RequestDataErasureWorkflow
+    :is-open="isRequestDataErasureOpen"
+    @close="closeRequestDataErasure"
+    @erase="handleRequestDataErasureSubmit"
+  />
+
+  <AddRetentionPolicyWorkflow
+    :is-open="isAddRetentionPolicyOpen"
+    @close="closeAddRetentionPolicy"
+    @add="handleAddRetentionPolicySubmit"
+    @saveDraft="handleAddRetentionPolicySaveDraft"
+  />
+
+  <EditRetentionPolicyWorkflow
+    :is-open="isEditRetentionPolicyOpen"
+    :policy="selectedRetentionPolicy"
+    @close="closeEditRetentionPolicy"
+    @update="handleEditRetentionPolicySubmit"
+    @delete="handleDeleteRetentionPolicySubmit"
+    @saveDraft="handleEditRetentionPolicySaveDraft"
+  />
+
+  <DeleteRetentionPolicyWorkflow
+    :is-open="isDeleteRetentionPolicyOpen"
+    :policy-id="selectedRetentionPolicy?.id"
+    :policy-name="selectedRetentionPolicy?.recordType"
+    :policy-record-type="selectedRetentionPolicy?.recordType"
+    :policy-data-category="selectedRetentionPolicy?.dataCategory"
+    :policy-status="selectedRetentionPolicy?.status"
+    :policy-retention-period="selectedRetentionPolicy?.retentionPeriod"
+    :policy-retention-unit="selectedRetentionPolicy?.retentionUnit"
+    :policy-legal-basis="selectedRetentionPolicy?.legalBasis"
+    @close="closeDeleteRetentionPolicy"
+    @delete="handleDeleteRetentionPolicySubmit"
+    @suspend="handleSuspendRetentionPolicySubmit"
+  />
+
+  <RefreshSecurityEventsWorkflow
+    :is-open="isRefreshSecurityEventsOpen"
+    @close="closeRefreshSecurityEvents"
+    @refresh="handleRefreshSecurityEventsSubmit"
+  />
   </SidebarLayout>
 </template>
 
@@ -647,6 +690,11 @@ import RevokeAllSessionsWorkflow from '@/components/RevokeAllSessionsWorkflow.vu
 import RevokeSessionWorkflow from '@/components/RevokeSessionWorkflow.vue'
 import SessionInfoWorkflow from '@/components/SessionInfoWorkflow.vue'
 import ExportDataWorkflow from '@/components/ExportDataWorkflow.vue'
+import RequestDataErasureWorkflow from '@/components/RequestDataErasureWorkflow.vue'
+import AddRetentionPolicyWorkflow from '@/components/AddRetentionPolicyWorkflow.vue'
+import EditRetentionPolicyWorkflow from '@/components/EditRetentionPolicyWorkflow.vue'
+import DeleteRetentionPolicyWorkflow from '@/components/DeleteRetentionPolicyWorkflow.vue'
+import RefreshSecurityEventsWorkflow from '@/components/RefreshSecurityEventsWorkflow.vue'
 import { notify } from '@/composables/useNotifications'
 
 const activeTab = ref<'sessions' | 'privacy' | 'data-lifecycle' | 'security-events' | 'compliance'>('sessions')
@@ -657,6 +705,11 @@ const isRevokeAllSessionsOpen = ref(false)
 const isRevokeSessionOpen = ref(false)
 const isSessionInfoOpen = ref(false)
 const isExportDataOpen = ref(false)
+const isRequestDataErasureOpen = ref(false)
+const isAddRetentionPolicyOpen = ref(false)
+const isEditRetentionPolicyOpen = ref(false)
+const isDeleteRetentionPolicyOpen = ref(false)
+const isRefreshSecurityEventsOpen = ref(false)
 
 // Selected items for workflows
 const selectedSession = ref<any>(null)
@@ -676,6 +729,9 @@ const selectedSessionDuration = ref<string>('')
 const selectedSessionAuthMethod = ref<string>('')
 const selectedSessionMfaEnabled = ref<boolean>(false)
 const selectedSessionUserAgent = ref<string>('')
+
+// Selected items for retention policy workflows
+const selectedRetentionPolicy = ref<any>(null)
 
 // Mock data
 const mockSessions = ref([
@@ -1110,6 +1166,98 @@ const handleExportDataSubmit = (data: any) => {
   console.log('Export data workflow submitted:', data)
   notify.success('Data Export Requested', 'Your data export request has been submitted successfully!')
   closeExportData()
+}
+
+// New workflow functions
+const openRequestDataErasure = () => {
+  isRequestDataErasureOpen.value = true
+}
+
+const closeRequestDataErasure = () => {
+  isRequestDataErasureOpen.value = false
+}
+
+const openAddRetentionPolicy = () => {
+  isAddRetentionPolicyOpen.value = true
+}
+
+const closeAddRetentionPolicy = () => {
+  isAddRetentionPolicyOpen.value = false
+}
+
+const openEditRetentionPolicy = (policy: any) => {
+  selectedRetentionPolicy.value = policy
+  isEditRetentionPolicyOpen.value = true
+}
+
+const closeEditRetentionPolicy = () => {
+  isEditRetentionPolicyOpen.value = false
+  selectedRetentionPolicy.value = null
+}
+
+const openDeleteRetentionPolicy = (policy: any) => {
+  selectedRetentionPolicy.value = policy
+  isDeleteRetentionPolicyOpen.value = true
+}
+
+const closeDeleteRetentionPolicy = () => {
+  isDeleteRetentionPolicyOpen.value = false
+  selectedRetentionPolicy.value = null
+}
+
+const openRefreshSecurityEvents = () => {
+  isRefreshSecurityEventsOpen.value = true
+}
+
+const closeRefreshSecurityEvents = () => {
+  isRefreshSecurityEventsOpen.value = false
+}
+
+// New workflow handlers
+const handleRequestDataErasureSubmit = (data: any) => {
+  console.log('Request data erasure workflow submitted:', data)
+  notify.success('Data Erasure Requested', 'Your data erasure request has been submitted successfully!')
+  closeRequestDataErasure()
+}
+
+const handleAddRetentionPolicySubmit = (data: any) => {
+  console.log('Add retention policy workflow submitted:', data)
+  notify.success('Retention Policy Added', 'Retention policy has been added successfully!')
+  closeAddRetentionPolicy()
+}
+
+const handleAddRetentionPolicySaveDraft = (data: any) => {
+  console.log('Add retention policy draft saved:', data)
+  notify.success('Draft Saved', 'Retention policy draft has been saved successfully!')
+}
+
+const handleEditRetentionPolicySubmit = (data: any) => {
+  console.log('Edit retention policy workflow submitted:', data)
+  notify.success('Retention Policy Updated', 'Retention policy has been updated successfully!')
+  closeEditRetentionPolicy()
+}
+
+const handleEditRetentionPolicySaveDraft = (data: any) => {
+  console.log('Edit retention policy draft saved:', data)
+  notify.success('Draft Saved', 'Retention policy changes have been saved as draft!')
+}
+
+const handleDeleteRetentionPolicySubmit = (data: any) => {
+  console.log('Delete retention policy workflow submitted:', data)
+  notify.success('Retention Policy Deleted', 'Retention policy has been deleted successfully!')
+  closeDeleteRetentionPolicy()
+}
+
+const handleSuspendRetentionPolicySubmit = (data: any) => {
+  console.log('Suspend retention policy workflow submitted:', data)
+  notify.success('Retention Policy Suspended', 'Retention policy has been suspended successfully!')
+  closeDeleteRetentionPolicy()
+}
+
+const handleRefreshSecurityEventsSubmit = (data: any) => {
+  console.log('Refresh security events workflow submitted:', data)
+  notify.success('Security Events Refresh Started', 'Security events refresh has been initiated successfully!')
+  closeRefreshSecurityEvents()
 }
 
 // Helper functions
