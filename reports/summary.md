@@ -1,12 +1,12 @@
 # GitHub Actions Failure Summary
 
 **Repository:** AbdullahHassan176/Global-ish  
-**Generated:** 2025-09-29 09:39:20 UTC  
+**Generated:** 2025-10-06 03:06:40 UTC  
 **Limit:** 50 runs per workflow
 
 ## Summary
 
-**Total Failed Runs:** 176
+**Total Failed Runs:** 180
 
 ## Failed Runs
 
@@ -96,6 +96,10 @@
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Lint | Run ESLint; |  |
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Type Check | Run TypeScript check; |  |
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Test | Run tests; |  |
+| Security Scanning & Compliance | [18268782752](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18268782752) | failure | 2025-10-06T03:03:08Z | `aa2e5de` | SAST Analysis | Run ESLint Security Rules; |  |
+| Security Scanning & Compliance | [18268782752](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18268782752) | failure | 2025-10-06T03:03:08Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; |  |
+| Security Scanning & Compliance | [18268782752](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18268782752) | failure | 2025-10-06T03:03:08Z | `aa2e5de` | Security Policy Compliance | Set up job; |  |
+| Security Scanning & Compliance | [18268782752](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18268782752) | failure | 2025-10-06T03:03:08Z | `aa2e5de` | Build Application | Build application; |  |
 | Security Scanning & Compliance | [18092520409](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18092520409) | failure | 2025-09-29T09:35:52Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; |  |
 | Security Scanning & Compliance | [18092520409](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18092520409) | failure | 2025-09-29T09:35:52Z | `aa2e5de` | SAST Analysis | Run ESLint Security Rules; |  |
 | Security Scanning & Compliance | [18092520409](https://github.com/AbdullahHassan176/Global-ish/actions/runs/18092520409) | failure | 2025-09-29T09:35:52Z | `aa2e5de` | Build Application | Build application; |  |
