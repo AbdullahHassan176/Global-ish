@@ -1,7 +1,7 @@
 # GitHub Actions Failure Summary
 
 **Repository:** AbdullahHassan176/Global-ish  
-**Generated:** 2026-09-07 02:26:09 UTC  
+**Generated:** 2026-09-14 02:27:24 UTC  
 **Limit:** 50 runs per workflow
 
 ## Summary
@@ -88,6 +88,10 @@
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Lint |  | Logs not available |
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Type Check |  | Logs not available |
 | CI/CD Pipeline | [17929661940](https://github.com/AbdullahHassan176/Global-ish/actions/runs/17929661940) | failure | 2025-09-22T22:01:15Z | `ef87b00` | Test |  | Logs not available |
+| Security Scanning & Compliance | [34799070024](https://github.com/AbdullahHassan176/Global-ish/actions/runs/34799070024) | failure | 2026-09-14T02:23:53Z | `aa2e5de` | Build Application | Build application; |  |
+| Security Scanning & Compliance | [34799070024](https://github.com/AbdullahHassan176/Global-ish/actions/runs/34799070024) | failure | 2026-09-14T02:23:53Z | `aa2e5de` | SAST Analysis | Run ESLint Security Rules; |  |
+| Security Scanning & Compliance | [34799070024](https://github.com/AbdullahHassan176/Global-ish/actions/runs/34799070024) | failure | 2026-09-14T02:23:53Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; |  |
+| Security Scanning & Compliance | [34799070024](https://github.com/AbdullahHassan176/Global-ish/actions/runs/34799070024) | failure | 2026-09-14T02:23:53Z | `aa2e5de` | Security Policy Compliance | Set up job; |  |
 | Security Scanning & Compliance | [34076058815](https://github.com/AbdullahHassan176/Global-ish/actions/runs/34076058815) | failure | 2026-09-07T02:22:15Z | `aa2e5de` | Build Application | Build application; |  |
 | Security Scanning & Compliance | [34076058815](https://github.com/AbdullahHassan176/Global-ish/actions/runs/34076058815) | failure | 2026-09-07T02:22:15Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; |  |
 | Security Scanning & Compliance | [34076058815](https://github.com/AbdullahHassan176/Global-ish/actions/runs/34076058815) | failure | 2026-09-07T02:22:15Z | `aa2e5de` | SAST Analysis | Run ESLint Security Rules; |  |
@@ -136,10 +140,10 @@
 | Security Scanning & Compliance | [27927343240](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27927343240) | failure | 2026-06-22T03:18:19Z | `aa2e5de` | SAST Analysis | Run ESLint Security Rules; |  |
 | Security Scanning & Compliance | [27927343240](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27927343240) | failure | 2026-06-22T03:18:19Z | `aa2e5de` | Build Application | Build application; |  |
 | Security Scanning & Compliance | [27927343240](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27927343240) | failure | 2026-06-22T03:18:19Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; |  |
-| Security Scanning & Compliance | [27521926241](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27521926241) | failure | 2026-06-15T03:18:32Z | `aa2e5de` | Build Application | Build application; |  |
-| Security Scanning & Compliance | [27521926241](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27521926241) | failure | 2026-06-15T03:18:32Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; |  |
-| Security Scanning & Compliance | [27521926241](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27521926241) | failure | 2026-06-15T03:18:32Z | `aa2e5de` | SAST Analysis | Run ESLint Security Rules; |  |
-| Security Scanning & Compliance | [27521926241](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27521926241) | failure | 2026-06-15T03:18:32Z | `aa2e5de` | Security Policy Compliance | Set up job; |  |
+| Security Scanning & Compliance | [27521926241](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27521926241) | failure | 2026-06-15T03:18:32Z | `aa2e5de` | Build Application | Build application; | Logs not available |
+| Security Scanning & Compliance | [27521926241](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27521926241) | failure | 2026-06-15T03:18:32Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; | Logs not available |
+| Security Scanning & Compliance | [27521926241](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27521926241) | failure | 2026-06-15T03:18:32Z | `aa2e5de` | SAST Analysis | Run ESLint Security Rules; | Logs not available |
+| Security Scanning & Compliance | [27521926241](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27521926241) | failure | 2026-06-15T03:18:32Z | `aa2e5de` | Security Policy Compliance | Set up job; | Logs not available |
 | Security Scanning & Compliance | [27114019938](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27114019938) | failure | 2026-06-08T03:18:12Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; | Logs not available |
 | Security Scanning & Compliance | [27114019938](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27114019938) | failure | 2026-06-08T03:18:12Z | `aa2e5de` | Build Application | Build application; | Logs not available |
 | Security Scanning & Compliance | [27114019938](https://github.com/AbdullahHassan176/Global-ish/actions/runs/27114019938) | failure | 2026-06-08T03:18:12Z | `aa2e5de` | Security Policy Compliance | Set up job; | Logs not available |
@@ -180,10 +184,10 @@
 | Security Scanning & Compliance | [24017133684](https://github.com/AbdullahHassan176/Global-ish/actions/runs/24017133684) | failure | 2026-04-06T03:11:27Z | `aa2e5de` | Build Application | Build application; | Logs not available |
 | Security Scanning & Compliance | [24017133684](https://github.com/AbdullahHassan176/Global-ish/actions/runs/24017133684) | failure | 2026-04-06T03:11:27Z | `aa2e5de` | Security Policy Compliance | Set up job; | Logs not available |
 | Security Scanning & Compliance | [24017133684](https://github.com/AbdullahHassan176/Global-ish/actions/runs/24017133684) | failure | 2026-04-06T03:11:27Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; | Logs not available |
-| Security Scanning & Compliance | [23726259699](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23726259699) | failure | 2026-03-30T03:11:04Z | `aa2e5de` | SAST Analysis | Run ESLint Security Rules; | Logs not available |
-| Security Scanning & Compliance | [23726259699](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23726259699) | failure | 2026-03-30T03:11:04Z | `aa2e5de` | Security Policy Compliance | Set up job; | Logs not available |
-| Security Scanning & Compliance | [23726259699](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23726259699) | failure | 2026-03-30T03:11:04Z | `aa2e5de` | Dependency Vulnerability Scan | Run pnpm audit; | Logs not available |
-| Security Scanning & Compliance | [23726259699](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23726259699) | failure | 2026-03-30T03:11:04Z | `aa2e5de` | Build Application | Build application; | Logs not available |
+| Security Scanning & Compliance | [23726259699](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23726259699) | failure | 2026-03-30T03:11:04Z | `aa2e5de` | SAST Analysis |  | Logs not available |
+| Security Scanning & Compliance | [23726259699](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23726259699) | failure | 2026-03-30T03:11:04Z | `aa2e5de` | Security Policy Compliance |  | Logs not available |
+| Security Scanning & Compliance | [23726259699](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23726259699) | failure | 2026-03-30T03:11:04Z | `aa2e5de` | Dependency Vulnerability Scan |  | Logs not available |
+| Security Scanning & Compliance | [23726259699](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23726259699) | failure | 2026-03-30T03:11:04Z | `aa2e5de` | Build Application |  | Logs not available |
 | Security Scanning & Compliance | [23419753540](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23419753540) | failure | 2026-03-23T03:10:04Z | `aa2e5de` | SAST Analysis |  | Logs not available |
 | Security Scanning & Compliance | [23419753540](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23419753540) | failure | 2026-03-23T03:10:04Z | `aa2e5de` | Build Application |  | Logs not available |
 | Security Scanning & Compliance | [23419753540](https://github.com/AbdullahHassan176/Global-ish/actions/runs/23419753540) | failure | 2026-03-23T03:10:04Z | `aa2e5de` | Security Policy Compliance |  | Logs not available |
@@ -204,10 +208,6 @@
 | Security Scanning & Compliance | [22291514434](https://github.com/AbdullahHassan176/Global-ish/actions/runs/22291514434) | failure | 2026-02-23T03:08:28Z | `aa2e5de` | Build Application |  | Logs not available |
 | Security Scanning & Compliance | [22291514434](https://github.com/AbdullahHassan176/Global-ish/actions/runs/22291514434) | failure | 2026-02-23T03:08:28Z | `aa2e5de` | Dependency Vulnerability Scan |  | Logs not available |
 | Security Scanning & Compliance | [22291514434](https://github.com/AbdullahHassan176/Global-ish/actions/runs/22291514434) | failure | 2026-02-23T03:08:28Z | `aa2e5de` | SAST Analysis |  | Logs not available |
-| Security Scanning & Compliance | [22048767083](https://github.com/AbdullahHassan176/Global-ish/actions/runs/22048767083) | failure | 2026-02-16T03:08:19Z | `aa2e5de` | Dependency Vulnerability Scan |  | Logs not available |
-| Security Scanning & Compliance | [22048767083](https://github.com/AbdullahHassan176/Global-ish/actions/runs/22048767083) | failure | 2026-02-16T03:08:19Z | `aa2e5de` | Security Policy Compliance |  | Logs not available |
-| Security Scanning & Compliance | [22048767083](https://github.com/AbdullahHassan176/Global-ish/actions/runs/22048767083) | failure | 2026-02-16T03:08:19Z | `aa2e5de` | SAST Analysis |  | Logs not available |
-| Security Scanning & Compliance | [22048767083](https://github.com/AbdullahHassan176/Global-ish/actions/runs/22048767083) | failure | 2026-02-16T03:08:19Z | `aa2e5de` | Build Application |  | Logs not available |
 
 ---
 *Generated by GitHub Actions Error Summarizer*
